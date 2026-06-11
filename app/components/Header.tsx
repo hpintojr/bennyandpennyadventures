@@ -42,7 +42,7 @@ export default function Header() {
           <div className="text-center font-serif text-[26px] italic text-coral sm:text-[42px] md:text-[46px]">
             <span className="align-middle text-[.85em]">♥</span> Adventures <span className="align-middle text-[.85em]">♥</span>
           </div>
-          <p className="mt-2 text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#6b5d4f] sm:text-[11px]">Medical Books for Brave Little Hearts</p>
+          <p className="mt-2 text-center text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#6b5d4f] sm:text-[11px]">Medical Books for Brave Little Hearts</p>
         </Link>
 
         <nav className="hidden items-center gap-5 text-sm font-bold text-[#102f35] lg:flex xl:gap-7">
