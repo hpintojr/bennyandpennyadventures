@@ -50,7 +50,7 @@ export default function HomePage() {
         <ImageSlot src="/images/author-michelle.png" alt="Michelle Marie Pinto writing illustration" label="Author Image" note="public/images/author-michelle.png" className="min-h-[360px] rounded-3xl" />
         <div className="text-center lg:text-left">
           <p className="font-serif text-2xl italic text-teal">Meet the Author ♥</p>
-          <h2 className="mt-1 font-serif text-[35px] font-bold leading-tight text-teal">Michelle Marie Pinto, RN</h2>
+          <h2 className="mt-1 font-serif text-[32px] font-bold leading-tight text-teal sm:text-[35px]">Michelle Marie Pinto, RN</h2>
           <p className="mt-2 font-serif text-3xl text-coral">Nurse. Mom. Writer.</p>
           <p className="mt-6 max-w-xl text-lg leading-8 text-ink lg:max-w-none">With over 15 years as a registered nurse and a deep passion for helping children and families, I created Benny &amp; Penny Adventures to make medical experiences less scary and a little more understandable through stories, friendship, and imagination.</p>
         </div>

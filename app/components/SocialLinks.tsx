@@ -22,7 +22,7 @@ const socialLinks = [
 ];
 
 export default function SocialLinks({ align = "left" }: { align?: "left" | "center" | "right" }) {
-  const justify = align === "right" ? "justify-end" : align === "center" ? "justify-center" : "justify-start";
+  const justify = align === "right" ? "justify-center md:justify-end" : align === "center" ? "justify-center" : "justify-start";
   return (
     <div className={`mt-5 flex gap-3 ${justify}`}>
       {socialLinks.map((link) => (
