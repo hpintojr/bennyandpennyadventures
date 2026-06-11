@@ -30,8 +30,11 @@ export default function Header() {
   const { count } = useCart();
 
   const isActive = (href: string) => {
+    // Section links like /#author and /#family should not be treated
+    // as active on every route just because their base path is /.
+    if (href.includes("#")) return false;
     if (href === "/") return pathname === "/";
-    return pathname.startsWith(href.replace(/#.*$/, ""));
+    return pathname === href || pathname.startsWith(`${href}/`);
   };
 
   return (
