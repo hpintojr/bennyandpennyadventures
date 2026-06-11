@@ -1,0 +1,174 @@
+<!--
+  Benny & Penny's Adventures — Contact page wireframe
+  Includes: contact form (with inquiry-type dropdown), direct email + socials, newsletter signup.
+  Maps to future Next.js route: app/contact/page.tsx
+-->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contact — Benny &amp; Penny's Adventures</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Nunito:wght@400;500;600;700&display=swap');
+  :root{--cream:#FFF6E8;--teal:#064852;--coral:#E7646C;--tan:#E8CFAE;--panel:#F9EAD7;--blush:#FDE4DE;--green:#EEF2E6;--body:#1D3237;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--cream);color:var(--teal);font-family:'Nunito',sans-serif;line-height:1.6}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 22px}
+  h1,h2,h3{font-family:'Playfair Display',serif;margin:0}
+  .heart{color:var(--coral)}
+  .btn{display:inline-block;background:var(--coral);color:#fff;font-family:'Playfair Display',serif;padding:12px 24px;border-radius:999px;font-size:16px;border:none;cursor:pointer}
+  .bar{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:22px 0}
+  .brand{display:block;line-height:1}
+  .brand .n{font-family:'Playfair Display',serif;font-weight:700;font-size:38px;color:var(--teal);line-height:1}
+  .brand .a{font-family:'Playfair Display',serif;font-style:italic;font-size:38px;color:var(--coral);line-height:1.05;text-align:center}
+  .brand .a .hs{font-size:.85em;vertical-align:middle}
+  .brand .t{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#6b5d4f;margin-top:6px;font-weight:bold}
+  .menu{display:flex;align-items:center;gap:20px;font-size:14px;font-weight:600;color:var(--body)}
+  .menu a.active{color:var(--coral)}
+  .cart-link{position:relative;display:inline-flex;align-items:center;color:var(--teal)}
+  .cart-link svg{width:24px;height:24px}
+  .cart-count{position:absolute;top:-9px;right:-11px;min-width:18px;height:18px;border-radius:999px;background:var(--coral);color:#fff;font-size:11px;font-weight:700;display:none;align-items:center;justify-content:center;padding:0 5px;line-height:1}
+  .desktop-cta{white-space:nowrap}
+  .hamb{display:none;flex:0 0 auto;width:46px;height:46px;align-items:center;justify-content:center;background:rgba(255,255,255,.7);border:1px solid var(--tan);border-radius:50%;font-size:22px;line-height:1;color:var(--teal);cursor:pointer}
+  .mobile-menu{display:none;flex-direction:column;gap:6px;text-align:center;border:1px solid var(--tan);background:rgba(255,255,255,.7);border-radius:16px;padding:12px;margin:-4px 0 14px}
+  .mobile-menu a{padding:10px;border-radius:10px;font-weight:600;color:var(--body)}
+  .mobile-menu a.active{color:var(--coral)}
+  .mobile-menu a.btn{color:#fff;margin-top:6px}
+  .mobile-menu.open{display:flex}
+  @media(max-width:1024px){
+    .menu,.desktop-cta{display:none}
+    .hamb{display:flex;position:absolute;right:5px;top:22px}
+    .cart-link{position:absolute;right:60px;top:24px}
+    .bar{position:relative;align-items:flex-start}
+    .brand{flex:1;text-align:center}
+    .brand .n,.brand .a,.brand .t{text-align:center}
+  }
+  @media(max-width:600px){
+    .brand .n,.brand .a{font-size:26px}
+    .brand .t{font-size:10px}
+  }
+  @media(max-width:380px){
+    .brand .n,.brand .a{font-size:22px}
+    .hamb{width:42px;height:42px;font-size:20px}
+  }
+  .phead{text-align:center;padding:18px 0 4px}
+  .phead h1{font-size:44px;color:var(--teal)}
+  .phead p{max-width:58ch;margin:12px auto 0;color:var(--body)}
+
+  .grid{display:grid;grid-template-columns:1.3fr .9fr;gap:28px;padding:26px 0 48px;align-items:start}
+  .formcard{background:rgba(255,255,255,.55);border:1px solid var(--tan);border-radius:22px;padding:26px}
+  .field{margin-bottom:16px}
+  .field label{display:block;font-size:13px;font-weight:700;color:var(--teal);margin-bottom:6px}
+  .field input,.field select,.field textarea{width:100%;border:1px solid var(--tan);border-radius:12px;padding:12px 14px;font-family:inherit;font-size:15px;background:#fff;color:var(--body)}
+  .field textarea{min-height:130px;resize:vertical}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+  .aside{display:flex;flex-direction:column;gap:18px}
+  .infocard{background:var(--blush);border:1px solid var(--tan);border-radius:22px;padding:24px}
+  .infocard h3{font-size:24px;color:var(--teal);margin-bottom:8px}
+  .infocard p{font-size:14px;color:var(--body);margin:6px 0}
+  .infocard a.email{font-weight:700;color:var(--coral)}
+  .socials{display:flex;gap:12px;margin-top:12px}
+  .socials a{width:44px;height:44px;border-radius:50%;background:var(--teal);color:#fff;display:flex;align-items:center;justify-content:center}
+  .socials a:hover{background:#0a5f68}
+  .socials svg{width:20px;height:20px;fill:currentColor}
+  .newscard{background:var(--green);border:1px solid var(--tan);border-radius:22px;padding:24px}
+  .newscard h3{font-size:22px;color:var(--teal);margin-bottom:6px}
+  .newscard p{font-size:13px;color:var(--body);margin:0 0 12px}
+  .signup{display:flex;border:1px solid var(--tan);background:#fff;border-radius:999px;overflow:hidden}
+  .signup input{flex:1;border:none;outline:none;padding:11px 16px;font-family:inherit}
+  .signup button{border-radius:0;padding:0 18px;font-size:14px}
+
+  footer.foot{background:var(--teal);color:#fff;text-align:center;padding:22px;font-size:13px}
+  @media(max-width:820px){.grid{grid-template-columns:1fr}}
+  @media(max-width:560px){.row{grid-template-columns:1fr}.phead h1{font-size:34px}.topbar{justify-content:center}}
+</style>
+
+<div class="wrap">
+  <header class="bar" id="top">
+    <a class="brand" href="[C] Homepage Wireframe.html">
+      <div class="n">Benny &amp; Penny's</div>
+      <div class="a"><span class="hs">♥</span> Adventures <span class="hs">♥</span></div>
+      <div class="t">Medical Books for Brave Little Hearts</div>
+    </a>
+    <nav class="menu">
+      <a href="[C] Homepage Wireframe.html">Home</a>
+      <a href="[C] Homepage Wireframe.html#author">About</a>
+      <a href="[C] Homepage Wireframe.html#family">Our Characters</a>
+      <a href="[C] Books.html">Books</a>
+      <a href="[C] For Parents.html">For Parents</a>
+      <a class="active" href="[C] Contact.html">Contact</a>
+    </nav>
+    <a class="cart-link" href="[C] Cart.html" aria-label="Cart">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
+      <span class="cart-count">0</span>
+    </a>
+    <button class="hamb" id="hamb" aria-label="Toggle menu">☰</button>
+  </header>
+  <nav class="mobile-menu" id="mobileMenu">
+    <a href="[C] Homepage Wireframe.html">Home</a>
+    <a href="[C] Homepage Wireframe.html#author">About</a>
+    <a href="[C] Homepage Wireframe.html#family">Our Characters</a>
+    <a href="[C] Books.html">Books</a>
+    <a href="[C] For Parents.html">For Parents</a>
+    <a class="active" href="[C] Contact.html">Contact</a>
+    <a href="[C] Cart.html">Cart</a>
+    <a class="btn" href="[C] Homepage Wireframe.html#community">Join Our Journey ♥</a>
+  </nav>
+
+  <div class="phead">
+    <h1>Contact Us <span class="heart">♥</span></h1>
+    <p>Questions, school visits, press, or bulk orders — we'd love to hear from you. We read every message and reply as soon as we can.</p>
+  </div>
+
+  <div class="grid">
+    <form class="formcard" onsubmit="return false">
+      <div class="row">
+        <div class="field"><label>Name</label><input type="text" placeholder="Your name"></div>
+        <div class="field"><label>Email</label><input type="email" placeholder="you@example.com"></div>
+      </div>
+      <div class="field">
+        <label>What's this about?</label>
+        <select>
+          <option>General question</option>
+          <option>School / library visit</option>
+          <option>Press &amp; media inquiry</option>
+          <option>Bulk / wholesale order</option>
+          <option>Something else</option>
+        </select>
+      </div>
+      <div class="field"><label>Message</label><textarea placeholder="How can we help?"></textarea></div>
+      <button class="btn" type="submit">Send Message ♥</button>
+    </form>
+
+    <div class="aside">
+      <div class="infocard">
+        <h3>Reach Us Directly</h3>
+        <p>Prefer email? Write to us anytime:</p>
+        <p><a class="email" href="mailto:hello@bennyandpenny.com">hello@bennyandpenny.com</a></p>
+        <p style="margin-top:14px;font-weight:700;color:var(--teal)">Follow the adventures</p>
+        <div class="socials">
+          <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.43.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.43.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.16-.43-.36-1.06-.41-2.23C2.17 15.58 2.16 15.2 2.16 12s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.43-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16M12 0C8.74 0 8.33.01 7.05.07 5.78.13 4.9.33 4.14.63c-.79.3-1.46.72-2.13 1.38C1.35 2.67.93 3.34.63 4.14.33 4.9.13 5.78.07 7.05.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.27.26 2.15.56 2.91.31.8.72 1.47 1.38 2.13.66.66 1.34 1.08 2.13 1.38.76.3 1.64.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.27-.06 2.15-.26 2.91-.56a5.9 5.9 0 0 0 2.13-1.38 5.9 5.9 0 0 0 1.38-2.13c.3-.76.5-1.64.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.27-.26-2.15-.56-2.91a5.9 5.9 0 0 0-1.38-2.13A5.9 5.9 0 0 0 19.86.63c-.76-.3-1.64-.5-2.91-.56C15.67.01 15.26 0 12 0z"/><path d="M12 5.84A6.16 6.16 0 1 0 18.16 12 6.16 6.16 0 0 0 12 5.84M12 16a4 4 0 1 1 4-4 4 4 0 0 1-4 4M18.41 4.15a1.44 1.44 0 1 0 1.44 1.44 1.44 1.44 0 0 0-1.44-1.44z"/></svg></a>
+          <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M24 12a12 12 0 1 0-13.88 11.85v-8.38H7.08V12h3.04V9.36c0-3 1.79-4.67 4.53-4.67 1.31 0 2.68.24 2.68.24v2.95h-1.51c-1.49 0-1.95.92-1.95 1.87V12h3.32l-.53 3.47h-2.79v8.38A12 12 0 0 0 24 12z"/></svg></a>
+          <a href="#" aria-label="TikTok"><svg viewBox="0 0 24 24"><path d="M16.6 5.82a4.28 4.28 0 0 1-1.06-2.82h-3.3v13.2a2.59 2.59 0 1 1-2.59-2.59c.27 0 .53.04.78.12V8.36a5.96 5.96 0 0 0-.78-.05A5.92 5.92 0 1 0 15.57 14.2V8.07a7.55 7.55 0 0 0 4.43 1.42V6.19a4.27 4.27 0 0 1-3.4-.37z"/></svg></a>
+          <a href="mailto:hello@bennyandpenny.com" aria-label="Email"><svg viewBox="0 0 24 24"><path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm9 7L4 7v.6l8 5 8-5V7l-8 5z"/></svg></a>
+        </div>
+      </div>
+
+      <div class="newscard">
+        <h3>Join Our Community ♥</h3>
+        <p>New books, resources, and helpful tips — straight to your inbox.</p>
+        <form class="signup" onsubmit="return false">
+          <input type="email" placeholder="Enter your email">
+          <button class="btn" type="submit">Sign Up ♥</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="foot">© 2026 Benny &amp; Penny's Adventures. All rights reserved.</footer>
+
+<script>
+(function(){function c(){try{return JSON.parse(localStorage.getItem('bp_cart')||'[]').reduce(function(n,i){return n+(i.qty||1)},0)}catch(e){return 0}}document.querySelectorAll('.cart-count').forEach(function(el){var n=c();el.textContent=n;el.style.display=n>0?'flex':'none';});})();
+(function(){var b=document.getElementById('hamb'),m=document.getElementById('mobileMenu');if(!b||!m)return;b.addEventListener('click',function(){var o=m.classList.toggle('open');b.textContent=o?'✕':'☰';});m.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){m.classList.remove('open');b.textContent='☰';});});})();
+</script>

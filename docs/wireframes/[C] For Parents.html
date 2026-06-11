@@ -1,0 +1,191 @@
+<!--
+  Benny & Penny's Adventures — For Parents page wireframe
+  Resources: talk-to-your-child guides, printable activity sheets, kid-friendly glossary, support & org links.
+  Maps to future Next.js route: app/for-parents/page.tsx
+-->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>For Parents — Benny &amp; Penny's Adventures</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Nunito:wght@400;500;600;700&display=swap');
+  :root{--cream:#FFF6E8;--teal:#064852;--coral:#E7646C;--tan:#E8CFAE;--panel:#F9EAD7;--blush:#FDE4DE;--green:#EEF2E6;--body:#1D3237;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--cream);color:var(--teal);font-family:'Nunito',sans-serif;line-height:1.6}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 22px}
+  h1,h2,h3{font-family:'Playfair Display',serif;margin:0}
+  .heart{color:var(--coral)}
+  .btn{display:inline-block;background:var(--coral);color:#fff;font-family:'Playfair Display',serif;padding:10px 20px;border-radius:999px;font-size:14px}
+  .ghost{display:inline-block;border:1px solid var(--tan);background:#fff;color:var(--teal);border-radius:999px;padding:8px 16px;font-size:13px;font-weight:600}
+  .bar{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:22px 0}
+  .brand{display:block;line-height:1}
+  .brand .n{font-family:'Playfair Display',serif;font-weight:700;font-size:38px;color:var(--teal);line-height:1}
+  .brand .a{font-family:'Playfair Display',serif;font-style:italic;font-size:38px;color:var(--coral);line-height:1.05;text-align:center}
+  .brand .a .hs{font-size:.85em;vertical-align:middle}
+  .brand .t{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#6b5d4f;margin-top:6px;font-weight:bold}
+  .menu{display:flex;align-items:center;gap:20px;font-size:14px;font-weight:600;color:var(--body)}
+  .menu a.active{color:var(--coral)}
+  .cart-link{position:relative;display:inline-flex;align-items:center;color:var(--teal)}
+  .cart-link svg{width:24px;height:24px}
+  .cart-count{position:absolute;top:-9px;right:-11px;min-width:18px;height:18px;border-radius:999px;background:var(--coral);color:#fff;font-size:11px;font-weight:700;display:none;align-items:center;justify-content:center;padding:0 5px;line-height:1}
+  .desktop-cta{white-space:nowrap}
+  .hamb{display:none;flex:0 0 auto;width:46px;height:46px;align-items:center;justify-content:center;background:rgba(255,255,255,.7);border:1px solid var(--tan);border-radius:50%;font-size:22px;line-height:1;color:var(--teal);cursor:pointer}
+  .mobile-menu{display:none;flex-direction:column;gap:6px;text-align:center;border:1px solid var(--tan);background:rgba(255,255,255,.7);border-radius:16px;padding:12px;margin:-4px 0 14px}
+  .mobile-menu a{padding:10px;border-radius:10px;font-weight:600;color:var(--body)}
+  .mobile-menu a.active{color:var(--coral)}
+  .mobile-menu a.btn{color:#fff;margin-top:6px}
+  .mobile-menu.open{display:flex}
+  @media(max-width:1024px){
+    .menu,.desktop-cta{display:none}
+    .hamb{display:flex;position:absolute;right:5px;top:22px}
+    .cart-link{position:absolute;right:60px;top:24px}
+    .bar{position:relative;align-items:flex-start}
+    .brand{flex:1;text-align:center}
+    .brand .n,.brand .a,.brand .t{text-align:center}
+  }
+  @media(max-width:600px){
+    .brand .n,.brand .a{font-size:26px}
+    .brand .t{font-size:10px}
+  }
+  @media(max-width:380px){
+    .brand .n,.brand .a{font-size:22px}
+    .hamb{width:42px;height:42px;font-size:20px}
+  }
+
+  .phead{text-align:center;padding:18px 0 6px}
+  .phead h1{font-size:44px;color:var(--teal)}
+  .phead p{max-width:62ch;margin:12px auto 0;color:var(--body)}
+
+  .sec{padding:28px 0 8px}
+  .sec-h{display:flex;align-items:baseline;gap:10px;margin-bottom:4px}
+  .sec-h h2{font-size:30px;color:var(--teal)}
+  .sec-sub{color:var(--body);font-size:14px;margin:0 0 18px}
+
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+  .tile{background:rgba(255,255,255,.55);border:1px solid var(--tan);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:8px}
+  .tile h3{font-size:18px;color:var(--teal);line-height:1.2}
+  .tile p{font-size:13px;color:var(--body);margin:0;flex:1}
+  .tile .pdf{margin-top:4px}
+
+  .printph{aspect-ratio:4/3;border:2px dashed #C9A98C;border-radius:14px;background:var(--panel);display:flex;align-items:center;justify-content:center;color:#9C7E5E;font-size:13px;font-weight:600;margin-bottom:6px}
+
+  .glossary{background:rgba(255,255,255,.55);border:1px solid var(--tan);border-radius:20px;padding:8px 24px}
+  .term{padding:16px 0;border-bottom:1px solid var(--tan)}
+  .term:last-child{border-bottom:none}
+  .term b{font-family:'Playfair Display',serif;color:var(--coral);font-size:18px}
+  .term p{margin:4px 0 0;font-size:14px;color:var(--body)}
+
+  .orglist{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+  .org{background:var(--blush);border:1px solid var(--tan);border-radius:16px;padding:18px}
+  .org h3{font-size:17px;color:var(--teal)}
+  .org p{font-size:13px;color:var(--body);margin:6px 0 10px}
+
+  .note{font-size:12px;color:#8a7c6a;margin-top:10px;font-style:italic}
+  footer.foot{background:var(--teal);color:#fff;text-align:center;padding:22px;font-size:13px;margin-top:34px}
+
+  @media(max-width:820px){.grid3{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:560px){.grid3,.grid2,.orglist{grid-template-columns:1fr}.phead h1{font-size:34px}.topbar{justify-content:center}}
+</style>
+
+<div class="wrap">
+  <header class="bar" id="top">
+    <a class="brand" href="[C] Homepage Wireframe.html">
+      <div class="n">Benny &amp; Penny's</div>
+      <div class="a"><span class="hs">♥</span> Adventures <span class="hs">♥</span></div>
+      <div class="t">Medical Books for Brave Little Hearts</div>
+    </a>
+    <nav class="menu">
+      <a href="[C] Homepage Wireframe.html">Home</a>
+      <a href="[C] Homepage Wireframe.html#author">About</a>
+      <a href="[C] Homepage Wireframe.html#family">Our Characters</a>
+      <a href="[C] Books.html">Books</a>
+      <a class="active" href="[C] For Parents.html">For Parents</a>
+      <a href="[C] Contact.html">Contact</a>
+    </nav>
+    <a class="cart-link" href="[C] Cart.html" aria-label="Cart">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
+      <span class="cart-count">0</span>
+    </a>
+    <button class="hamb" id="hamb" aria-label="Toggle menu">☰</button>
+  </header>
+  <nav class="mobile-menu" id="mobileMenu">
+    <a href="[C] Homepage Wireframe.html">Home</a>
+    <a href="[C] Homepage Wireframe.html#author">About</a>
+    <a href="[C] Homepage Wireframe.html#family">Our Characters</a>
+    <a href="[C] Books.html">Books</a>
+    <a class="active" href="[C] For Parents.html">For Parents</a>
+    <a href="[C] Contact.html">Contact</a>
+    <a href="[C] Cart.html">Cart</a>
+    <a class="btn" href="[C] Homepage Wireframe.html#community">Join Our Journey ♥</a>
+  </nav>
+
+  <div class="phead">
+    <h1>For Parents <span class="heart">♥</span></h1>
+    <p>Tools to help you prepare your child — and yourself — for medical moments. Written by a registered nurse and mom, these resources turn the unknown into something gentle and brave.</p>
+  </div>
+
+  <!-- 1. Talk-to-your-child guides -->
+  <section class="sec">
+    <div class="sec-h"><h2>Talk-to-Your-Child Guides</h2><span class="heart">♥</span></div>
+    <p class="sec-sub">Short, plain-language guides for preparing your child before each kind of procedure.</p>
+    <div class="grid3">
+      <div class="tile"><h3>Home Infusions</h3><p>How to explain a home infusion day and make it feel cozy and calm.</p><div class="pdf"><a class="ghost" href="#">Read guide →</a></div></div>
+      <div class="tile"><h3>Ports</h3><p>Talking about the little button under the skin and why it helps.</p><div class="pdf"><a class="ghost" href="#">Read guide →</a></div></div>
+      <div class="tile"><h3>PICC Lines</h3><p>Helping your child understand a PICC line without fear.</p><div class="pdf"><a class="ghost" href="#">Read guide →</a></div></div>
+      <div class="tile"><h3>Central / Special Lines</h3><p>Hickman, Broviac, tunneled, and central lines — explained simply.</p><div class="pdf"><a class="ghost" href="#">Read guide →</a></div></div>
+      <div class="tile"><h3>MRI Scans</h3><p>Preparing for the loud-but-safe machine and how to hold still.</p><div class="pdf"><a class="ghost" href="#">Read guide →</a></div></div>
+      <div class="tile"><h3>Hospital Stays</h3><p>What to pack and how to make an overnight stay feel safe.</p><div class="pdf"><a class="ghost" href="#">Read guide →</a></div></div>
+      <div class="tile"><h3>Ambulance Rides</h3><p>Taking the scary out of sirens and lights.</p><div class="pdf"><a class="ghost" href="#">Read guide →</a></div></div>
+      <div class="tile"><h3>Surgery Day</h3><p>Walking through the special sleep and waking up brave.</p><div class="pdf"><a class="ghost" href="#">Read guide →</a></div></div>
+      <div class="tile"><h3>Lab Draws</h3><p>Tips for a calmer, braver blood draw.</p><div class="pdf"><a class="ghost" href="#">Read guide →</a></div></div>
+    </div>
+  </section>
+
+  <!-- 2. Printable activity sheets -->
+  <section class="sec">
+    <div class="sec-h"><h2>Printable Activity Sheets</h2><span class="heart">♥</span></div>
+    <p class="sec-sub">Free downloadable coloring pages and activities to do together before or after a visit.</p>
+    <div class="grid3">
+      <div class="tile"><div class="printph">Coloring page preview</div><h3>Benny &amp; Penny Coloring Pages</h3><p>Color the characters and their medical helpers.</p><div class="pdf"><a class="btn" href="#">Download PDF ♥</a></div></div>
+      <div class="tile"><div class="printph">Bravery chart preview</div><h3>My Bravery Chart</h3><p>A sticker chart to celebrate every brave step.</p><div class="pdf"><a class="btn" href="#">Download PDF ♥</a></div></div>
+      <div class="tile"><div class="printph">Activity sheet preview</div><h3>Find-It &amp; Match Activities</h3><p>Gentle games that introduce medical tools.</p><div class="pdf"><a class="btn" href="#">Download PDF ♥</a></div></div>
+    </div>
+  </section>
+
+  <!-- 3. Kid-friendly glossary -->
+  <section class="sec">
+    <div class="sec-h"><h2>Kid-Friendly Glossary</h2><span class="heart">♥</span></div>
+    <p class="sec-sub">Plain-language definitions you can read aloud together.</p>
+    <div class="glossary">
+      <div class="term"><b>Infusion</b><p>Medicine that flows slowly into the body through a tiny tube — like a gentle drink for the inside.</p></div>
+      <div class="term"><b>Port</b><p>A small button placed under the skin that gives nurses an easy, comfy spot to give medicine.</p></div>
+      <div class="term"><b>PICC line</b><p>A soft, bendy line that goes in the arm so medicine can travel right where it's needed.</p></div>
+      <div class="term"><b>Central line</b><p>A special line that reaches a big vein near the heart to deliver medicine or collect labs.</p></div>
+      <div class="term"><b>IV</b><p>A tiny tube placed in a vein to give fluids or medicine.</p></div>
+      <div class="term"><b>MRI</b><p>A big machine that takes pictures of the inside of the body using magnets. It's loud, but it doesn't hurt.</p></div>
+      <div class="term"><b>Lab draw</b><p>A small sample of blood the care team checks to see how the body is doing.</p></div>
+      <div class="term"><b>Anesthesia</b><p>Special sleepy medicine that helps a child rest and feel nothing during surgery.</p></div>
+    </div>
+    <p class="note">Reviewed for plain-language accuracy; always defer to your child's care team for medical advice.</p>
+  </section>
+
+  <!-- 4. Support & org links -->
+  <section class="sec">
+    <div class="sec-h"><h2>Support &amp; Organizations</h2><span class="heart">♥</span></div>
+    <p class="sec-sub">Trusted places for more help. (Links to be added — placeholders below.)</p>
+    <div class="orglist">
+      <div class="org"><h3>Child Life Programs</h3><p>Specialists who help kids cope with hospital experiences through play and preparation.</p><a class="ghost" href="#">Visit →</a></div>
+      <div class="org"><h3>Procedure &amp; Pain Support</h3><p>Resources for easing fear and discomfort around needles and procedures.</p><a class="ghost" href="#">Visit →</a></div>
+      <div class="org"><h3>Family &amp; Caregiver Support</h3><p>Community and emotional support for parents and caregivers.</p><a class="ghost" href="#">Visit →</a></div>
+      <div class="org"><h3>Condition-Specific Groups</h3><p>Organizations tied to your child's specific diagnosis or treatment.</p><a class="ghost" href="#">Visit →</a></div>
+    </div>
+  </section>
+</div>
+
+<footer class="foot">© 2026 Benny &amp; Penny's Adventures. All rights reserved.</footer>
+
+<script>
+(function(){function c(){try{return JSON.parse(localStorage.getItem('bp_cart')||'[]').reduce(function(n,i){return n+(i.qty||1)},0)}catch(e){return 0}}document.querySelectorAll('.cart-count').forEach(function(el){var n=c();el.textContent=n;el.style.display=n>0?'flex':'none';});})();
+(function(){var b=document.getElementById('hamb'),m=document.getElementById('mobileMenu');if(!b||!m)return;b.addEventListener('click',function(){var o=m.classList.toggle('open');b.textContent=o?'✕':'☰';});m.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){m.classList.remove('open');b.textContent='☰';});});})();
+</script>

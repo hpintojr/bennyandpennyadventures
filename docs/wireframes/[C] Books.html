@@ -1,0 +1,261 @@
+<!--
+  Benny & Penny's Adventures — Books page wireframe
+  Self-contained preview. Cover areas are placeholders (books 1-4 marked art-ready).
+  Maps to a future Next.js route: app/books/page.tsx
+-->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Our Books — Benny &amp; Penny's Adventures</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Nunito:wght@400;500;600;700&display=swap');
+  :root{--cream:#FFF6E8;--teal:#064852;--coral:#E7646C;--tan:#E8CFAE;--panel:#F9EAD7;--blush:#FDE4DE;--green:#EEF2E6;--body:#1D3237;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--cream);color:var(--teal);font-family:'Nunito',sans-serif;line-height:1.6}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 22px}
+  h1,h2,h3{font-family:'Playfair Display',serif;margin:0}
+  .heart{color:var(--coral)}
+  .btn{display:inline-block;background:var(--coral);color:#fff;font-family:'Playfair Display',serif;padding:10px 20px;border-radius:999px;font-size:15px}
+
+  /* topbar */
+  .bar{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:22px 0}
+  .brand{display:block;line-height:1}
+  .brand .n{font-family:'Playfair Display',serif;font-weight:700;font-size:38px;color:var(--teal);line-height:1}
+  .brand .a{font-family:'Playfair Display',serif;font-style:italic;font-size:38px;color:var(--coral);line-height:1.05;text-align:center}
+  .brand .a .hs{font-size:.85em;vertical-align:middle}
+  .brand .t{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#6b5d4f;margin-top:6px;font-weight:bold}
+  .menu{display:flex;align-items:center;gap:20px;font-size:14px;font-weight:600;color:var(--body)}
+  .menu a.active{color:var(--coral)}
+  .desktop-cta{white-space:nowrap}
+  .hamb{display:none;flex:0 0 auto;width:46px;height:46px;align-items:center;justify-content:center;background:rgba(255,255,255,.7);border:1px solid var(--tan);border-radius:50%;font-size:22px;line-height:1;color:var(--teal);cursor:pointer}
+  .mobile-menu{display:none;flex-direction:column;gap:6px;text-align:center;border:1px solid var(--tan);background:rgba(255,255,255,.7);border-radius:16px;padding:12px;margin:-4px 0 14px}
+  .mobile-menu a{padding:10px;border-radius:10px;font-weight:600;color:var(--body)}
+  .mobile-menu a.active{color:var(--coral)}
+  .mobile-menu a.btn{color:#fff;margin-top:6px}
+  .mobile-menu.open{display:flex}
+  @media(max-width:1024px){
+    .menu,.desktop-cta{display:none}
+    .hamb{display:flex;position:absolute;right:5px;top:22px}
+    .cart-link{position:absolute;right:60px;top:24px}
+    .bar{position:relative;align-items:flex-start}
+    .brand{flex:1;text-align:center}
+    .brand .n,.brand .a,.brand .t{text-align:center}
+  }
+  @media(max-width:600px){
+    .brand .n,.brand .a{font-size:26px}
+    .brand .t{font-size:10px}
+  }
+  @media(max-width:380px){
+    .brand .n,.brand .a{font-size:22px}
+    .hamb{width:42px;height:42px;font-size:20px}
+  }
+
+  /* page head */
+  .phead{text-align:center;padding:18px 0 8px}
+  .phead h1{font-size:44px;color:var(--teal)}
+  .phead p{max-width:60ch;margin:12px auto 0;color:var(--body)}
+
+  /* grid */
+  .books{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;padding:26px 0 48px}
+  .card{background:rgba(255,255,255,.5);border:1px solid var(--tan);border-radius:20px;overflow:hidden;display:flex;flex-direction:column}
+  .cover{position:relative;aspect-ratio:3/4;background:var(--panel);border-bottom:1px solid var(--tan);display:flex;align-items:center;justify-content:center;text-align:center;color:#9C7E5E;font-family:'Playfair Display',serif;font-size:16px;padding:14px}
+  .cover .badge{position:absolute;top:10px;left:10px;background:var(--blush);color:var(--coral);font-family:'Nunito';font-weight:700;font-size:11px;padding:4px 10px;border-radius:999px}
+  .card .body{padding:18px;display:flex;flex-direction:column;gap:8px;flex:1}
+  .eyebrow{font-family:'Nunito';font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--coral)}
+  .card h3{font-size:20px;color:var(--teal);line-height:1.2}
+  .topic{font-size:12px;font-weight:700;color:#6b7d80}
+  .card p{font-size:13.5px;color:var(--body);margin:0;flex:1}
+  .card .cta{margin-top:6px}
+  .prices{font-size:12.5px;font-weight:700;color:var(--teal);margin-top:4px;line-height:1.5}
+  .prices span{color:#6b7d80;font-weight:600}
+  .soon{display:inline-block;border:1px solid var(--tan);color:#8a7c6a;border-radius:999px;padding:8px 16px;font-size:13px;font-weight:600;background:#fff}
+  .soon:hover{border-color:var(--coral);color:var(--coral)}
+  .cart-link{position:relative;display:inline-flex;align-items:center;color:var(--teal)}
+  .cart-link svg{width:24px;height:24px}
+  .cart-count{position:absolute;top:-9px;right:-11px;min-width:18px;height:18px;border-radius:999px;background:var(--coral);color:#fff;font-size:11px;font-weight:700;display:none;align-items:center;justify-content:center;padding:0 5px;line-height:1}
+
+  .series{margin:8px 0 44px;background:var(--teal);color:#fff;border-radius:24px;padding:38px;display:grid;grid-template-columns:1.3fr .9fr;gap:30px;align-items:center}
+  .series h2{font-size:36px;color:#fff;line-height:1.1}
+  .series p{color:#f3e7d3;font-size:15px;margin:14px 0 0}
+  .series .price{font-family:'Playfair Display',serif;font-size:22px;margin-top:16px}
+  .series .btn{background:var(--coral);margin-top:18px}
+  .series .covers{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+  .series .mini{width:58px;height:78px;border-radius:8px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:15px;color:#fff}
+  @media(max-width:700px){.series{grid-template-columns:1fr;text-align:center;padding:30px 22px}.series .covers{margin-top:8px}}
+
+  footer.foot{background:var(--teal);color:#fff;text-align:center;padding:22px;font-size:13px;margin-top:10px}
+
+  @media(max-width:900px){.books{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:560px){.books{grid-template-columns:1fr}.phead h1{font-size:34px}.topbar{justify-content:center}}
+</style>
+
+<div class="wrap">
+  <header class="bar" id="top">
+    <a class="brand" href="[C] Homepage Wireframe.html">
+      <div class="n">Benny &amp; Penny's</div>
+      <div class="a"><span class="hs">♥</span> Adventures <span class="hs">♥</span></div>
+      <div class="t">Medical Books for Brave Little Hearts</div>
+    </a>
+    <nav class="menu">
+      <a href="[C] Homepage Wireframe.html">Home</a>
+      <a href="[C] Homepage Wireframe.html#author">About</a>
+      <a href="[C] Homepage Wireframe.html#family">Our Characters</a>
+      <a class="active" href="[C] Books.html">Books</a>
+      <a href="[C] For Parents.html">For Parents</a>
+      <a href="[C] Contact.html">Contact</a>
+    </nav>
+    <a class="cart-link" href="[C] Cart.html" aria-label="Cart">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
+      <span class="cart-count">0</span>
+    </a>
+    <button class="hamb" id="hamb" aria-label="Toggle menu">☰</button>
+  </header>
+  <nav class="mobile-menu" id="mobileMenu">
+    <a href="[C] Homepage Wireframe.html">Home</a>
+    <a href="[C] Homepage Wireframe.html#author">About</a>
+    <a href="[C] Homepage Wireframe.html#family">Our Characters</a>
+    <a class="active" href="[C] Books.html">Books</a>
+    <a href="[C] For Parents.html">For Parents</a>
+    <a href="[C] Contact.html">Contact</a>
+    <a href="[C] Cart.html">Cart</a>
+    <a class="btn" href="[C] Homepage Wireframe.html#community">Join Our Journey ♥</a>
+  </nav>
+
+  <div class="phead">
+    <h1>Our Books <span class="heart">♥</span></h1>
+    <p>A growing series that turns real medical experiences into gentle, brave little adventures. New titles release as they're illustrated — join our community to hear first.</p>
+  </div>
+
+  <section class="books">
+
+    <div class="card">
+      <div class="cover"><span class="badge">Cover ready</span>Book 1 Cover<br><small>/images/book-1.png</small></div>
+      <div class="body">
+        <div class="eyebrow">Book 1</div>
+        <h3>Benny &amp; Penny's Home Infusion Day</h3>
+        <div class="topic">Topic: Home infusions</div>
+        <p>Benny learns what a home infusion is and discovers that getting medicine at home can be cozy, calm, and even a little fun.</p>
+        <div class="prices">PDF/EPUB $15.99 <span>·</span> Paperback $17.99 <span>·</span> Hardcover $24.99</div>
+        <div class="cta"><a class="soon" href="[C] Product.html">View &amp; choose format →</a></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cover"><span class="badge">Cover ready</span>Book 2 Cover<br><small>/images/book-2.png</small></div>
+      <div class="body">
+        <div class="eyebrow">Book 2</div>
+        <h3>Benny and Penny's Port Adventure</h3>
+        <div class="topic">Topic: Ports</div>
+        <p>Penny meets her port and learns how this tiny helper under the skin makes getting medicine quick and brave-easy.</p>
+        <div class="prices">PDF/EPUB $15.99 <span>·</span> Paperback $17.99 <span>·</span> Hardcover $24.99</div>
+        <div class="cta"><a class="soon" href="[C] Product.html">View &amp; choose format →</a></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cover"><span class="badge">Cover ready</span>Book 3 Cover<br><small>/images/book-3.png</small></div>
+      <div class="body">
+        <div class="eyebrow">Book 3</div>
+        <h3>Benny &amp; Penny's PICC Line Adventure</h3>
+        <div class="topic">Topic: PICC lines</div>
+        <p>Benny gets a PICC line and finds out how this special long line helps doctors care for him — with no big pokes needed.</p>
+        <div class="prices">PDF/EPUB $15.99 <span>·</span> Paperback $17.99 <span>·</span> Hardcover $24.99</div>
+        <div class="cta"><a class="soon" href="[C] Product.html">View &amp; choose format →</a></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cover"><span class="badge">Cover ready</span>Book 4 Cover<br><small>/images/book-4.png</small></div>
+      <div class="body">
+        <div class="eyebrow">Book 4</div>
+        <h3>Benny &amp; Penny's Special Line Adventure</h3>
+        <div class="topic">Topic: Central lines</div>
+        <p>Meet the special lines! Benny and Penny explore Hickman lines, Broviac lines, tunneled central venous catheters, and central lines — and learn why each is a brave little helper.</p>
+        <div class="prices">PDF/EPUB $15.99 <span>·</span> Paperback $17.99 <span>·</span> Hardcover $24.99</div>
+        <div class="cta"><a class="soon" href="[C] Product.html">View &amp; choose format →</a></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cover">Book 5 Cover<br><small>/images/book-5.png</small></div>
+      <div class="body">
+        <div class="eyebrow">Book 5</div>
+        <h3>MRI Adventure</h3>
+        <div class="topic">Topic: MRI scans</div>
+        <p>The big camera that takes pictures of the inside! Benny and Penny discover that the MRI is loud but safe, and how to stay still and brave.</p>
+        <div class="prices">PDF/EPUB $15.99 <span>·</span> Paperback $17.99 <span>·</span> Hardcover $24.99</div>
+        <div class="cta"><a class="soon" href="[C] Product.html">View &amp; choose format →</a></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cover">Book 6 Cover<br><small>/images/book-6.png</small></div>
+      <div class="body">
+        <div class="eyebrow">Book 6</div>
+        <h3>Hospital Sleepover Adventure</h3>
+        <div class="topic">Topic: Overnight stays</div>
+        <p>Sometimes you stay overnight, and that's okay. Penny learns what a hospital sleepover is like — from the bed buttons to the kind night-time nurses.</p>
+        <div class="prices">PDF/EPUB $15.99 <span>·</span> Paperback $17.99 <span>·</span> Hardcover $24.99</div>
+        <div class="cta"><a class="soon" href="[C] Product.html">View &amp; choose format →</a></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cover">Book 7 Cover<br><small>/images/book-7.png</small></div>
+      <div class="body">
+        <div class="eyebrow">Book 7</div>
+        <h3>Ambulance Adventure with Mary the Medic</h3>
+        <div class="topic">Topic: Ambulance rides</div>
+        <p>Sirens, lights, and a friendly medic named Mary! Benny learns that an ambulance ride is just a fast way to get extra help.</p>
+        <div class="prices">PDF/EPUB $15.99 <span>·</span> Paperback $17.99 <span>·</span> Hardcover $24.99</div>
+        <div class="cta"><a class="soon" href="[C] Product.html">View &amp; choose format →</a></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cover">Book 8 Cover<br><small>/images/book-8.png</small></div>
+      <div class="body">
+        <div class="eyebrow">Book 8</div>
+        <h3>Surgery Day Adventure</h3>
+        <div class="topic">Topic: Surgery</div>
+        <p>Benny and Penny learn what happens on surgery day — the special sleep, the caring team, and waking up brave on the other side.</p>
+        <div class="prices">PDF/EPUB $15.99 <span>·</span> Paperback $17.99 <span>·</span> Hardcover $24.99</div>
+        <div class="cta"><a class="soon" href="[C] Product.html">View &amp; choose format →</a></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cover">Book 9 Cover<br><small>/images/book-9.png</small></div>
+      <div class="body">
+        <div class="eyebrow">Book 9</div>
+        <h3>Lab Draw Adventure</h3>
+        <div class="topic">Topic: Blood draws</div>
+        <p>A little poke for a big help! Penny learns why doctors draw labs and how to be brave for a quick blood draw.</p>
+        <div class="prices">PDF/EPUB $15.99 <span>·</span> Paperback $17.99 <span>·</span> Hardcover $24.99</div>
+        <div class="cta"><a class="soon" href="[C] Product.html">View &amp; choose format →</a></div>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="series">
+    <div>
+      <h2>Get the Full Series <span style="color:var(--coral)">♥</span></h2>
+      <p>Bring home every Benny &amp; Penny adventure in one collection — all 9 stories covering infusions, ports, lines, scans, hospital stays, surgery, and more. The complete library to help your brave little one feel ready for anything.</p>
+      <div class="price">Bundle pricing — coming soon</div>
+      <a class="btn" href="[C] Homepage Wireframe.html#community">Notify Me When It Drops ♥</a>
+    </div>
+    <div class="covers">
+      <div class="mini">1</div><div class="mini">2</div><div class="mini">3</div>
+      <div class="mini">4</div><div class="mini">5</div><div class="mini">6</div>
+      <div class="mini">7</div><div class="mini">8</div><div class="mini">9</div>
+    </div>
+  </section>
+</div>
+
+<footer class="foot">© 2026 Benny &amp; Penny's Adventures. All rights reserved.</footer>
+
+<script>
+(function(){function count(){try{return JSON.parse(localStorage.getItem('bp_cart')||'[]').reduce(function(n,i){return n+(i.qty||1)},0)}catch(e){return 0}}document.querySelectorAll('.cart-count').forEach(function(el){var c=count();el.textContent=c;el.style.display=c>0?'flex':'none';});})();
+(function(){var b=document.getElementById('hamb'),m=document.getElementById('mobileMenu');if(!b||!m)return;b.addEventListener('click',function(){var o=m.classList.toggle('open');b.textContent=o?'✕':'☰';});m.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){m.classList.remove('open');b.textContent='☰';});});})();
+</script>
