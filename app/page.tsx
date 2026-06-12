@@ -23,7 +23,7 @@ const pillars = [
 
 function HeroContent({ className = "" }: { className?: string }) {
   return (
-    <div className={`max-w-xl text-center lg:text-left ${className}`}>
+    <div className={`mx-auto max-w-xl text-center lg:mx-0 lg:text-left ${className}`}>
       <h1 className="font-serif text-4xl font-bold leading-tight text-teal sm:text-5xl md:text-6xl">Helping Children Feel <span className="text-coral">Brave</span> About Medical Care</h1>
       <div className="my-5 text-5xl text-coral sm:text-6xl">♥</div>
       <p className="mx-auto max-w-md text-base leading-8 text-ink sm:text-lg lg:mx-0">Benny, Penny, and their medical friends help children understand infusions, PICC lines, ports, pumps, and more through fun, comforting adventures.</p>
@@ -41,7 +41,7 @@ export default function HomePage() {
           <img
             src="/images/hero-family_mb.png"
             alt="Benny and Penny family illustration"
-            className="mt-8 block w-full rounded-[2rem]"
+            className="mx-auto mt-8 block w-full rounded-[2rem]"
           />
         </div>
 
@@ -68,7 +68,7 @@ export default function HomePage() {
           <p className="font-serif text-2xl italic text-teal">Meet the Author ♥</p>
           <h2 className="mt-1 font-serif text-[32px] font-bold leading-tight text-teal sm:text-[35px]">Michelle Marie Pinto, RN</h2>
           <p className="mt-2 font-serif text-3xl text-coral">Nurse. Mom. Writer.</p>
-          <p className="mt-6 max-w-xl text-lg leading-8 text-ink lg:max-w-none">With over 15 years as a registered nurse and a deep passion for helping children and families, I created Benny &amp; Penny Adventures to make medical experiences less scary and a little more understandable through stories, friendship, and imagination.</p>
+          <p className="mx-auto mt-6 max-w-xl text-lg leading-8 text-ink lg:mx-0 lg:max-w-none">With over 15 years as a registered nurse and a deep passion for helping children and families, I created Benny &amp; Penny Adventures to make medical experiences less scary and a little more understandable through stories, friendship, and imagination.</p>
         </div>
         <div className="mx-auto w-full max-w-lg rounded-3xl border border-tan bg-blush p-8 lg:mx-0 lg:max-w-none">
           <h3 className="font-serif text-[27px]">As Seen In My Life ♥</h3>
