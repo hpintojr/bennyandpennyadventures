@@ -36,7 +36,7 @@ export default function HomePage() {
   return (
     <SiteShell>
       <section className="wrap pb-10 pt-2">
-        <div className="md:hidden">
+        <div className="lg:hidden">
           <HeroContent />
           <img
             src="/images/hero-family_mb.png"
@@ -45,7 +45,7 @@ export default function HomePage() {
           />
         </div>
 
-        <div className="hero-family-bg relative hidden min-h-[560px] items-center overflow-hidden rounded-[2rem] px-8 py-14 md:flex lg:min-h-[620px] lg:px-12 lg:py-20 xl:min-h-[680px]">
+        <div className="hero-family-bg relative hidden min-h-[620px] items-center overflow-hidden rounded-[2rem] px-12 py-20 lg:flex xl:min-h-[680px]">
           <HeroContent />
         </div>
       </section>
