@@ -11,8 +11,7 @@ type ImageSlotProps = {
   imgClassName?: string;
 };
 
-export default function ImageSlot({ src, alt, label, note, className = "", imgClassName = "" }: ImageSlotProps) {
-  const [loaded, setLoaded] = useState(false);
+export default function ImageSlot({ src, alt, className = "", imgClassName = "" }: ImageSlotProps) {
   const [failed, setFailed] = useState(false);
 
   return (
@@ -21,19 +20,13 @@ export default function ImageSlot({ src, alt, label, note, className = "", imgCl
         <img
           src={src}
           alt={alt}
-          className={`h-full w-full object-cover transition-opacity duration-200 ${loaded ? "opacity-100" : "opacity-0"} ${imgClassName}`}
-          onLoad={() => setLoaded(true)}
+          loading="lazy"
+          decoding="async"
+          className={`block h-full w-full object-cover ${imgClassName}`}
           onError={() => setFailed(true)}
         />
       )}
-      {(!loaded || failed) && (
-        <div className="absolute inset-0 grid place-items-center bg-panel/90 p-4 text-center text-teal">
-          <div>
-            <p className="font-serif text-xl sm:text-2xl">{label}</p>
-            {note && <p className="mt-2 text-xs font-semibold text-[#6b5d4f]">{note}</p>}
-          </div>
-        </div>
-      )}
+      {failed && <div className="absolute inset-0 bg-panel" aria-hidden="true" />}
     </div>
   );
 }
