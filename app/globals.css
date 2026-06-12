@@ -49,23 +49,10 @@ textarea {
 }
 
 .hero-family-bg {
-  background-image: url('/images/hero-family_mb.png');
-  background-position: center 28%;
+  background-image: url('/images/hero-family.png');
+  background-position: right center;
   background-repeat: no-repeat;
-  background-size: cover;
-}
-
-@media (min-width: 768px) {
-  .hero-family-bg {
-    background-image: url('/images/hero-family.png');
-    background-position: center center;
-  }
-}
-
-@media (max-width: 767px) {
-  .hero-family-bg {
-    background-position: center 18%;
-  }
+  background-size: 80% auto;
 }
 
 @layer components {
