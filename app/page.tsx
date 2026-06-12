@@ -24,10 +24,9 @@ const pillars = [
 export default function HomePage() {
   return (
     <SiteShell>
-      <section className="hero-family-bg relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-cream/75 via-cream/45 to-cream/85 lg:bg-gradient-to-r lg:from-cream/90 lg:via-cream/55 lg:to-cream/10" aria-hidden="true" />
-        <div className="wrap relative flex min-h-[620px] items-center py-16 sm:min-h-[680px] lg:min-h-[760px] lg:py-20">
-          <div className="max-w-xl rounded-[2rem] bg-cream/72 p-6 text-center shadow-sm backdrop-blur-[1px] sm:p-8 lg:bg-cream/68 lg:text-left">
+      <section className="wrap pb-10 pt-2">
+        <div className="hero-family-bg relative flex min-h-[560px] items-center overflow-hidden rounded-[2rem] px-6 py-14 sm:min-h-[620px] sm:px-8 lg:min-h-[680px] lg:px-12 lg:py-20">
+          <div className="max-w-xl text-center lg:text-left">
             <h1 className="font-serif text-4xl font-bold leading-tight text-teal sm:text-5xl md:text-6xl">Helping Children Feel <span className="text-coral">Brave</span> About Medical Care</h1>
             <div className="my-5 text-5xl text-coral sm:text-6xl">♥</div>
             <p className="mx-auto max-w-md text-base leading-8 text-ink sm:text-lg lg:mx-0">Benny, Penny, and their medical friends help children understand infusions, PICC lines, ports, pumps, and more through fun, comforting adventures.</p>
