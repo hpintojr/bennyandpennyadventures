@@ -24,7 +24,7 @@ const pillars = [
 function HeroContent({ className = "" }: { className?: string }) {
   return (
     <div className={`mx-auto max-w-xl text-center lg:mx-0 lg:text-left ${className}`}>
-      <h1 className="font-serif text-[38px] font-bold leading-tight text-teal sm:text-5xl md:text-6xl">Helping Children Feel <span className="text-coral">Brave</span> About Medical Care</h1>
+      <h1 className="font-serif text-[40px] font-bold leading-tight text-teal sm:text-5xl md:text-6xl">Helping Children Feel <span className="text-coral">Brave</span> About Medical Care</h1>
       <div className="my-5 text-5xl text-coral sm:text-6xl">♥</div>
       <p className="mx-auto max-w-md text-base leading-8 text-ink sm:text-lg lg:mx-0">Benny, Penny, and their medical friends help children understand infusions, PICC lines, ports, pumps, and more through fun, comforting adventures.</p>
       <Link href="/books" className="btn mt-7 text-lg sm:text-xl">Explore Our Books ♥</Link>
