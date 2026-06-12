@@ -55,6 +55,27 @@ textarea {
   background-size: 80% auto;
 }
 
+.hero-family-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    var(--cream) 0%,
+    var(--cream) 25%,
+    rgba(255, 246, 232, 0.92) 33%,
+    rgba(255, 246, 232, 0.45) 43%,
+    rgba(255, 246, 232, 0) 56%
+  );
+}
+
+.hero-family-bg > * {
+  position: relative;
+  z-index: 1;
+}
+
 @layer components {
   .wrap {
     @apply mx-auto w-full max-w-7xl px-5 sm:px-6;
