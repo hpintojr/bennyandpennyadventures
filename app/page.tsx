@@ -24,21 +24,23 @@ const pillars = [
 export default function HomePage() {
   return (
     <SiteShell>
-      <section className="wrap grid items-center gap-10 pb-10 pt-2 lg:grid-cols-[0.9fr_1.4fr]">
-        <div className="text-center lg:text-left">
-          <h1 className="font-serif text-4xl font-bold leading-tight text-teal sm:text-5xl md:text-6xl">Helping Children Feel <span className="text-coral">Brave</span> About Medical Care</h1>
-          <div className="my-5 text-5xl text-coral sm:text-6xl">♥</div>
-          <p className="mx-auto max-w-md text-base leading-8 text-ink sm:text-lg lg:mx-0">Benny, Penny, and their medical friends help children understand infusions, PICC lines, ports, pumps, and more through fun, comforting adventures.</p>
-          <Link href="/books" className="btn mt-7 text-lg sm:text-xl">Explore Our Books ♥</Link>
+      <section className="hero-family-bg relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-cream/75 via-cream/45 to-cream/85 lg:bg-gradient-to-r lg:from-cream/90 lg:via-cream/55 lg:to-cream/10" aria-hidden="true" />
+        <div className="wrap relative flex min-h-[620px] items-center py-16 sm:min-h-[680px] lg:min-h-[760px] lg:py-20">
+          <div className="max-w-xl rounded-[2rem] bg-cream/72 p-6 text-center shadow-sm backdrop-blur-[1px] sm:p-8 lg:bg-cream/68 lg:text-left">
+            <h1 className="font-serif text-4xl font-bold leading-tight text-teal sm:text-5xl md:text-6xl">Helping Children Feel <span className="text-coral">Brave</span> About Medical Care</h1>
+            <div className="my-5 text-5xl text-coral sm:text-6xl">♥</div>
+            <p className="mx-auto max-w-md text-base leading-8 text-ink sm:text-lg lg:mx-0">Benny, Penny, and their medical friends help children understand infusions, PICC lines, ports, pumps, and more through fun, comforting adventures.</p>
+            <Link href="/books" className="btn mt-7 text-lg sm:text-xl">Explore Our Books ♥</Link>
+          </div>
         </div>
-        <ImageSlot src="/images/hero-family.png" alt="Benny and Penny family illustration" label="Hero Family Image" note="public/images/hero-family.png" className="order-first min-h-[280px] rounded-[2rem] sm:min-h-[360px] lg:order-none lg:min-h-[430px]" />
       </section>
 
       <section className="wrap py-8">
         <div className="grid overflow-hidden rounded-3xl border border-tan bg-white/45 md:grid-cols-2 lg:grid-cols-5">
           {pillars.map((pillar) => (
             <div key={pillar.title} className="border-tan p-7 text-center lg:my-[22px] lg:border-r lg:px-[18px] lg:py-[10px] lg:last:border-r-0">
-              <ImageSlot src={pillar.image} alt={`${pillar.title} icon`} label="Icon" note={pillar.image.replace("/images/", "")} className="mx-auto mb-4 h-16 w-16 rounded-2xl border-dashed" />
+              <ImageSlot src={pillar.image} alt={`${pillar.title} icon`} label="Icon" note={pillar.image.replace("/images/", "")} className="mx-auto mb-4 h-[5.25rem] w-[5.25rem] rounded-2xl border-dashed" />
               <h3 className="font-serif text-[21px] leading-tight text-teal">{pillar.title}</h3>
               <p className="mt-4 text-sm leading-6 text-[#26383c]">{pillar.text}</p>
             </div>
