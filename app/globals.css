@@ -48,6 +48,26 @@ textarea {
   color: var(--teal);
 }
 
+.hero-family-bg {
+  background-image: url('/images/hero-family_mb.png');
+  background-position: center 28%;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+@media (min-width: 768px) {
+  .hero-family-bg {
+    background-image: url('/images/hero-family.png');
+    background-position: center center;
+  }
+}
+
+@media (max-width: 767px) {
+  .hero-family-bg {
+    background-position: center 18%;
+  }
+}
+
 @layer components {
   .wrap {
     @apply mx-auto w-full max-w-7xl px-5 sm:px-6;
