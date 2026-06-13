@@ -1,4 +1,6 @@
-import configPromise from "@payload-config";
+import type { Metadata } from "next";
+
+import config from "@payload-config";
 import { RootPage, generatePageMetadata } from "@payloadcms/next/views";
 import { importMap } from "../importMap";
 
@@ -11,9 +13,10 @@ type Args = {
   }>;
 };
 
-export const generateMetadata = ({ params, searchParams }: Args) =>
-  generatePageMetadata({ config: configPromise, params, searchParams });
+export const generateMetadata = ({ params, searchParams }: Args): Promise<Metadata> =>
+  generatePageMetadata({ config, params, searchParams });
 
-export default function AdminPage({ params, searchParams }: Args) {
-  return <RootPage config={configPromise} importMap={importMap} params={params} searchParams={searchParams} />;
-}
+const Page = ({ params, searchParams }: Args) =>
+  RootPage({ config, params, searchParams, importMap });
+
+export default Page;
