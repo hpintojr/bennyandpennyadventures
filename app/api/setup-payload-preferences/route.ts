@@ -17,10 +17,13 @@ CREATE TABLE IF NOT EXISTS "payload_preferences" (
 
 CREATE TABLE IF NOT EXISTS "payload_preferences_rels" (
   "id" serial PRIMARY KEY,
+  "order" integer,
   "parent_id" integer REFERENCES "payload_preferences"("id") ON DELETE CASCADE,
   "path" varchar NOT NULL,
   "users_id" integer REFERENCES "users"("id") ON DELETE CASCADE
 );
+
+ALTER TABLE "payload_preferences_rels" ADD COLUMN IF NOT EXISTS "order" integer;
 
 CREATE INDEX IF NOT EXISTS "payload_preferences_key_idx" ON "payload_preferences" ("key");
 CREATE INDEX IF NOT EXISTS "payload_preferences_rels_parent_idx" ON "payload_preferences_rels" ("parent_id");
@@ -49,7 +52,7 @@ export async function GET(request: Request) {
 
     return jsonResponse({
       ok: true,
-      message: "Payload preference tables were created. Refresh /admin and log in."
+      message: "Payload preference tables were repaired. Refresh /admin and log in."
     });
   } catch (error) {
     return jsonResponse(
