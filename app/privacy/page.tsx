@@ -16,7 +16,7 @@ export default function PrivacyPage() {
         <h1 className="mt-3 font-serif text-4xl font-semibold text-teal">Privacy Policy</h1>
 
         <p className="mt-4 text-ink">
-          Benny &amp; Penny&rsquo;s Adventures respects your privacy. This Privacy Policy explains how we collect, use, and protect information when you visit our website, contact us, join our email list, or purchase digital or print products from us.
+          Benny &amp; Penny&rsquo;s Adventures respects your privacy. This Privacy Policy explains how we collect, use, and protect information when you visit our website, contact us, join our email list, or purchase digital, audio, or print products from us.
         </p>
 
         <p className="mt-4 rounded-2xl border border-tan bg-blush p-4 text-sm text-ink">
@@ -29,8 +29,8 @@ export default function PrivacyPage() {
           <li>Your name and email address when you submit the contact form.</li>
           <li>Your inquiry type and message when you contact us.</li>
           <li>Your email address when you join our newsletter or email list.</li>
-          <li>Purchase and order information when you buy digital or print products.</li>
-          <li>Download access information for PDF or EPUB products, such as download count, access status, and expiration details.</li>
+          <li>Purchase and order information when you buy digital, audio, or print products.</li>
+          <li>Download or access information for PDF, EPUB, audiobook, or audio products, such as download count, access status, file type, and expiration details.</li>
         </ul>
 
         <h2 className="mt-8 font-serif text-2xl text-teal">How We Use Information</h2>
@@ -39,8 +39,8 @@ export default function PrivacyPage() {
           <li>Respond to questions and contact form submissions.</li>
           <li>Send website inquiry notifications to our business email.</li>
           <li>Send newsletter updates, book release announcements, printables, and related resources when you sign up.</li>
-          <li>Process purchases and provide access to digital downloads.</li>
-          <li>Track download limits and help prevent unauthorized sharing.</li>
+          <li>Process purchases and provide access to digital downloads, audiobooks, audio files, or print orders.</li>
+          <li>Track download/access limits and help prevent unauthorized sharing.</li>
           <li>Improve the website, customer experience, and product offerings.</li>
         </ul>
 
@@ -59,9 +59,12 @@ export default function PrivacyPage() {
           Payments are expected to be processed through Stripe or another secure payment provider. We do not store full credit card numbers on our website. Payment providers may collect and process payment information according to their own privacy policies.
         </p>
 
-        <h2 className="mt-8 font-serif text-2xl text-teal">Digital Downloads</h2>
+        <h2 className="mt-8 font-serif text-2xl text-teal">Digital Downloads and Audiobooks</h2>
         <p className="mt-2 text-ink">
-          PDF and EPUB files may be delivered using private storage, such as Cloudflare R2, and signed, time-limited links. We may track download activity, including the number of downloads, file type, purchase record, and link expiration, to provide access and protect our digital products.
+          PDF, EPUB, audiobook, and other audio files may be delivered using private storage, such as Cloudflare R2, and signed, time-limited links. We may track download or access activity, including the number of downloads or plays, file type, purchase record, and link expiration, to provide access and protect our digital and audio products.
+        </p>
+        <p className="mt-3 text-ink">
+          If audiobook streaming, playback, or third-party audio delivery is added later, the provider may process technical information needed to deliver the audio experience, such as device/browser information, access logs, playback requests, and IP address.
         </p>
 
         <h2 className="mt-8 font-serif text-2xl text-teal">Print-on-Demand Orders</h2>
@@ -75,7 +78,7 @@ export default function PrivacyPage() {
         </p>
 
         <h2 className="mt-8 font-serif text-2xl text-teal">How We Share Information</h2>
-        <p className="mt-2 text-ink">We do not sell personal information. We may share information with trusted service providers who help us operate the website, send emails, process payments, deliver digital files, fulfill print orders, or comply with legal obligations.</p>
+        <p className="mt-2 text-ink">We do not sell personal information. We may share information with trusted service providers who help us operate the website, send emails, process payments, deliver digital/audio files, fulfill print orders, or comply with legal obligations.</p>
 
         <h2 className="mt-8 font-serif text-2xl text-teal">Data Security</h2>
         <p className="mt-2 text-ink">
