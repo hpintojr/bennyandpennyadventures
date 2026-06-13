@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS "users" (
 );
 
 CREATE TABLE IF NOT EXISTS "users_sessions" (
-  "id" serial PRIMARY KEY,
+  "id" varchar PRIMARY KEY,
   "_order" integer NOT NULL,
   "_parent_id" integer NOT NULL REFERENCES "users"("id") ON DELETE CASCADE,
   "created_at" timestamp(3) with time zone,
@@ -43,6 +43,11 @@ CREATE INDEX IF NOT EXISTS "users_created_at_idx" ON "users" ("created_at");
 CREATE INDEX IF NOT EXISTS "users_sessions_order_idx" ON "users_sessions" ("_order");
 CREATE INDEX IF NOT EXISTS "users_sessions_parent_id_idx" ON "users_sessions" ("_parent_id");
 `;
+
+const repairSessionsIdSql = [
+  'ALTER TABLE "users_sessions" ALTER COLUMN "id" DROP DEFAULT',
+  'ALTER TABLE "users_sessions" ALTER COLUMN "id" TYPE varchar USING "id"::varchar'
+].join('; ');
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
@@ -67,10 +72,11 @@ export async function GET(request: Request) {
   try {
     await client.connect();
     await client.query(setupSql);
+    await client.query(repairSessionsIdSql);
 
     return jsonResponse({
       ok: true,
-      message: "Core Payload users schema was created. Visit /admin to create the first admin user."
+      message: "Core Payload users schema was repaired. Visit /admin and create or log in as the admin user."
     });
   } catch (error) {
     return jsonResponse(
