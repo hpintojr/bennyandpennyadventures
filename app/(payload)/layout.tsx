@@ -5,6 +5,7 @@ import type { ServerFunctionClient } from "payload";
 import type { ReactNode } from "react";
 
 import { importMap } from "./admin/importMap";
+import "./custom.scss";
 
 type Args = {
   children: ReactNode;
