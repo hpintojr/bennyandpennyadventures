@@ -1,3 +1,44 @@
+import type { Metadata } from "next";
+import SiteShell from "../../components/SiteShell";
+import NewsletterForm from "../../components/NewsletterForm";
+import SocialLinks from "../../components/SocialLinks";
+import ContactForm from "../../components/ContactForm";
+
+export const metadata: Metadata = {
+  title: "Contact",
+  description: "Contact Benny & Penny's Adventures for questions, school visits, press, media, and bulk orders."
+};
+
+const email = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "hello@bennyandpenny.com";
+
 export default function ContactPage() {
-  return null;
+  return (
+    <SiteShell>
+      <div className="page-wrap pb-16 pt-4">
+        <section className="text-center">
+          <h1 className="font-serif text-4xl font-semibold text-teal sm:text-5xl">Contact Us</h1>
+          <p className="mx-auto mt-4 max-w-2xl text-ink">Questions, school visits, press, or bulk orders. We read every message and reply as soon as we can.</p>
+        </section>
+
+        <section className="grid items-start gap-7 py-10 lg:grid-cols-[1.3fr_0.9fr]">
+          <ContactForm />
+
+          <aside className="space-y-5">
+            <div className="rounded-3xl border border-tan bg-blush p-6">
+              <h2 className="font-serif text-2xl text-teal">Reach Us Directly</h2>
+              <p className="mt-2 text-sm text-ink">Prefer email? Write to us anytime:</p>
+              <a className="mt-2 inline-block font-extrabold text-coral" href={`mailto:${email}`}>{email}</a>
+              <p className="mt-5 font-extrabold text-teal">Follow the adventures</p>
+              <SocialLinks />
+            </div>
+            <div className="rounded-3xl border border-tan bg-green p-6">
+              <h2 className="font-serif text-2xl text-teal">Join the Newsletter</h2>
+              <p className="mt-2 text-sm text-ink">Get book release updates, printables, and gentle medical-prep resources.</p>
+              <NewsletterForm compact />
+            </div>
+          </aside>
+        </section>
+      </div>
+    </SiteShell>
+  );
 }
