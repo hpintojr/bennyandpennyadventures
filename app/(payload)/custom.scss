@@ -1,13 +1,152 @@
-/* Keep Payload's default admin layout intact. Only improve auth form readability. */
+/* Benny & Penny Payload Admin branding. Keep Payload layout intact; only theme colors, spacing, and login polish. */
 :root {
-  --theme-text: #173f43;
+  --bp-cream: #fff8ed;
+  --bp-cream-soft: #fbf0df;
+  --bp-teal: #065766;
+  --bp-teal-deep: #043f49;
+  --bp-coral: #eb6373;
+  --bp-gold: #d8b98d;
+  --theme-text: var(--bp-teal-deep);
+  --theme-elevation-0: #fffaf1;
+  --theme-elevation-50: #fff4e4;
+  --theme-elevation-100: #f8ead5;
+  --theme-elevation-150: #efd9bd;
+  --theme-elevation-200: #e6caa7;
   --theme-input-bg: #ffffff;
+  --theme-success-500: var(--bp-teal);
+  --theme-error-500: var(--bp-coral);
 }
 
+body {
+  background:
+    radial-gradient(circle at top left, rgba(235, 99, 115, 0.18), transparent 34rem),
+    linear-gradient(135deg, var(--bp-cream) 0%, #fffaf1 48%, #eef5ea 100%) !important;
+  color: var(--bp-teal-deep) !important;
+}
+
+/* Global admin shell */
+.template-default .nav,
+.template-default aside {
+  background: linear-gradient(180deg, #fff5e8 0%, #f6e8d5 100%) !important;
+  border-right: 1px solid rgba(216, 185, 141, 0.45) !important;
+}
+
+.template-default .nav a,
+.template-default aside a,
+.template-default .nav__label,
+.template-default .nav-group__label {
+  color: var(--bp-teal-deep) !important;
+}
+
+.template-default .nav a[aria-current='page'],
+.template-default aside a[aria-current='page'],
+.template-default .nav a:hover,
+.template-default aside a:hover {
+  color: var(--bp-teal) !important;
+  background: rgba(235, 99, 115, 0.1) !important;
+}
+
+.template-default main,
+.template-default .gutter--left,
+.template-default .gutter--right {
+  background: transparent !important;
+}
+
+.template-default h1,
+.template-default h2,
+.template-default h3,
+.template-default .doc-header__title {
+  color: var(--bp-teal) !important;
+}
+
+.template-default .btn--style-primary,
+.template-default button[type='submit'] {
+  background: var(--bp-coral) !important;
+  border-color: var(--bp-coral) !important;
+  color: #ffffff !important;
+}
+
+.template-default .btn--style-secondary,
+.template-default .btn--style-pill {
+  border-color: rgba(216, 185, 141, 0.9) !important;
+  color: var(--bp-teal-deep) !important;
+}
+
+.template-default input,
+.template-default textarea,
+.template-default select {
+  background: #ffffff !important;
+  color: var(--bp-teal-deep) !important;
+  border-color: rgba(216, 185, 141, 0.75) !important;
+}
+
+.template-default table,
+.template-default .collection-list,
+.template-default .render-fields,
+.template-default .doc-controls,
+.template-default .document-fields,
+.template-default .field-type {
+  border-color: rgba(216, 185, 141, 0.35) !important;
+}
+
+/* Add brand context to admin pages without replacing Payload internals. */
+.template-default .app-header::after,
+.template-login::before,
+.template-create-first-user::before {
+  content: "Benny & Penny's Admin Panel";
+  display: block;
+  color: var(--bp-teal);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.template-default .app-header::after {
+  margin-left: 1rem;
+  font-size: 0.95rem;
+}
+
+/* Login / first-user screen */
 .template-login,
 .template-create-first-user {
-  background: #fff8ed !important;
-  color: #173f43 !important;
+  background:
+    radial-gradient(circle at 50% 16%, rgba(235, 99, 115, 0.18), transparent 18rem),
+    linear-gradient(135deg, var(--bp-cream) 0%, #fffaf1 52%, #edf4e9 100%) !important;
+  color: var(--bp-teal-deep) !important;
+}
+
+.template-login::before,
+.template-create-first-user::before {
+  position: fixed;
+  top: calc(50% - 13.5rem);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  width: min(32rem, calc(100vw - 2rem));
+  text-align: center;
+  font-size: clamp(1.5rem, 2vw, 2rem);
+}
+
+.template-login::after,
+.template-create-first-user::after {
+  content: "Manage books, orders, subscribers, downloads, and family adventure content.";
+  position: fixed;
+  top: calc(50% - 11rem);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  width: min(34rem, calc(100vw - 2rem));
+  text-align: center;
+  color: rgba(4, 63, 73, 0.78);
+  font-size: 0.95rem;
+}
+
+.template-login form,
+.template-create-first-user form {
+  background: rgba(255, 250, 241, 0.94) !important;
+  border: 1px solid rgba(216, 185, 141, 0.55) !important;
+  border-radius: 1.25rem !important;
+  box-shadow: 0 1.5rem 4rem rgba(4, 63, 73, 0.12) !important;
+  padding: 2rem !important;
 }
 
 .template-login label,
@@ -16,7 +155,7 @@
 .template-create-first-user .field-label,
 .template-login .description,
 .template-create-first-user .description {
-  color: #173f43 !important;
+  color: var(--bp-teal-deep) !important;
 }
 
 .template-login input,
@@ -24,13 +163,18 @@
 .template-login select,
 .template-create-first-user select {
   background: #ffffff !important;
-  color: #173f43 !important;
-  border-color: #d8b98d !important;
+  color: var(--bp-teal-deep) !important;
+  border-color: var(--bp-gold) !important;
 }
 
 .template-login button[type='submit'],
 .template-create-first-user button[type='submit'] {
-  background: #eb6373 !important;
-  border-color: #eb6373 !important;
+  background: var(--bp-coral) !important;
+  border-color: var(--bp-coral) !important;
   color: #ffffff !important;
+}
+
+.template-login a,
+.template-create-first-user a {
+  color: var(--bp-teal) !important;
 }
