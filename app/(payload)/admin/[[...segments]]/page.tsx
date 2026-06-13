@@ -10,9 +10,9 @@ type Args = {
   }>;
 };
 
-export const generateMetadata = async ({ params, searchParams }: Args) =>
-  generatePageMetadata({ config: configPromise, params: await params, searchParams: await searchParams });
+export const generateMetadata = ({ params, searchParams }: Args) =>
+  generatePageMetadata({ config: configPromise, params, searchParams });
 
-export default async function AdminPage({ params, searchParams }: Args) {
-  return <RootPage config={configPromise} params={await params} searchParams={await searchParams} />;
+export default function AdminPage({ params, searchParams }: Args) {
+  return <RootPage config={configPromise} params={params} searchParams={searchParams} />;
 }
