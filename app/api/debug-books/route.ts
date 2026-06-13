@@ -2,7 +2,17 @@ import { Client } from "pg";
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+function isAuthorized(request: Request) {
+  const expectedSecret = process.env.PAYLOAD_SETUP_SECRET;
+  const providedSecret = new URL(request.url).searchParams.get("secret");
+  return Boolean(expectedSecret && providedSecret && providedSecret === expectedSecret);
+}
+
+export async function GET(request: Request) {
+  if (!isAuthorized(request)) {
+    return Response.json({ ok: false, message: "Unauthorized debug request." }, { status: 401 });
+  }
+
   const databaseUri = process.env.DATABASE_URI;
 
   if (!databaseUri) {
