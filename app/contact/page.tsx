@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import SiteShell from "../components/SiteShell";
 import NewsletterForm from "../components/NewsletterForm";
 import SocialLinks from "../components/SocialLinks";
+import ContactForm from "../components/ContactForm";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -20,24 +21,7 @@ export default function ContactPage() {
         </section>
 
         <section className="grid items-start gap-7 py-10 lg:grid-cols-[1.3fr_0.9fr]">
-          <form className="panel-card rounded-3xl p-6" action={`mailto:${email}`} method="post" encType="text/plain">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <label className="text-sm font-extrabold text-teal">Name<input name="name" type="text" placeholder="Your name" className="mt-2 w-full rounded-xl border border-tan bg-white px-4 py-3 font-normal text-ink outline-none focus:border-coral" /></label>
-              <label className="text-sm font-extrabold text-teal">Email<input name="email" type="email" placeholder="you@example.com" className="mt-2 w-full rounded-xl border border-tan bg-white px-4 py-3 font-normal text-ink outline-none focus:border-coral" /></label>
-            </div>
-            <label className="mt-4 block text-sm font-extrabold text-teal">What&rsquo;s this about?
-              <select name="inquiryType" className="mt-2 w-full rounded-xl border border-tan bg-white px-4 py-3 font-normal text-ink outline-none focus:border-coral">
-                <option>General question</option>
-                <option>School / library visit</option>
-                <option>Press & media inquiry</option>
-                <option>Bulk / wholesale order</option>
-                <option>Something else</option>
-              </select>
-            </label>
-            <label className="mt-4 block text-sm font-extrabold text-teal">Message<textarea name="message" placeholder="How can we help?" className="mt-2 min-h-36 w-full rounded-xl border border-tan bg-white px-4 py-3 font-normal text-ink outline-none focus:border-coral" /></label>
-            <button className="btn mt-5" type="submit">Send Message ♥</button>
-            <p className="mt-3 text-xs text-[#6b7d80]">This opens the visitor&rsquo;s email app for now. Replace this with a backend form action when Mailjet or another provider is connected.</p>
-          </form>
+          <ContactForm />
 
           <aside className="space-y-5">
             <div className="rounded-3xl border border-tan bg-blush p-6">
