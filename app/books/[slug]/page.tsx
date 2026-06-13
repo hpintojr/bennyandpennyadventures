@@ -4,19 +4,17 @@ import type { Metadata } from "next";
 import SiteShell from "../../components/SiteShell";
 import ImageSlot from "../../components/ImageSlot";
 import ProductActions from "../../components/ProductActions";
-import { books, getBookBySlug } from "@/lib/books";
+import { getPayloadBookBySlug } from "@/lib/payloadBooks";
+
+export const dynamic = "force-dynamic";
 
 type ProductPageProps = {
   params: Promise<{ slug: string }>;
 };
 
-export function generateStaticParams() {
-  return books.map((book) => ({ slug: book.slug }));
-}
-
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const book = getBookBySlug(slug);
+  const book = await getPayloadBookBySlug(slug);
   if (!book) return { title: "Book Not Found" };
   return {
     title: book.title,
@@ -31,7 +29,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const { slug } = await params;
-  const book = getBookBySlug(slug);
+  const book = await getPayloadBookBySlug(slug);
   if (!book) notFound();
 
   return (
