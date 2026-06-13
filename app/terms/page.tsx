@@ -16,7 +16,7 @@ export default function TermsPage() {
         <h1 className="mt-3 font-serif text-4xl font-semibold text-teal">Terms of Service</h1>
 
         <p className="mt-4 text-ink">
-          These Terms of Service describe the rules for using the Benny &amp; Penny&rsquo;s Adventures website and purchasing or accessing our books, digital downloads, print products, and related resources. By using this website, you agree to these Terms.
+          These Terms of Service describe the rules for using the Benny &amp; Penny&rsquo;s Adventures website and purchasing or accessing our books, digital downloads, audiobooks, audio files, print products, and related resources. By using this website, you agree to these Terms.
         </p>
 
         <h2 className="mt-8 font-serif text-2xl text-teal">Adult Use of the Website</h2>
@@ -31,15 +31,18 @@ export default function TermsPage() {
 
         <h2 className="mt-8 font-serif text-2xl text-teal">Purchases</h2>
         <p className="mt-2 text-ink">
-          We may offer digital books, print books, bundles, and related resources for purchase. Prices, availability, formats, and product details may change at any time. Payment processing may be handled by Stripe or another secure payment provider.
+          We may offer digital books, audiobooks, audio files, print books, bundles, and related resources for purchase. Prices, availability, formats, and product details may change at any time. Payment processing may be handled by Stripe or another secure payment provider.
         </p>
 
-        <h2 className="mt-8 font-serif text-2xl text-teal">Digital Products: PDF and EPUB Downloads</h2>
+        <h2 className="mt-8 font-serif text-2xl text-teal">Digital Products: PDF, EPUB, Audiobooks, and Audio Files</h2>
         <p className="mt-2 text-ink">
-          Digital products may be delivered as PDF, EPUB, or other downloadable formats. Digital downloads are for personal, non-commercial use by the purchaser and their household, classroom, or care setting unless a separate written license says otherwise.
+          Digital products may be delivered as PDF, EPUB, audiobook, audio file, streaming audio, or other downloadable/access-controlled formats. Digital and audio products are for personal, non-commercial use by the purchaser and their household, classroom, or care setting unless a separate written license says otherwise.
         </p>
         <p className="mt-3 text-ink">
-          Download links may be time-limited, access-limited, or both. Unless otherwise stated at checkout, we may limit each purchased digital file to a maximum of three downloads. We may also use short-lived signed links that expire for security purposes. If you have trouble accessing a purchased file, contact us for help.
+          Download or access links may be time-limited, access-limited, play-limited, or download-limited. Unless otherwise stated at checkout, we may limit each purchased digital or audio file to a maximum of three downloads or access attempts. We may also use short-lived signed links that expire for security purposes. If you have trouble accessing a purchased file, contact us for help.
+        </p>
+        <p className="mt-3 text-ink">
+          Audiobook and audio access may be provided as a downloadable file, private signed link, streaming player, or third-party delivery method. Purchased audio content may not be copied, redistributed, uploaded, resold, publicly performed, or shared outside the allowed personal, household, classroom, or care-setting use.
         </p>
 
         <h2 className="mt-8 font-serif text-2xl text-teal">Print Products and Print-on-Demand</h2>
@@ -49,7 +52,7 @@ export default function TermsPage() {
 
         <h2 className="mt-8 font-serif text-2xl text-teal">Refunds and Cancellations</h2>
         <p className="mt-2 text-ink">
-          Because digital products can be accessed immediately, digital downloads are generally final sale once access has been provided, unless required by law or unless we choose to make an exception. If a file is defective, inaccessible, or incorrect, contact us and we will make reasonable efforts to fix the issue or provide replacement access.
+          Because digital and audio products can be accessed immediately, PDF, EPUB, audiobook, and audio purchases are generally final sale once access has been provided, unless required by law or unless we choose to make an exception. If a file is defective, inaccessible, incomplete, or incorrect, contact us and we will make reasonable efforts to fix the issue or provide replacement access.
         </p>
         <p className="mt-3 text-ink">
           Print product refund, replacement, or cancellation options may depend on the status of the print order and the policies of the fulfillment provider.
@@ -67,32 +70,32 @@ export default function TermsPage() {
 
         <h2 className="mt-8 font-serif text-2xl text-teal">Intellectual Property</h2>
         <p className="mt-2 text-ink">
-          All website content, books, illustrations, characters, designs, text, downloads, branding, and related materials are owned by Benny &amp; Penny&rsquo;s Adventures or its creators unless otherwise stated. You may not copy, reproduce, distribute, resell, upload, share, modify, or create derivative works from our content without written permission, except as allowed by law or by a license we provide.
+          All website content, books, illustrations, characters, designs, text, downloads, audiobooks, audio recordings, narration, music, sound design, branding, and related materials are owned by Benny &amp; Penny&rsquo;s Adventures or its creators unless otherwise stated. You may not copy, reproduce, distribute, resell, upload, publicly perform, share, modify, or create derivative works from our content without written permission, except as allowed by law or by a license we provide.
         </p>
 
         <h2 className="mt-8 font-serif text-2xl text-teal">Acceptable Use</h2>
         <p className="mt-2 text-ink">You agree not to:</p>
         <ul className="mt-3 list-disc space-y-2 pl-6 text-ink">
           <li>Use the website for unlawful, harmful, abusive, or fraudulent purposes.</li>
-          <li>Attempt to bypass download limits, access controls, or security protections.</li>
-          <li>Share private digital download links publicly or with unauthorized users.</li>
-          <li>Interfere with the website, servers, forms, checkout, or digital delivery systems.</li>
+          <li>Attempt to bypass download limits, access controls, audio access limits, or security protections.</li>
+          <li>Share private digital download or audiobook links publicly or with unauthorized users.</li>
+          <li>Interfere with the website, servers, forms, checkout, streaming, playback, or digital delivery systems.</li>
           <li>Use automated tools to scrape, copy, or misuse the website or its content.</li>
         </ul>
 
         <h2 className="mt-8 font-serif text-2xl text-teal">Third-Party Services</h2>
         <p className="mt-2 text-ink">
-          We may use third-party providers for hosting, email delivery, payments, digital storage, analytics, and print fulfillment. These providers may have their own terms and policies. We are not responsible for third-party websites or services that we do not control.
+          We may use third-party providers for hosting, email delivery, payments, digital storage, audio hosting or streaming, analytics, and print fulfillment. These providers may have their own terms and policies. We are not responsible for third-party websites or services that we do not control.
         </p>
 
         <h2 className="mt-8 font-serif text-2xl text-teal">No Guarantees</h2>
         <p className="mt-2 text-ink">
-          We work to keep the website accurate, available, and helpful, but we do not guarantee that the website, downloads, forms, or services will always be uninterrupted, error-free, or available. Content may be updated, removed, or changed at any time.
+          We work to keep the website accurate, available, and helpful, but we do not guarantee that the website, downloads, audio playback, forms, or services will always be uninterrupted, error-free, or available. Content may be updated, removed, or changed at any time.
         </p>
 
         <h2 className="mt-8 font-serif text-2xl text-teal">Limitation of Liability</h2>
         <p className="mt-2 text-ink">
-          To the fullest extent allowed by law, Benny &amp; Penny&rsquo;s Adventures and its creators will not be liable for indirect, incidental, special, consequential, or punitive damages arising from your use of the website, products, downloads, or services.
+          To the fullest extent allowed by law, Benny &amp; Penny&rsquo;s Adventures and its creators will not be liable for indirect, incidental, special, consequential, or punitive damages arising from your use of the website, products, downloads, audio products, or services.
         </p>
 
         <h2 className="mt-8 font-serif text-2xl text-teal">Changes to These Terms</h2>
