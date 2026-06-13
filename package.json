@@ -4,11 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "payload generate:importmap && next build",
     "start": "next start",
     "lint": "next lint",
     "payload": "payload",
-    "payload:push": "payload db:push"
+    "payload:importmap": "payload generate:importmap"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "^3.0.0",
