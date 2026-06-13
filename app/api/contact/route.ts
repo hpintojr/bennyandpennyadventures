@@ -13,6 +13,11 @@ function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
+function isMissingTableError(error: unknown) {
+  const message = error instanceof Error ? error.message : String(error);
+  return message.includes("relation \"contact_submissions\" does not exist") || message.includes("42P01");
+}
+
 function escapeHtml(value: string) {
   return value
     .replaceAll("&", "&amp;")
@@ -138,12 +143,20 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Please enter a valid email address." }, { status: 400 });
     }
 
-    await saveContactSubmission({ name, email, inquiryType, message });
+    try {
+      await saveContactSubmission({ name, email, inquiryType, message });
+    } catch (payloadError) {
+      if (!isMissingTableError(payloadError)) {
+        throw payloadError;
+      }
+
+      console.error("Contact form accepted, but the contact_submissions table is missing. Run Payload schema setup before relying on stored submissions.", payloadError);
+    }
 
     try {
       await sendContactNotification({ name, email, inquiryType, message });
     } catch (emailError) {
-      console.error("Contact submission was saved, but email notification failed", emailError);
+      console.error("Contact submission was accepted, but email notification failed", emailError);
     }
 
     return NextResponse.json({ ok: true });
