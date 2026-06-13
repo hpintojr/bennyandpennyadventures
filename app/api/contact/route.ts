@@ -31,7 +31,7 @@ async function sendContactNotification({
   message: string;
 }) {
   if (!mailjetApiKey || !mailjetSecretKey) {
-    throw new Error("Mailjet is not configured. Add MAILJET_API_KEY and MAILJET_SECRET_KEY in Vercel.");
+    throw new Error("Mailjet is not configured yet. Please add MAILJET_API_KEY and MAILJET_SECRET_KEY in Vercel, then redeploy.");
   }
 
   const auth = Buffer.from(`${mailjetApiKey}:${mailjetSecretKey}`).toString("base64");
@@ -91,11 +91,33 @@ async function sendContactNotification({
     })
   });
 
+  const resultText = await response.text();
+
   if (!response.ok) {
-    const errorText = await response.text();
-    console.error("Mailjet contact notification failed", errorText);
-    throw new Error("Unable to send your message right now. Please try again soon.");
+    console.error("Mailjet contact notification failed", {
+      status: response.status,
+      statusText: response.statusText,
+      fromEmail,
+      contactEmail,
+      resultText
+    });
+
+    if (resultText.toLowerCase().includes("sender") || resultText.toLowerCase().includes("from")) {
+      throw new Error("Mailjet rejected the sender email. Verify CONTACT_FROM_EMAIL in Mailjet and Vercel, then redeploy.");
+    }
+
+    if (response.status === 401 || response.status === 403) {
+      throw new Error("Mailjet rejected the API credentials. Check MAILJET_API_KEY and MAILJET_SECRET_KEY in Vercel, then redeploy.");
+    }
+
+    throw new Error("Mailjet could not send the message. Check the Vercel function logs for the exact Mailjet response.");
   }
+
+  console.log("Mailjet contact notification sent", {
+    status: response.status,
+    fromEmail,
+    contactEmail
+  });
 }
 
 export async function POST(request: Request) {
