@@ -1,0 +1,117 @@
+:root {
+  --theme-elevation-0: #fff8ed;
+  --theme-elevation-50: #fff3df;
+  --theme-elevation-100: #f8e8ce;
+  --theme-elevation-150: #eed8b7;
+  --theme-elevation-200: #e5caa3;
+  --theme-elevation-250: #d8b98d;
+  --theme-elevation-300: #c9a779;
+  --theme-elevation-400: #a88761;
+  --theme-elevation-500: #856748;
+  --theme-elevation-600: #654b32;
+  --theme-elevation-700: #493522;
+  --theme-elevation-800: #2f2317;
+  --theme-elevation-900: #1d150e;
+  --theme-elevation-1000: #100c08;
+
+  --theme-text: #173f43;
+  --theme-input-bg: #ffffff;
+  --theme-success-500: #2e7d32;
+  --theme-error-500: #b42318;
+  --theme-warning-500: #b7791f;
+}
+
+html[data-theme='light'],
+html[data-theme='dark'] {
+  --theme-bg: #fff8ed;
+  --theme-text: #173f43;
+}
+
+body {
+  background: #fff8ed !important;
+  color: #173f43 !important;
+}
+
+.payload-admin-bar,
+.template-default,
+.template-login,
+.template-create-first-user {
+  background: #fff8ed !important;
+  color: #173f43 !important;
+}
+
+label,
+.label,
+.field-label,
+.field-type__label,
+.field-description,
+.description,
+.field-error,
+.render-fields__label,
+.login__label,
+.create-first-user__label,
+.auth-fields label,
+.checkbox-input label,
+.select-input label {
+  color: #173f43 !important;
+}
+
+input,
+textarea,
+select,
+.rs__control,
+.field-type input,
+.field-type textarea,
+.field-type select {
+  background: #ffffff !important;
+  color: #173f43 !important;
+  border-color: #d8b98d !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #6b7d80 !important;
+}
+
+button[type='submit'],
+.btn--style-primary,
+.button--style-primary {
+  background: #eb6373 !important;
+  border-color: #eb6373 !important;
+  color: #ffffff !important;
+}
+
+button[type='submit']:hover,
+.btn--style-primary:hover,
+.button--style-primary:hover {
+  background: #d94f62 !important;
+  border-color: #d94f62 !important;
+}
+
+.nav,
+.nav__wrap,
+.app-header,
+.collection-list,
+.dashboard,
+.doc-header,
+.list-header {
+  color: #173f43 !important;
+}
+
+.nav a,
+.nav button,
+.breadcrumbs,
+.breadcrumbs a,
+.collection-list a,
+.dashboard a {
+  color: #173f43 !important;
+}
+
+.card,
+.doc-controls,
+.document-fields,
+.collection-list__wrap,
+.dashboard__wrap {
+  background: rgba(255, 255, 255, 0.82) !important;
+  border-color: #eed8b7 !important;
+}
