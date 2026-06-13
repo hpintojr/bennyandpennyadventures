@@ -71,10 +71,11 @@ export default function ProductActions({ book }: ProductActionsProps) {
       </div>
 
       <div className="mt-6 rounded-2xl border border-tan bg-white/60 p-4 text-sm text-ink">
-        <p className="font-extrabold text-teal">Digital file test paths</p>
+        <p className="font-extrabold text-teal">Digital and audio file test paths</p>
         <p className="mt-1">PDF: <code className="rounded bg-white px-1">{book.pdfPath}</code></p>
         <p>EPUB: <code className="rounded bg-white px-1">{book.epubPath}</code></p>
-        <p className="mt-2 text-xs text-[#6b7d80]">Drop matching files into <code>public/downloads/</code> for local link testing. For launch, keep paid ebooks private in Cloudflare R2 and deliver signed links after Stripe checkout.</p>
+        <p>Audiobook: <code className="rounded bg-white px-1">{book.audioPath}</code></p>
+        <p className="mt-2 text-xs text-[#6b7d80]">Drop matching files into <code>public/downloads/</code> for local link testing. For launch, keep paid ebooks and audiobook files private in Cloudflare R2 and deliver signed links after Stripe checkout.</p>
       </div>
 
       <div className={`fixed bottom-6 left-1/2 z-50 rounded-full bg-teal px-6 py-3 font-bold text-white shadow-xl transition ${toast ? "translate-x-[-50%] translate-y-0 opacity-100" : "pointer-events-none translate-x-[-50%] translate-y-5 opacity-0"}`}>
