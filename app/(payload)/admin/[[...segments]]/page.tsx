@@ -2,17 +2,17 @@ import configPromise from "@payload-config";
 import { RootPage, generatePageMetadata } from "@payloadcms/next/views";
 
 type Args = {
-  params: {
-    segments: string[];
-  };
-  searchParams: {
-    [key: string]: string | string[];
-  };
+  params: Promise<{
+    segments?: string[];
+  }>;
+  searchParams: Promise<{
+    [key: string]: string | string[] | undefined;
+  }>;
 };
 
-export const generateMetadata = ({ params, searchParams }: Args) =>
-  generatePageMetadata({ config: configPromise, params, searchParams });
+export const generateMetadata = async ({ params, searchParams }: Args) =>
+  generatePageMetadata({ config: configPromise, params: await params, searchParams: await searchParams });
 
-export default function AdminPage({ params, searchParams }: Args) {
-  return <RootPage config={configPromise} params={params} searchParams={searchParams} />;
+export default async function AdminPage({ params, searchParams }: Args) {
+  return <RootPage config={configPromise} params={await params} searchParams={await searchParams} />;
 }
