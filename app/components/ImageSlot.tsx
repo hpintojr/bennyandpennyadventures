@@ -11,7 +11,7 @@ type ImageSlotProps = {
   imgClassName?: string;
 };
 
-export default function ImageSlot({ src, alt, className = "", imgClassName = "" }: ImageSlotProps) {
+export default function ImageSlot({ src, alt, label, note, className = "", imgClassName = "" }: ImageSlotProps) {
   const [failed, setFailed] = useState(false);
 
   return (
@@ -26,7 +26,14 @@ export default function ImageSlot({ src, alt, className = "", imgClassName = "" 
           onError={() => setFailed(true)}
         />
       )}
-      {failed && <div className="absolute inset-0 bg-panel" aria-hidden="true" />}
+      {failed && (
+        <div className="absolute inset-0 grid place-items-center bg-panel p-4 text-center" role="img" aria-label={alt}>
+          <div>
+            <div className="font-serif text-lg text-teal">{label}</div>
+            {note ? <div className="mt-1 text-xs font-bold text-[#8a7059]">{note}</div> : null}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
