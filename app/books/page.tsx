@@ -2,14 +2,19 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import SiteShell from "../components/SiteShell";
 import ImageSlot from "../components/ImageSlot";
-import { books, bookFormats, formatMoney } from "@/lib/books";
+import { bookFormats, formatMoney } from "@/lib/books";
+import { getPayloadBooks } from "@/lib/payloadBooks";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Our Books",
   description: "Browse Benny & Penny's Adventures children's medical book series."
 };
 
-export default function BooksPage() {
+export default async function BooksPage() {
+  const books = await getPayloadBooks();
+
   return (
     <SiteShell>
       <div className="page-wrap pb-16 pt-4">
