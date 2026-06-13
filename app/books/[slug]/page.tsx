@@ -7,15 +7,16 @@ import ProductActions from "../../components/ProductActions";
 import { books, getBookBySlug } from "@/lib/books";
 
 type ProductPageProps = {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 };
 
 export function generateStaticParams() {
   return books.map((book) => ({ slug: book.slug }));
 }
 
-export function generateMetadata({ params }: ProductPageProps): Metadata {
-  const book = getBookBySlug(params.slug);
+export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const book = getBookBySlug(slug);
   if (!book) return { title: "Book Not Found" };
   return {
     title: book.title,
@@ -28,8 +29,9 @@ export function generateMetadata({ params }: ProductPageProps): Metadata {
   };
 }
 
-export default function ProductPage({ params }: ProductPageProps) {
-  const book = getBookBySlug(params.slug);
+export default async function ProductPage({ params }: ProductPageProps) {
+  const { slug } = await params;
+  const book = getBookBySlug(slug);
   if (!book) notFound();
 
   return (
