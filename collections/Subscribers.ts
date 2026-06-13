@@ -2,8 +2,14 @@ import type { CollectionConfig } from "payload";
 
 export const Subscribers: CollectionConfig = {
   slug: "subscribers",
+  labels: {
+    singular: "Subscriber",
+    plural: "Subscribers"
+  },
   admin: {
+    group: "Marketing",
     useAsTitle: "email",
+    description: "Newsletter and resource-library email signups.",
     defaultColumns: ["email", "marketingOptIn", "source", "createdAt"]
   },
   fields: [
