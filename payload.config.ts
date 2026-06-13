@@ -1,5 +1,4 @@
 import { postgresAdapter } from "@payloadcms/db-postgres";
-import { lexicalEditor } from "@payloadcms/richtext-lexical";
 import { buildConfig } from "payload";
 import { AccessGrants } from "./collections/AccessGrants";
 import { AuditLogs } from "./collections/AuditLogs";
@@ -37,7 +36,6 @@ export default buildConfig({
       connectionString: process.env.DATABASE_URI
     }
   }),
-  editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || "",
   serverURL: process.env.PAYLOAD_PUBLIC_SERVER_URL || process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000",
   typescript: {
