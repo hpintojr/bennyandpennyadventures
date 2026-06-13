@@ -1,17 +1,17 @@
 import { postgresAdapter } from "@payloadcms/db-postgres";
 import { buildConfig } from "payload";
-import { AccessGrants } from "./collections/AccessGrants";
-import { AuditLogs } from "./collections/AuditLogs";
-import { Books } from "./collections/Books";
-import { ContactSubmissions } from "./collections/ContactSubmissions";
-import { CustomerAddresses } from "./collections/CustomerAddresses";
-import { Downloads } from "./collections/Downloads";
-import { OrderItems } from "./collections/OrderItems";
-import { Orders } from "./collections/Orders";
-import { Subscribers } from "./collections/Subscribers";
-import { SupportMessages } from "./collections/SupportMessages";
-import { SupportTickets } from "./collections/SupportTickets";
-import { Users } from "./collections/Users";
+import { AccessGrants } from "./collections/AccessGrants.ts";
+import { AuditLogs } from "./collections/AuditLogs.ts";
+import { Books } from "./collections/Books.ts";
+import { ContactSubmissions } from "./collections/ContactSubmissions.ts";
+import { CustomerAddresses } from "./collections/CustomerAddresses.ts";
+import { Downloads } from "./collections/Downloads.ts";
+import { OrderItems } from "./collections/OrderItems.ts";
+import { Orders } from "./collections/Orders.ts";
+import { Subscribers } from "./collections/Subscribers.ts";
+import { SupportMessages } from "./collections/SupportMessages.ts";
+import { SupportTickets } from "./collections/SupportTickets.ts";
+import { Users } from "./collections/Users.ts";
 
 export default buildConfig({
   admin: {
