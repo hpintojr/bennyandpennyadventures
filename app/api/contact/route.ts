@@ -90,55 +90,35 @@ async function sendContactNotification({
     <p>${escapeHtml(message).replaceAll("\n", "<br />")}</p>
   `;
 
-  try {
-    const result = await getMailjetClient().post("send", { version: "v3.1" }).request({
-      Messages: [
-        {
-          From: {
-            Email: fromEmail,
-            Name: fromName
-          },
-          To: [
-            {
-              Email: contactEmail,
-              Name: "Benny & Penny Contact"
-            }
-          ],
-          ReplyTo: {
-            Email: email,
-            Name: name
-          },
-          Subject: `New website inquiry: ${inquiryType}`,
-          TextPart: textBody,
-          HTMLPart: htmlBody
-        }
-      ]
-    });
+  const result = await getMailjetClient().post("send", { version: "v3.1" }).request({
+    Messages: [
+      {
+        From: {
+          Email: fromEmail,
+          Name: fromName
+        },
+        To: [
+          {
+            Email: contactEmail,
+            Name: "Benny & Penny Contact"
+          }
+        ],
+        ReplyTo: {
+          Email: email,
+          Name: name
+        },
+        Subject: `New website inquiry: ${inquiryType}`,
+        TextPart: textBody,
+        HTMLPart: htmlBody
+      }
+    ]
+  });
 
-    console.log("Mailjet contact notification sent", {
-      status: result.response.status,
-      fromEmail,
-      contactEmail
-    });
-  } catch (error) {
-    console.error("Mailjet contact notification failed", {
-      fromEmail,
-      contactEmail,
-      error
-    });
-
-    const errorMessage = error instanceof Error ? error.message : "Unknown Mailjet error";
-
-    if (errorMessage.toLowerCase().includes("sender") || errorMessage.toLowerCase().includes("from")) {
-      throw new Error("Mailjet rejected the sender email. Verify CONTACT_FROM_EMAIL in Mailjet and Vercel, then redeploy.");
-    }
-
-    if (errorMessage.includes("401") || errorMessage.includes("403") || errorMessage.toLowerCase().includes("unauthorized") || errorMessage.toLowerCase().includes("forbidden")) {
-      throw new Error("Mailjet rejected the API credentials. Check MAILJET_API_KEY and MAILJET_SECRET_KEY in Vercel, then redeploy.");
-    }
-
-    throw new Error(`Mailjet could not send the message: ${errorMessage}`);
-  }
+  console.log("Mailjet contact notification sent", {
+    status: result.response.status,
+    fromEmail,
+    contactEmail
+  });
 }
 
 export async function POST(request: Request) {
@@ -159,7 +139,12 @@ export async function POST(request: Request) {
     }
 
     await saveContactSubmission({ name, email, inquiryType, message });
-    await sendContactNotification({ name, email, inquiryType, message });
+
+    try {
+      await sendContactNotification({ name, email, inquiryType, message });
+    } catch (emailError) {
+      console.error("Contact submission was saved, but email notification failed", emailError);
+    }
 
     return NextResponse.json({ ok: true });
   } catch (error) {
