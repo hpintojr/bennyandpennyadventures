@@ -1,3 +1,4 @@
+import Mailjet from "node-mailjet";
 import { NextResponse } from "next/server";
 
 const contactEmail = process.env.CONTACT_EMAIL || process.env.NEXT_PUBLIC_CONTACT_EMAIL || "hello@bennyandpenny.com";
@@ -19,6 +20,14 @@ function escapeHtml(value: string) {
     .replaceAll("'", "&#039;");
 }
 
+function getMailjetClient() {
+  if (!mailjetApiKey || !mailjetSecretKey) {
+    throw new Error("Mailjet is not configured yet. Please add MAILJET_API_KEY and MAILJET_SECRET_KEY in Vercel, then redeploy.");
+  }
+
+  return Mailjet.apiConnect(mailjetApiKey, mailjetSecretKey);
+}
+
 async function sendContactNotification({
   name,
   email,
@@ -30,11 +39,6 @@ async function sendContactNotification({
   inquiryType: string;
   message: string;
 }) {
-  if (!mailjetApiKey || !mailjetSecretKey) {
-    throw new Error("Mailjet is not configured yet. Please add MAILJET_API_KEY and MAILJET_SECRET_KEY in Vercel, then redeploy.");
-  }
-
-  const auth = Buffer.from(`${mailjetApiKey}:${mailjetSecretKey}`).toString("base64");
   const submittedAt = new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" });
 
   const textBody = [
@@ -60,13 +64,8 @@ async function sendContactNotification({
     <p>${escapeHtml(message).replaceAll("\n", "<br />")}</p>
   `;
 
-  const response = await fetch("https://api.mailjet.com/v3.1/send", {
-    method: "POST",
-    headers: {
-      Authorization: `Basic ${auth}`,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
+  try {
+    const result = await getMailjetClient().post("send", { version: "v3.1" }).request({
       Messages: [
         {
           From: {
@@ -88,36 +87,32 @@ async function sendContactNotification({
           HTMLPart: htmlBody
         }
       ]
-    })
-  });
-
-  const resultText = await response.text();
-
-  if (!response.ok) {
-    console.error("Mailjet contact notification failed", {
-      status: response.status,
-      statusText: response.statusText,
-      fromEmail,
-      contactEmail,
-      resultText
     });
 
-    if (resultText.toLowerCase().includes("sender") || resultText.toLowerCase().includes("from")) {
+    console.log("Mailjet contact notification sent", {
+      status: result.response.status,
+      fromEmail,
+      contactEmail
+    });
+  } catch (error) {
+    console.error("Mailjet contact notification failed", {
+      fromEmail,
+      contactEmail,
+      error
+    });
+
+    const errorMessage = error instanceof Error ? error.message : "Unknown Mailjet error";
+
+    if (errorMessage.toLowerCase().includes("sender") || errorMessage.toLowerCase().includes("from")) {
       throw new Error("Mailjet rejected the sender email. Verify CONTACT_FROM_EMAIL in Mailjet and Vercel, then redeploy.");
     }
 
-    if (response.status === 401 || response.status === 403) {
+    if (errorMessage.includes("401") || errorMessage.includes("403") || errorMessage.toLowerCase().includes("unauthorized") || errorMessage.toLowerCase().includes("forbidden")) {
       throw new Error("Mailjet rejected the API credentials. Check MAILJET_API_KEY and MAILJET_SECRET_KEY in Vercel, then redeploy.");
     }
 
-    throw new Error("Mailjet could not send the message. Check the Vercel function logs for the exact Mailjet response.");
+    throw new Error(`Mailjet could not send the message: ${errorMessage}`);
   }
-
-  console.log("Mailjet contact notification sent", {
-    status: response.status,
-    fromEmail,
-    contactEmail
-  });
 }
 
 export async function POST(request: Request) {
