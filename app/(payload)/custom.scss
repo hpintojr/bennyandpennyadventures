@@ -13,12 +13,8 @@
   --theme-elevation-800: #2f2317;
   --theme-elevation-900: #1d150e;
   --theme-elevation-1000: #100c08;
-
   --theme-text: #173f43;
   --theme-input-bg: #ffffff;
-  --theme-success-500: #2e7d32;
-  --theme-error-500: #b42318;
-  --theme-warning-500: #b7791f;
 }
 
 html[data-theme='light'],
@@ -27,16 +23,35 @@ html[data-theme='dark'] {
   --theme-text: #173f43;
 }
 
-body {
-  background: #fff8ed !important;
-  color: #173f43 !important;
-}
-
-.payload-admin-bar,
+body,
 .template-default,
 .template-login,
 .template-create-first-user {
   background: #fff8ed !important;
+  color: #173f43 !important;
+}
+
+.template-default main,
+.template-default .view-container,
+.template-default .payload__main,
+.template-default .gutter--left,
+.template-default .collection-list,
+.template-default .collection-list__wrap,
+.template-default .list-controls,
+.template-default .table,
+.template-default table,
+.template-default thead,
+.template-default tbody,
+.template-default tr,
+.template-default td,
+.template-default th,
+.template-default .cell,
+.template-default .row,
+.template-default .card,
+.template-default .doc-controls,
+.template-default .document-fields,
+.template-default .dashboard,
+.template-default .dashboard__wrap {
   color: #173f43 !important;
 }
 
@@ -52,7 +67,17 @@ label,
 .create-first-user__label,
 .auth-fields label,
 .checkbox-input label,
-.select-input label {
+.select-input label,
+.table th,
+.table td,
+table th,
+table td,
+.cell,
+.cell a,
+.list-header,
+.list-header *,
+.collection-list *,
+.dashboard * {
   color: #173f43 !important;
 }
 
@@ -91,19 +116,10 @@ button[type='submit']:hover,
 .nav,
 .nav__wrap,
 .app-header,
-.collection-list,
-.dashboard,
-.doc-header,
-.list-header {
-  color: #173f43 !important;
-}
-
 .nav a,
 .nav button,
 .breadcrumbs,
-.breadcrumbs a,
-.collection-list a,
-.dashboard a {
+.breadcrumbs a {
   color: #173f43 !important;
 }
 
@@ -111,7 +127,9 @@ button[type='submit']:hover,
 .doc-controls,
 .document-fields,
 .collection-list__wrap,
-.dashboard__wrap {
-  background: rgba(255, 255, 255, 0.82) !important;
+.dashboard__wrap,
+.table,
+table {
+  background: rgba(255, 255, 255, 0.86) !important;
   border-color: #eed8b7 !important;
 }
