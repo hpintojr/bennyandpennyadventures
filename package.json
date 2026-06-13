@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "payload": "payload"
+    "payload": "payload",
+    "payload:push": "payload db:push"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "^3.0.0",
