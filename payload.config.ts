@@ -13,6 +13,17 @@ import { SupportMessages } from "./collections/SupportMessages.ts";
 import { SupportTickets } from "./collections/SupportTickets.ts";
 import { Users } from "./collections/Users.ts";
 
+function requiredEnv(name: string) {
+  const value = process.env[name];
+  if (!value) {
+    throw new Error(`${name} is required for Payload CMS.`);
+  }
+  return value;
+}
+
+const databaseUri = requiredEnv("DATABASE_URI");
+const payloadSecret = requiredEnv("PAYLOAD_SECRET");
+
 export default buildConfig({
   admin: {
     user: Users.slug
@@ -33,10 +44,10 @@ export default buildConfig({
   ],
   db: postgresAdapter({
     pool: {
-      connectionString: process.env.DATABASE_URI
+      connectionString: databaseUri
     }
   }),
-  secret: process.env.PAYLOAD_SECRET || "",
+  secret: payloadSecret,
   serverURL: process.env.PAYLOAD_PUBLIC_SERVER_URL || process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000",
   typescript: {
     outputFile: "payload-types.ts"
