@@ -1,6 +1,6 @@
 export type BookFormat = {
-  label: "PDF / EPUB" | "Paperback" | "Hardcover";
-  shortLabel: "Digital" | "Paperback" | "Hardcover";
+  label: "PDF / EPUB" | "Audiobook" | "Paperback" | "Hardcover";
+  shortLabel: "Digital" | "Audio" | "Paperback" | "Hardcover";
   price: number;
   description: string;
 };
@@ -19,6 +19,7 @@ export type Book = {
   longDescription: string;
   pdfPath: string;
   epubPath: string;
+  audioPath: string;
   stripeLookupKey: string;
 };
 
@@ -28,6 +29,12 @@ export const bookFormats: BookFormat[] = [
     shortLabel: "Digital",
     price: 15.99,
     description: "Instant digital download. Connect to Cloudflare R2 signed delivery later."
+  },
+  {
+    label: "Audiobook",
+    shortLabel: "Audio",
+    price: 21.99,
+    description: "Narrated audio edition. Store privately in Cloudflare R2 and deliver with signed access links."
   },
   {
     label: "Paperback",
@@ -58,6 +65,7 @@ export const books: Book[] = [
     longDescription: "Benny learns what a home infusion is and discovers that getting medicine at home can be cozy, calm, and even a little fun. Written by a registered nurse and mom, this gentle story turns an unfamiliar experience into a brave little adventure — helping your child feel informed and reassured.",
     pdfPath: "/downloads/book-1.pdf",
     epubPath: "/downloads/book-1.epub",
+    audioPath: "/downloads/book-1-audiobook.mp3",
     stripeLookupKey: "book_1_digital"
   },
   {
@@ -74,6 +82,7 @@ export const books: Book[] = [
     longDescription: "Penny meets her port and learns how this tiny helper under the skin makes getting medicine quick and brave-easy. This story helps children understand ports with soft language, friendly visuals, and a steady sense of courage.",
     pdfPath: "/downloads/book-2.pdf",
     epubPath: "/downloads/book-2.epub",
+    audioPath: "/downloads/book-2-audiobook.mp3",
     stripeLookupKey: "book_2_digital"
   },
   {
@@ -90,6 +99,7 @@ export const books: Book[] = [
     longDescription: "Benny gets a PICC line and finds out how this special long line helps doctors care for him — with no big pokes needed. The book gently explains what a PICC line is and why it can help.",
     pdfPath: "/downloads/book-3.pdf",
     epubPath: "/downloads/book-3.epub",
+    audioPath: "/downloads/book-3-audiobook.mp3",
     stripeLookupKey: "book_3_digital"
   },
   {
@@ -106,6 +116,7 @@ export const books: Book[] = [
     longDescription: "Benny and Penny learn about special lines like Hickman, Broviac, tunneled, and central lines in a gentle, kid-friendly way. The adventure gives parents simple language for a complicated medical topic.",
     pdfPath: "/downloads/book-4.pdf",
     epubPath: "/downloads/book-4.epub",
+    audioPath: "/downloads/book-4-audiobook.mp3",
     stripeLookupKey: "book_4_digital"
   },
   {
@@ -122,6 +133,7 @@ export const books: Book[] = [
     longDescription: "A brave little guide to the loud-but-safe machine, staying still, and knowing what to expect during an MRI. This story helps children prepare with less fear and more confidence.",
     pdfPath: "/downloads/book-5.pdf",
     epubPath: "/downloads/book-5.epub",
+    audioPath: "/downloads/book-5-audiobook.mp3",
     stripeLookupKey: "book_5_digital"
   },
   {
@@ -138,6 +150,7 @@ export const books: Book[] = [
     longDescription: "A comforting story about overnight hospital stays, what to pack, who helps, and how home can still feel close. Benny and Penny show children that a hospital sleepover can feel safer when they know what is coming.",
     pdfPath: "/downloads/book-6.pdf",
     epubPath: "/downloads/book-6.epub",
+    audioPath: "/downloads/book-6-audiobook.mp3",
     stripeLookupKey: "book_6_digital"
   },
   {
@@ -154,6 +167,7 @@ export const books: Book[] = [
     longDescription: "Taking the scary out of sirens, lights, stretchers, and the helpers who ride along to keep kids safe. This adventure frames an ambulance ride as support, speed, and care.",
     pdfPath: "/downloads/book-7.pdf",
     epubPath: "/downloads/book-7.epub",
+    audioPath: "/downloads/book-7-audiobook.mp3",
     stripeLookupKey: "book_7_digital"
   },
   {
@@ -170,6 +184,7 @@ export const books: Book[] = [
     longDescription: "A gentle walk through special sleep, the people who help, and waking up brave after surgery. Benny and Penny help children understand the steps without making the day feel too big.",
     pdfPath: "/downloads/book-8.pdf",
     epubPath: "/downloads/book-8.epub",
+    audioPath: "/downloads/book-8-audiobook.mp3",
     stripeLookupKey: "book_8_digital"
   },
   {
@@ -186,6 +201,7 @@ export const books: Book[] = [
     longDescription: "Simple tips and a brave little story for calmer blood draws, deep breaths, and proud moments after. This adventure helps children know what a lab draw is and how they can get through it.",
     pdfPath: "/downloads/book-9.pdf",
     epubPath: "/downloads/book-9.epub",
+    audioPath: "/downloads/book-9-audiobook.mp3",
     stripeLookupKey: "book_9_digital"
   }
 ];
