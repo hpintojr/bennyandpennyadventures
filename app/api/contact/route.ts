@@ -1,5 +1,7 @@
+import config from "@payload-config";
 import Mailjet from "node-mailjet";
 import { NextResponse } from "next/server";
+import { getPayload } from "payload";
 
 const contactEmail = process.env.CONTACT_EMAIL || process.env.NEXT_PUBLIC_CONTACT_EMAIL || "hello@bennyandpenny.com";
 const fromEmail = process.env.CONTACT_FROM_EMAIL || contactEmail;
@@ -26,6 +28,30 @@ function getMailjetClient() {
   }
 
   return Mailjet.apiConnect(mailjetApiKey, mailjetSecretKey);
+}
+
+async function saveContactSubmission({
+  name,
+  email,
+  inquiryType,
+  message
+}: {
+  name: string;
+  email: string;
+  inquiryType: string;
+  message: string;
+}) {
+  const payload = await getPayload({ config });
+  await payload.create({
+    collection: "contact-submissions",
+    data: {
+      name,
+      email,
+      inquiryType,
+      message,
+      status: "new"
+    }
+  });
 }
 
 async function sendContactNotification({
@@ -132,7 +158,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Please enter a valid email address." }, { status: 400 });
     }
 
-    // TODO: When Payload CMS is connected, save this submission to the ContactSubmissions collection.
+    await saveContactSubmission({ name, email, inquiryType, message });
     await sendContactNotification({ name, email, inquiryType, message });
 
     return NextResponse.json({ ok: true });
