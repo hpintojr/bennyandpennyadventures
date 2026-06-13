@@ -1,135 +1,36 @@
+/* Keep Payload's default admin layout intact. Only improve auth form readability. */
 :root {
-  --theme-elevation-0: #fff8ed;
-  --theme-elevation-50: #fff3df;
-  --theme-elevation-100: #f8e8ce;
-  --theme-elevation-150: #eed8b7;
-  --theme-elevation-200: #e5caa3;
-  --theme-elevation-250: #d8b98d;
-  --theme-elevation-300: #c9a779;
-  --theme-elevation-400: #a88761;
-  --theme-elevation-500: #856748;
-  --theme-elevation-600: #654b32;
-  --theme-elevation-700: #493522;
-  --theme-elevation-800: #2f2317;
-  --theme-elevation-900: #1d150e;
-  --theme-elevation-1000: #100c08;
   --theme-text: #173f43;
   --theme-input-bg: #ffffff;
 }
 
-html[data-theme='light'],
-html[data-theme='dark'] {
-  --theme-bg: #fff8ed;
-  --theme-text: #173f43;
-}
-
-body,
-.template-default,
 .template-login,
 .template-create-first-user {
   background: #fff8ed !important;
   color: #173f43 !important;
 }
 
-.template-default main,
-.template-default .view-container,
-.template-default .payload__main,
-.template-default .gutter--left,
-.template-default .collection-list,
-.template-default .collection-list__wrap,
-.template-default .list-controls,
-.template-default .table,
-.template-default table,
-.template-default thead,
-.template-default tbody,
-.template-default tr,
-.template-default td,
-.template-default th,
-.template-default .cell,
-.template-default .row,
-.template-default .card,
-.template-default .doc-controls,
-.template-default .document-fields,
-.template-default .dashboard,
-.template-default .dashboard__wrap {
+.template-login label,
+.template-create-first-user label,
+.template-login .field-label,
+.template-create-first-user .field-label,
+.template-login .description,
+.template-create-first-user .description {
   color: #173f43 !important;
 }
 
-label,
-.label,
-.field-label,
-.field-type__label,
-.field-description,
-.description,
-.field-error,
-.render-fields__label,
-.login__label,
-.create-first-user__label,
-.auth-fields label,
-.checkbox-input label,
-.select-input label,
-.table th,
-.table td,
-table th,
-table td,
-.cell,
-.cell a,
-.list-header,
-.list-header *,
-.collection-list *,
-.dashboard * {
-  color: #173f43 !important;
-}
-
-input,
-textarea,
-select,
-.rs__control,
-.field-type input,
-.field-type textarea,
-.field-type select {
+.template-login input,
+.template-create-first-user input,
+.template-login select,
+.template-create-first-user select {
   background: #ffffff !important;
   color: #173f43 !important;
   border-color: #d8b98d !important;
 }
 
-input::placeholder,
-textarea::placeholder {
-  color: #6b7d80 !important;
-}
-
-button[type='submit'],
-.btn--style-primary,
-.button--style-primary {
+.template-login button[type='submit'],
+.template-create-first-user button[type='submit'] {
   background: #eb6373 !important;
   border-color: #eb6373 !important;
   color: #ffffff !important;
-}
-
-button[type='submit']:hover,
-.btn--style-primary:hover,
-.button--style-primary:hover {
-  background: #d94f62 !important;
-  border-color: #d94f62 !important;
-}
-
-.nav,
-.nav__wrap,
-.app-header,
-.nav a,
-.nav button,
-.breadcrumbs,
-.breadcrumbs a {
-  color: #173f43 !important;
-}
-
-.card,
-.doc-controls,
-.document-fields,
-.collection-list__wrap,
-.dashboard__wrap,
-.table,
-table {
-  background: rgba(255, 255, 255, 0.86) !important;
-  border-color: #eed8b7 !important;
 }
