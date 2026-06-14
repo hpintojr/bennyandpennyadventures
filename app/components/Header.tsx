@@ -60,9 +60,9 @@ export default function Header() {
           Join Our Journey ♥
         </Link>
 
-        <Link href="/cart" aria-label="Cart" className="absolute right-[60px] top-7 inline-flex text-teal transition hover:text-coral lg:static lg:right-auto lg:top-auto">
+        <Link href="/cart" aria-label="Cart" className="absolute right-[60px] top-7 inline-flex h-10 w-10 items-center justify-center text-teal transition hover:text-coral lg:relative lg:right-auto lg:top-auto lg:h-11 lg:w-11">
           <CartIcon />
-          {count > 0 && <span className="absolute -right-3 -top-2 grid min-h-[18px] min-w-[18px] place-items-center rounded-full bg-coral px-1 text-[11px] font-extrabold leading-none text-white">{count}</span>}
+          {count > 0 && <span className="absolute right-0 top-0 grid min-h-[18px] min-w-[18px] translate-x-1/3 -translate-y-1/3 place-items-center rounded-full bg-coral px-1 text-[11px] font-extrabold leading-none text-white">{count}</span>}
         </Link>
 
         <button
