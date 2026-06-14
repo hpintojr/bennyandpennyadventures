@@ -192,7 +192,7 @@ function BeforeDashboard() {
           </div>
         </article>
 
-        <aside className="bp-dashboard__card bp-dashboard__card--region" style={compactRegionCardStyle}>
+        <article className="bp-dashboard__card bp-dashboard__card--region" style={compactRegionCardStyle}>
           <h2 style={compactRegionTitleStyle}>Sales by Region</h2>
           <p style={compactRegionTextStyle}>Preview only until Stripe order data is live.</p>
           <div className="bp-dashboard__donut" aria-hidden="true" style={compactDonutStyle}>
@@ -203,7 +203,7 @@ function BeforeDashboard() {
             <span><i /> CA</span>
             <span><i /> UK</span>
           </div>
-        </aside>
+        </article>
       </div>
 
       <div className="bp-dashboard__bottomGrid">
