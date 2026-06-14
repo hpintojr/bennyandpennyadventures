@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import type Stripe from "stripe";
 import { buildOrderMetadata, cartRequiresShipping, validateCheckoutItems } from "@/lib/stripeCheckout";
 import { getSiteUrl, getStripe } from "@/lib/stripe";
 
@@ -8,7 +9,7 @@ type CheckoutRequestBody = {
   items?: unknown;
 };
 
-const shippingCountries = ["US"] as const;
+const shippingCountries: Stripe.Checkout.SessionCreateParams.ShippingAddressCollection.AllowedCountry[] = ["US"];
 
 export async function POST(request: Request) {
   let body: CheckoutRequestBody;
