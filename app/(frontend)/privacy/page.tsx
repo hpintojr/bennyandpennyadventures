@@ -12,7 +12,7 @@ export default function PrivacyPage() {
   return (
     <SiteShell>
       <article className="page-wrap max-w-3xl pb-16 pt-6">
-        <p className="text-sm font-bold uppercase tracking-[0.2em] text-coral">Last updated: June 13, 2026</p>
+        <p className="text-sm font-bold uppercase tracking-[0.2em] text-coral">Last updated: June 14, 2026</p>
         <h1 className="mt-3 font-serif text-4xl font-semibold text-teal">Privacy Policy</h1>
 
         <p className="mt-4 text-ink">
@@ -27,8 +27,10 @@ export default function PrivacyPage() {
         <p className="mt-2 text-ink">We may collect information you choose to provide, including:</p>
         <ul className="mt-3 list-disc space-y-2 pl-6 text-ink">
           <li>Your name and email address when you submit the contact form.</li>
+          <li>Your phone number if you choose to provide it.</li>
           <li>Your inquiry type and message when you contact us.</li>
           <li>Your email address when you join our newsletter or email list.</li>
+          <li>Opt-in consent details, such as checkbox selections, consent text shown, timestamp, IP address, and browser/user-agent information.</li>
           <li>Purchase and order information when you buy digital, audio, or print products.</li>
           <li>Download or access information for PDF, EPUB, audiobook, or audio products, such as download count, access status, file type, and expiration details.</li>
         </ul>
@@ -39,6 +41,7 @@ export default function PrivacyPage() {
           <li>Respond to questions and contact form submissions.</li>
           <li>Send website inquiry notifications to our business email.</li>
           <li>Send newsletter updates, book release announcements, printables, and related resources when you sign up.</li>
+          <li>Send SMS messages only when you affirmatively opt in, such as messages about your inquiry, orders, downloads, support, and related updates.</li>
           <li>Process purchases and provide access to digital downloads, audiobooks, audio files, or print orders.</li>
           <li>Track download/access limits and help prevent unauthorized sharing.</li>
           <li>Improve the website, customer experience, and product offerings.</li>
@@ -47,6 +50,14 @@ export default function PrivacyPage() {
         <h2 className="mt-8 font-serif text-2xl text-teal">Contact Forms and Email Notifications</h2>
         <p className="mt-2 text-ink">
           When you submit a contact form, your submission may be sent to us by email and may also be stored in our website backend so we can review and respond. We may use service providers, such as Mailjet or another email provider, to deliver these notifications.
+        </p>
+
+        <h2 className="mt-8 font-serif text-2xl text-teal">SMS/Text Message Opt-In</h2>
+        <p className="mt-2 text-ink">
+          If you choose to opt in to SMS messages, Benny &amp; Penny&rsquo;s Adventures may send text messages about your inquiry, orders, downloads, support, and related updates. Message frequency varies. Message and data rates may apply. Reply STOP to opt out and HELP for help. Consent to receive SMS messages is not a condition of purchase.
+        </p>
+        <p className="mt-3 text-ink">
+          We do not sell your personal information. We do not share mobile opt-in data or SMS consent with third parties for their own marketing purposes.
         </p>
 
         <h2 className="mt-8 font-serif text-2xl text-teal">Newsletter and Email List</h2>
@@ -87,7 +98,7 @@ export default function PrivacyPage() {
 
         <h2 className="mt-8 font-serif text-2xl text-teal">Your Choices</h2>
         <p className="mt-2 text-ink">
-          You may contact us to request that we update, correct, or delete information you have provided, subject to legal, accounting, security, and transaction recordkeeping needs. You may unsubscribe from marketing emails at any time.
+          You may contact us to request that we update, correct, or delete information you have provided, subject to legal, accounting, security, and transaction recordkeeping needs. You may unsubscribe from marketing emails at any time. You may opt out of SMS messages by replying STOP.
         </p>
 
         <h2 className="mt-8 font-serif text-2xl text-teal">Children&rsquo;s Privacy</h2>
