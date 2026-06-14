@@ -11,6 +11,7 @@ import "./admin-polish-overrides.scss";
 import "./admin-final-fixes.scss";
 import "./login-brand.scss";
 import "./admin-toggler-cleanup.scss";
+import "./admin-orders-cleanup.scss";
 
 type Args = {
   children: React.ReactNode;
