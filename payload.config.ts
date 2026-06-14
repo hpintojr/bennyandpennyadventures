@@ -3,11 +3,13 @@ import { buildConfig } from "payload";
 import { AccessGrants } from "./collections/AccessGrants.ts";
 import { AuditLogs } from "./collections/AuditLogs.ts";
 import { Books } from "./collections/Books.ts";
+import { ConsentLogs } from "./collections/ConsentLogs.ts";
 import { ContactSubmissions } from "./collections/ContactSubmissions.ts";
 import { CustomerAddresses } from "./collections/CustomerAddresses.ts";
 import { Downloads } from "./collections/Downloads.ts";
 import { OrderItems } from "./collections/OrderItems.ts";
 import { Orders } from "./collections/Orders.ts";
+import { PrivacyRequests } from "./collections/PrivacyRequests.ts";
 import { Subscribers } from "./collections/Subscribers.ts";
 import { SupportMessages } from "./collections/SupportMessages.ts";
 import { SupportTickets } from "./collections/SupportTickets.ts";
@@ -41,6 +43,8 @@ export default buildConfig({
     Orders,
     Subscribers,
     SupportTickets,
+    PrivacyRequests,
+    ConsentLogs,
     Users,
     CustomerAddresses,
     ContactSubmissions,
