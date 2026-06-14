@@ -21,7 +21,8 @@ const serviceLogos = {
   neon: "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/neon-tech.svg",
   stripe: "https://cdn.jsdelivr.net/gh/selfhst/icons/svg/stripe.svg",
   r2: "https://cdn.jsdelivr.net/gh/selfhst/icons/svg/cloudflare-zero-trust.svg",
-  mailjet: "https://cdn.jsdelivr.net/gh/selfhst/icons/svg/mailjet.svg"
+  mailjet: "https://cdn.jsdelivr.net/gh/selfhst/icons/svg/mailjet.svg",
+  lulu: "https://cdn.brandfetch.io/idICJd57ED/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1778052093073"
 };
 
 function getString(value: unknown, fallback = "") {
@@ -200,7 +201,8 @@ async function getDashboardData() {
     { label: "Neon Database", detail: orders.ok && users.ok ? "CONNECTED/ACTIVE" : "CHECK CONNECTION", logoUrl: serviceLogos.neon, active: orders.ok && users.ok },
     { label: "Stripe API", detail: hasStripeRecords ? "CONNECTED/ACTIVE" : "READY TO VERIFY", logoUrl: serviceLogos.stripe, active: hasStripeRecords },
     { label: "R2 Fulfillment", detail: downloads.ok ? "CONNECTED/ACTIVE" : "CHECK FULFILLMENT", logoUrl: serviceLogos.r2, active: downloads.ok },
-    { label: "Mailjet API", detail: subscribers.ok ? "CONNECTED/ACTIVE" : "CHECK EMAIL", logoUrl: serviceLogos.mailjet, active: subscribers.ok }
+    { label: "Mailjet API", detail: subscribers.ok ? "CONNECTED/ACTIVE" : "CHECK EMAIL", logoUrl: serviceLogos.mailjet, active: subscribers.ok },
+    { label: "LuLu Press API", detail: orderItems.ok ? "CONNECTED/ACTIVE" : "READY TO VERIFY", logoUrl: serviceLogos.lulu, active: orderItems.ok }
   ];
 
   return {
