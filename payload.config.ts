@@ -35,15 +35,15 @@ export default buildConfig({
     }
   },
   collections: [
-    Users,
     Books,
     Orders,
     Subscribers,
+    SupportTickets,
+    Users,
     CustomerAddresses,
     ContactSubmissions,
     OrderItems,
     Downloads,
-    SupportTickets,
     SupportMessages,
     AccessGrants,
     AuditLogs
