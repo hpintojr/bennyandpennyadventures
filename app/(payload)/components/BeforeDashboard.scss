@@ -11,8 +11,8 @@
 
 .bp-dashboard__topbar {
   align-items: center;
-  background: linear-gradient(90deg, rgba(196, 224, 212, 0.92), rgba(255, 248, 232, 0.96));
-  border: 1px solid rgba(216, 185, 141, 0.68);
+  background: linear-gradient(90deg, rgba(169, 212, 197, 0.92), rgba(247, 252, 250, 0.96));
+  border: 1px solid rgba(6, 87, 102, 0.16);
   border-radius: 16px;
   box-shadow: 0 16px 36px rgba(4, 63, 73, 0.1);
   display: flex;
@@ -62,8 +62,8 @@
 
 .bp-dashboard__topActions span {
   align-items: center;
-  background: #fffdf8;
-  border: 1px solid rgba(216, 185, 141, 0.72);
+  background: #fbfffc;
+  border: 1px solid rgba(6, 87, 102, 0.18);
   border-radius: 999px;
   box-shadow: 0 8px 18px rgba(4, 63, 73, 0.08);
   color: #043f49;
@@ -84,8 +84,8 @@
 
 .bp-dashboard__stat,
 .bp-dashboard__card {
-  background: #fffefa;
-  border: 1px solid rgba(216, 185, 141, 0.62);
+  background: #fbfffc;
+  border: 1px solid rgba(6, 87, 102, 0.14);
   border-radius: 14px;
   box-shadow: 0 10px 24px rgba(4, 63, 73, 0.08);
 }
@@ -98,7 +98,7 @@
 }
 
 .bp-dashboard__stat::after {
-  background: linear-gradient(90deg, rgba(196, 224, 212, 0.32), rgba(235, 99, 115, 0.08));
+  background: linear-gradient(90deg, rgba(169, 212, 197, 0.42), rgba(6, 87, 102, 0.07));
   border-radius: 999px;
   bottom: -2rem;
   content: '';
@@ -110,7 +110,7 @@
 
 .bp-dashboard__statIcon {
   align-items: center;
-  background: rgba(196, 224, 212, 0.78);
+  background: rgba(207, 234, 224, 0.92);
   border-radius: 999px;
   color: #065766;
   display: inline-flex;
@@ -201,7 +201,7 @@
 
 .bp-dashboard__cardHeader select {
   background: #ffffff;
-  border: 1px solid #d8b98d;
+  border: 1px solid rgba(6, 87, 102, 0.24);
   border-radius: 10px;
   color: #043f49;
   font-weight: 900;
@@ -211,8 +211,8 @@
 
 .bp-dashboard__chart {
   align-items: end;
-  background: linear-gradient(180deg, #fffaf1, #fff0d8);
-  border: 1px solid rgba(216, 185, 141, 0.55);
+  background: linear-gradient(180deg, #f7fcfa, #e6f5ef);
+  border: 1px solid rgba(6, 87, 102, 0.14);
   border-radius: 12px;
   display: grid;
   gap: 0.65rem;
@@ -247,6 +247,7 @@
 
 .bp-dashboard__card--region {
   align-items: center;
+  background: linear-gradient(180deg, #e6f5ef, #cfeae0);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -266,7 +267,7 @@
 }
 
 .bp-dashboard__donut::after {
-  background: #fffefa;
+  background: #fbfffc;
   border-radius: 50%;
   content: '';
   height: 82px;
@@ -324,7 +325,7 @@
 
 .bp-dashboard th,
 .bp-dashboard td {
-  border-bottom: 1px solid rgba(216, 185, 141, 0.55);
+  border-bottom: 1px solid rgba(6, 87, 102, 0.12);
   color: #043f49;
   font-size: 0.88rem;
   padding: 0.7rem 0.45rem;
@@ -333,12 +334,12 @@
 }
 
 .bp-dashboard th {
-  background: rgba(196, 224, 212, 0.6);
+  background: rgba(196, 224, 212, 0.78);
   font-weight: 950;
 }
 
 .bp-dashboard tr:nth-child(even) td {
-  background: #fff7ea;
+  background: #edf8f4;
 }
 
 .bp-dashboard__pill {
@@ -364,7 +365,7 @@
 }
 
 .bp-dashboard__quickLinks a {
-  border-bottom: 1px solid rgba(216, 185, 141, 0.55);
+  border-bottom: 1px solid rgba(6, 87, 102, 0.12);
   padding: 0.7rem 0;
 }
 
@@ -381,8 +382,8 @@
 
 .bp-dashboard__statusList div {
   align-items: center;
-  background: #fff7ea;
-  border: 1px solid rgba(216, 185, 141, 0.45);
+  background: #edf8f4;
+  border: 1px solid rgba(6, 87, 102, 0.12);
   border-radius: 12px;
   display: flex;
   justify-content: space-between;
