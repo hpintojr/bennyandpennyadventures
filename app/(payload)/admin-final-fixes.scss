@@ -111,17 +111,28 @@
 .template-default nav[aria-label='Breadcrumb'],
 .template-default nav[aria-label='Breadcrumbs'],
 .template-default [class*='breadcrumb'],
-.template-default [class*='Breadcrumb'] {
+.template-default [class*='Breadcrumb'],
+.template-default [aria-label='Benny & Penny Admin'] {
   display: none !important;
 }
 
-/* Keep app/header containers from clipping custom content elsewhere. */
+/* Some Payload header layouts render the icon and slash outside the breadcrumb class.
+   Hide the first standalone crumb row above the custom dashboard content. */
 .template-default .app-header,
-.template-default header,
 .template-default .app-header > *,
-.template-default header > *,
-.template-default .app-header * {
-  overflow: visible !important;
+.template-default header:has([aria-label='Benny & Penny Admin']),
+.template-default header:has([aria-label='Benny & Penny Admin']) > * {
+  display: none !important;
+  height: 0 !important;
+  margin: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+}
+
+/* Keep regular non-Payload custom headers visible. */
+.bp-dashboard__topbar {
+  display: grid !important;
 }
 
 /* Payload checkbox cleanup: Payload renders a real input plus a visual icon span.
