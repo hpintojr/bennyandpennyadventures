@@ -12,7 +12,7 @@ export default function TermsPage() {
   return (
     <SiteShell>
       <article className="page-wrap max-w-3xl pb-16 pt-6">
-        <p className="text-sm font-bold uppercase tracking-[0.2em] text-coral">Last updated: June 13, 2026</p>
+        <p className="text-sm font-bold uppercase tracking-[0.2em] text-coral">Last updated: June 14, 2026</p>
         <h1 className="mt-3 font-serif text-4xl font-semibold text-teal">Terms of Use</h1>
 
         <p className="mt-4 text-ink">
@@ -42,9 +42,12 @@ export default function TermsPage() {
           Print books may be fulfilled through print-on-demand partners. Production and shipping times may vary.
         </p>
 
-        <h2 className="mt-8 font-serif text-2xl text-teal">Email and Contact Forms</h2>
+        <h2 className="mt-8 font-serif text-2xl text-teal">Email, Contact Forms, and SMS Messages</h2>
         <p className="mt-2 text-ink">
           If you join our email list, you may receive updates, book announcements, printables, and related resources. You may unsubscribe from marketing emails at any time. Contact forms should be used only for genuine inquiries.
+        </p>
+        <p className="mt-3 text-ink">
+          If you opt in to SMS messages, you agree to receive text messages from Benny &amp; Penny&rsquo;s Adventures about your inquiry, orders, downloads, support, and related updates. Message frequency varies. Message and data rates may apply. Reply STOP to opt out and HELP for help. Consent to receive SMS messages is not a condition of purchase.
         </p>
 
         <h2 className="mt-8 font-serif text-2xl text-teal">Intellectual Property</h2>
