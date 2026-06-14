@@ -13,20 +13,25 @@ import { SupportMessages } from "./collections/SupportMessages.ts";
 import { SupportTickets } from "./collections/SupportTickets.ts";
 import { Users } from "./collections/Users.ts";
 
-function requiredEnv(name: string) {
-  const value = process.env[name];
-  if (!value) {
-    throw new Error(`${name} is required for Payload CMS.`);
-  }
-  return value;
-}
+const databaseUri = process.env.DATABASE_URI;
+const payloadSecret = process.env.PAYLOAD_SECRET;
 
-const databaseUri = requiredEnv("DATABASE_URI");
-const payloadSecret = requiredEnv("PAYLOAD_SECRET");
+if (!databaseUri || !payloadSecret) {
+  throw new Error("Payload CMS environment variables are required.");
+}
 
 export default buildConfig({
   admin: {
-    user: Users.slug
+    user: Users.slug,
+    components: {
+      graphics: {
+        Icon: "/app/(payload)/graphics/Icon.tsx#Icon",
+        Logo: "/app/(payload)/graphics/Logo.tsx#Logo"
+      }
+    },
+    meta: {
+      titleSuffix: " - Benny & Penny Admin"
+    }
   },
   collections: [
     Users,
