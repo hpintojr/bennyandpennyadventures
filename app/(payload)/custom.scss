@@ -44,7 +44,7 @@ body {
   border-right: 2px solid rgba(6, 87, 102, 0.18) !important;
   color: var(--bp-teal-deep) !important;
   min-height: 100vh !important;
-  padding-bottom: 15rem !important;
+  padding-bottom: 5.25rem !important;
 }
 
 .template-default .nav::before,
@@ -64,23 +64,8 @@ body {
 
 .template-default .nav::after,
 .template-default aside::after {
-  content: '🧸';
-  align-items: center;
-  background: rgba(251, 255, 252, 0.62) url('/admin/bear-sidebar-placeholder.png') center / contain no-repeat;
-  border: 1px dashed rgba(4, 63, 73, 0.24);
-  border-radius: 18px;
-  bottom: 4.85rem;
-  box-shadow: 0 12px 28px rgba(4, 63, 73, 0.1);
-  color: rgba(4, 63, 73, 0.34);
-  display: flex;
-  font-size: 3.5rem;
-  height: 108px;
-  justify-content: center;
-  left: 0.9rem;
-  pointer-events: none;
-  position: fixed;
-  width: 13.6rem;
-  z-index: 30;
+  content: none !important;
+  display: none !important;
 }
 
 .bp-admin-nav-extra {
