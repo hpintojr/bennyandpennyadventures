@@ -16,6 +16,7 @@ type PayloadDoc = {
 
 type PayloadFindResult = {
   docs?: PayloadDoc[];
+  totalDocs?: number;
 };
 
 type FulfillmentLineItem = {
@@ -72,9 +73,8 @@ function getCustomerEmail(session: Stripe.Checkout.Session): string | null {
   return session.customer_details?.email || session.customer_email || null;
 }
 
-function getOrderNumber(session: Stripe.Checkout.Session) {
-  const suffix = session.id.slice(-8).toUpperCase();
-  return `BP-${session.created}-${suffix}`;
+function getOrderPrefix() {
+  return String(new Date().getFullYear()).slice(-2);
 }
 
 function splitName(fullName: string | null | undefined) {
@@ -127,6 +127,26 @@ async function findExistingOrder(payload: PayloadClient, sessionId: string): Pro
   })) as PayloadFindResult;
 
   return result.docs?.[0] || null;
+}
+
+async function getNextOrderNumber(payload: PayloadClient) {
+  const prefix = getOrderPrefix();
+  const result = (await payload.find({
+    collection: "orders",
+    limit: 1000,
+    sort: "-createdAt"
+  })) as PayloadFindResult;
+
+  const sequencePattern = new RegExp(`^${prefix}-(\\d+)$`);
+  const maxSequence = (result.docs || []).reduce((max, order) => {
+    const orderNumber = getString(order.orderNumber);
+    const match = orderNumber?.match(sequencePattern);
+    if (!match) return max;
+    const parsed = Number(match[1]);
+    return Number.isFinite(parsed) ? Math.max(max, parsed) : max;
+  }, 0);
+
+  return `${prefix}-${String(maxSequence + 1).padStart(4, "0")}`;
 }
 
 async function findOrCreateCustomer(payload: PayloadClient, session: Stripe.Checkout.Session): Promise<PayloadDoc | null> {
@@ -282,12 +302,11 @@ async function createOrderItem(
 export async function fulfillCheckoutSession(session: Stripe.Checkout.Session): Promise<FulfillmentSummary> {
   const payload = await getPayloadClient();
   const existingOrder = await findExistingOrder(payload, session.id);
-  const orderNumber = getOrderNumber(session);
 
   if (existingOrder) {
     return {
       orderId: existingOrder.id,
-      orderNumber: getString(existingOrder.orderNumber) || orderNumber,
+      orderNumber: getString(existingOrder.orderNumber) || String(existingOrder.id),
       created: false,
       orderItemsCreated: 0,
       downloadsCreated: 0,
@@ -300,6 +319,7 @@ export async function fulfillCheckoutSession(session: Stripe.Checkout.Session): 
     throw new Error(`Stripe session ${session.id} does not include a customer email.`);
   }
 
+  const orderNumber = await getNextOrderNumber(payload);
   const items = await getFulfillmentItems(session.id);
   const customer = await findOrCreateCustomer(payload, session);
   const order = (await payload.create({
