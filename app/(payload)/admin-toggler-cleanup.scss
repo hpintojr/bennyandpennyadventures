@@ -47,28 +47,23 @@
   box-shadow: 0 0 0 2px rgba(6, 87, 102, 0.24) !important;
 }
 
-/* Payload has a raw .hamburger rule that adds background-color and box-shadow.
-   Force those off directly at the same layer we see in devtools. */
+.hamburger,
+.hamburger:hover,
+.nav-toggler .hamburger,
+.nav-toggler .hamburger:hover,
+.template-default__nav-toggler .hamburger,
+.template-default__nav-toggler .hamburger:hover,
 .template-default .hamburger,
-.template-default button.nav-toggler .hamburger,
-.template-default button.template-default__nav-toggler .hamburger,
+.template-default .hamburger:hover,
 .template-default .nav-toggler .hamburger,
-.template-default .template-default__nav-toggler .hamburger {
+.template-default .nav-toggler .hamburger:hover,
+.template-default .template-default__nav-toggler .hamburger,
+.template-default .template-default__nav-toggler .hamburger:hover {
   background: transparent !important;
   background-color: transparent !important;
   border: 0 !important;
   box-shadow: none !important;
   outline: 0 !important;
-}
-
-.template-default .hamburger:hover,
-.template-default button.nav-toggler .hamburger:hover,
-.template-default button.template-default__nav-toggler .hamburger:hover,
-.template-default .nav-toggler .hamburger:hover,
-.template-default .template-default__nav-toggler .hamburger:hover {
-  background: transparent !important;
-  background-color: transparent !important;
-  box-shadow: none !important;
 }
 
 .template-default .nav-toggler .hamburger,
