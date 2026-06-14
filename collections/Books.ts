@@ -7,7 +7,6 @@ export const Books: CollectionConfig = {
     plural: "Product Catalog"
   },
   admin: {
-    group: "Product Catalog",
     useAsTitle: "title",
     description: "Manage Benny & Penny books, product page content, formats, pricing, Stripe IDs, and private R2 file keys.",
     defaultColumns: ["number", "title", "status", "priceDigital", "priceAudiobook", "pricePaperback", "priceHardcover"]
