@@ -50,10 +50,11 @@ body {
   content: 'Benny & Penny\A Admin Panel';
   white-space: pre-line;
   display: block;
-  padding: 1.35rem 1.15rem 1.1rem;
+  min-height: 4.4rem;
+  padding: 1.35rem 1.15rem 1.1rem 3.25rem;
   color: var(--bp-teal-deep);
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 800;
   line-height: 1.08;
   border-bottom: 2px solid rgba(6, 87, 102, 0.16);
@@ -71,13 +72,55 @@ body {
   color: rgba(4, 63, 73, 0.34);
   display: flex;
   font-size: 3.5rem;
-  height: 118px;
+  height: 108px;
   justify-content: center;
   left: 1.15rem;
   pointer-events: none;
   position: sticky;
   right: 1.15rem;
   width: calc(100% - 2.3rem);
+}
+
+.bp-admin-nav-extra {
+  padding: 0 0.75rem;
+}
+
+.bp-admin-nav-extra--top {
+  margin: 0.75rem 0 0.4rem;
+}
+
+.bp-admin-nav-extra--bottom {
+  bottom: 1rem;
+  left: 0;
+  margin-top: 1rem;
+  padding-bottom: 0.75rem;
+  position: sticky;
+  right: 0;
+}
+
+.bp-admin-nav-extra__link {
+  align-items: center;
+  background: #f7fffb !important;
+  border: 1px solid rgba(6, 87, 102, 0.14);
+  border-radius: 0.85rem;
+  box-shadow: 0 8px 18px rgba(4, 63, 73, 0.06);
+  color: var(--bp-teal-deep) !important;
+  display: flex;
+  font-size: 1rem;
+  font-weight: 950;
+  gap: 0.6rem;
+  padding: 0.72rem 0.82rem;
+  text-decoration: none !important;
+}
+
+.bp-admin-nav-extra__link:hover,
+.bp-admin-nav-extra__link--logout:hover {
+  background: var(--bp-mint) !important;
+  color: var(--bp-teal-deep) !important;
+}
+
+.bp-admin-nav-extra__link--logout {
+  background: rgba(251, 255, 252, 0.76) !important;
 }
 
 .template-default .nav a,
@@ -108,15 +151,20 @@ body {
   box-shadow: inset 4px 0 0 var(--bp-teal), 0 8px 18px rgba(4, 63, 73, 0.08) !important;
 }
 
+/* Payload's default collection wrapper is too database-like, so make it recede. */
 .template-default .nav-group__label,
 .template-default .collapsible__toggle,
 .template-default .nav-group__toggle {
-  background: rgba(6, 87, 102, 0.1) !important;
-  border: 1px solid rgba(6, 87, 102, 0.12) !important;
-  border-radius: 0.85rem !important;
-  color: var(--bp-teal-deep) !important;
-  margin: 0.8rem 0.75rem 0.45rem !important;
-  padding: 0.56rem 0.8rem !important;
+  background: transparent !important;
+  border: 0 !important;
+  color: rgba(4, 63, 73, 0.48) !important;
+  font-size: 0.76rem !important;
+  font-weight: 950 !important;
+  letter-spacing: 0.16em !important;
+  margin: 0.45rem 0.75rem 0.15rem !important;
+  min-height: 0 !important;
+  padding: 0.25rem 0.78rem !important;
+  text-transform: uppercase !important;
 }
 
 /* Keep the visual sidebar focused on the core workflow. Direct routes still work. */
@@ -156,21 +204,19 @@ body {
   display: none !important;
 }
 
+.template-default .breadcrumbs,
+.template-default .app-header {
+  color: rgba(4, 63, 73, 0.72) !important;
+  font-size: 0.92rem !important;
+  font-weight: 850 !important;
+  gap: 0.35rem !important;
+}
+
 .template-default .breadcrumbs::before,
 .template-default .app-header::before,
 .template-default header::before {
-  content: '♥';
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.5rem;
-  height: 1.5rem;
-  margin-right: 0.5rem;
-  border-radius: 999px;
-  background: var(--bp-coral);
-  color: #ffffff;
-  font-size: 0.9rem;
-  font-weight: 950;
+  content: none !important;
+  display: none !important;
 }
 
 /* Product catalog and collection list cleanup */
@@ -260,14 +306,15 @@ button,
 [type='submit'],
 .btn,
 .btn--style-primary {
-  background: var(--bp-coral) !important;
-  border: 2px solid var(--bp-coral) !important;
+  background: #dff4ee !important;
+  border: 1px solid rgba(6, 87, 102, 0.22) !important;
   border-radius: 0.72rem !important;
-  color: #ffffff !important;
+  box-shadow: none !important;
+  color: var(--bp-teal-deep) !important;
   font-family: 'Nunito', ui-sans-serif, system-ui, sans-serif !important;
-  font-size: 1.05rem !important;
+  font-size: 1rem !important;
   font-weight: 950 !important;
-  min-height: 3rem !important;
+  min-height: 2.75rem !important;
   opacity: 1 !important;
 }
 
@@ -275,17 +322,18 @@ button:hover,
 [type='submit']:hover,
 .btn:hover,
 .btn--style-primary:hover {
-  background: var(--bp-coral-deep) !important;
-  border-color: var(--bp-coral-deep) !important;
+  background: var(--bp-mint) !important;
+  border-color: rgba(6, 87, 102, 0.32) !important;
+  color: var(--bp-teal-deep) !important;
 }
 
 button:disabled,
 [disabled],
 .btn--disabled {
-  background: var(--bp-coral) !important;
-  border-color: var(--bp-coral) !important;
-  color: #ffffff !important;
-  opacity: 0.88 !important;
+  background: #dff4ee !important;
+  border-color: rgba(6, 87, 102, 0.22) !important;
+  color: var(--bp-teal-deep) !important;
+  opacity: 0.72 !important;
 }
 
 .template-default .btn--style-secondary,
@@ -295,6 +343,18 @@ button:disabled,
   border-color: rgba(6, 87, 102, 0.22) !important;
   color: var(--bp-teal-deep) !important;
   font-weight: 850 !important;
+}
+
+/* Sort/columns/filter controls should feel like controls, not emergency CTA buttons. */
+.template-default .table button,
+.template-default .list-controls button,
+.template-default button[aria-label*='Sort'],
+.template-default button[aria-label*='Columns'],
+.template-default button[aria-label*='Filters'] {
+  background: #e7f6f1 !important;
+  border-color: rgba(6, 87, 102, 0.16) !important;
+  color: var(--bp-teal-deep) !important;
+  min-height: 2.35rem !important;
 }
 
 /* Login screen */
