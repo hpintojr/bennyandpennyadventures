@@ -3,6 +3,7 @@ import type { CollectionConfig } from "payload";
 export const CustomerAddresses: CollectionConfig = {
   slug: "customer-addresses",
   admin: {
+    hidden: true,
     useAsTitle: "fullName",
     defaultColumns: ["fullName", "customer", "city", "state", "phone"]
   },
