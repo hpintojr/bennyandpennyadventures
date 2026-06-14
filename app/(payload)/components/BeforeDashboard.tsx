@@ -10,8 +10,17 @@ import "./RegionCompact.scss";
 type PayloadDoc = { id?: string | number; createdAt?: string; [key: string]: unknown };
 type PayloadListResult = { docs: PayloadDoc[]; totalDocs: number; ok: boolean };
 type RecentOrder = { id: string; href: string; customerId: string; name: string; status: string; tone: string };
-type StatusItem = { label: string; detail: string; icon: string; active: boolean };
+type StatusItem = { label: string; detail: string; logoUrl: string; active: boolean };
 type FunnelItem = { label: string; value: number; width: number };
+type StatCard = { label: string; value: string; note: string; trend: string; icon: string };
+
+const serviceLogos = {
+  payload: "https://cdn.jsdelivr.net/gh/selfhst/icons/svg/payload.svg",
+  neon: "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/neon-tech.svg",
+  stripe: "https://cdn.jsdelivr.net/gh/selfhst/icons/svg/stripe.svg",
+  r2: "https://cdn.jsdelivr.net/gh/selfhst/icons/svg/cloudflare-zero-trust.svg",
+  mailjet: "https://cdn.jsdelivr.net/gh/selfhst/icons/svg/mailjet.svg"
+};
 
 function getString(value: unknown, fallback = "") {
   return typeof value === "string" && value.trim() ? value.trim() : fallback;
@@ -19,6 +28,10 @@ function getString(value: unknown, fallback = "") {
 
 function getNumber(value: unknown) {
   return typeof value === "number" && Number.isFinite(value) ? value : 0;
+}
+
+function formatMoney(value: number) {
+  return new Intl.NumberFormat("en-US", { currency: "USD", style: "currency" }).format(value);
 }
 
 function getObject(value: unknown): Record<string, unknown> | null {
@@ -63,6 +76,10 @@ function statusTone(status: string) {
   if (["pending", "processing"].includes(clean)) return "pending";
   if (["refunded", "canceled", "cancelled"].includes(clean)) return "muted";
   return "neutral";
+}
+
+function isCompletedSale(status: string) {
+  return ["paid", "fulfilled", "complete", "completed", "shipped"].includes(status.toLowerCase());
 }
 
 async function safeFind(collection: string, options: Record<string, unknown> = {}): Promise<PayloadListResult> {
@@ -118,8 +135,17 @@ async function getDashboardData() {
   ]);
 
   const rollups = itemRollups(orderItems.docs);
-  const completedOrders = allOrders.docs.filter((order) => ["paid", "fulfilled", "complete", "completed", "shipped"].includes(getString(order.status).toLowerCase()));
+  const completedOrders = allOrders.docs.filter((order) => isCompletedSale(getString(order.status)));
+  const totalRevenue = completedOrders.reduce((sum, order) => sum + getNumber(order.total), 0);
+  const totalItems = orderItems.docs.reduce((sum, item) => sum + Math.max(1, getNumber(item.quantity) || 1), 0);
   const hasStripeRecords = allOrders.docs.some((order) => getString(order.stripeCheckoutSessionId) || getString(order.stripePaymentIntentId));
+
+  const stats: StatCard[] = [
+    { label: "Total Revenue", value: formatMoney(totalRevenue), note: "Paid Stripe orders", trend: `${completedOrders.length} paid`, icon: "♡" },
+    { label: "Orders", value: String(allOrders.totalDocs), note: "Total order records", trend: "Live", icon: "▤" },
+    { label: "Items Sold", value: String(totalItems), note: "Order Detail quantity", trend: `${orderItems.totalDocs} rows`, icon: "📚" },
+    { label: "Subscribers", value: String(subscribers.totalDocs), note: "Community list", trend: "Live", icon: "💌" }
+  ];
 
   const recentOrders: RecentOrder[] = orders.docs.map((order, index) => {
     const rawStatus = getString(order.status, "pending");
@@ -133,14 +159,15 @@ async function getDashboardData() {
   });
 
   const systemStatus: StatusItem[] = [
-    { label: "Payload CMS/API", detail: orders.ok ? "CONNECTED/ACTIVE" : "CHECK LOGS", icon: "P", active: orders.ok },
-    { label: "Neon Database", detail: orders.ok && users.ok ? "CONNECTED/ACTIVE" : "CHECK CONNECTION", icon: "N", active: orders.ok && users.ok },
-    { label: "Stripe API", detail: hasStripeRecords ? "CONNECTED/ACTIVE" : "READY TO VERIFY", icon: "S", active: hasStripeRecords },
-    { label: "R2 Fulfillment", detail: downloads.ok ? "CONNECTED/ACTIVE" : "CHECK FULFILLMENT", icon: "R2", active: downloads.ok },
-    { label: "Mailjet API", detail: subscribers.ok ? "CONNECTED/ACTIVE" : "CHECK EMAIL", icon: "M", active: subscribers.ok }
+    { label: "Payload CMS/API", detail: orders.ok ? "CONNECTED/ACTIVE" : "CHECK LOGS", logoUrl: serviceLogos.payload, active: orders.ok },
+    { label: "Neon Database", detail: orders.ok && users.ok ? "CONNECTED/ACTIVE" : "CHECK CONNECTION", logoUrl: serviceLogos.neon, active: orders.ok && users.ok },
+    { label: "Stripe API", detail: hasStripeRecords ? "CONNECTED/ACTIVE" : "READY TO VERIFY", logoUrl: serviceLogos.stripe, active: hasStripeRecords },
+    { label: "R2 Fulfillment", detail: downloads.ok ? "CONNECTED/ACTIVE" : "CHECK FULFILLMENT", logoUrl: serviceLogos.r2, active: downloads.ok },
+    { label: "Mailjet API", detail: subscribers.ok ? "CONNECTED/ACTIVE" : "CHECK EMAIL", logoUrl: serviceLogos.mailjet, active: subscribers.ok }
   ];
 
   return {
+    stats,
     chartOrders,
     recentOrders,
     systemStatus,
@@ -170,6 +197,18 @@ async function BeforeDashboard() {
         </details>
       </header>
 
+      <div className="bp-dashboard__stats" aria-label="Dashboard key performance indicators">
+        {dashboard.stats.map((stat) => (
+          <article className="bp-dashboard__stat" key={stat.label}>
+            <div className="bp-dashboard__statIcon" aria-hidden="true">{stat.icon}</div>
+            <p>{stat.label}</p>
+            <strong>{stat.value}</strong>
+            <small>{stat.note}</small>
+            <em>{stat.trend}</em>
+          </article>
+        ))}
+      </div>
+
       <div className="bp-dashboard__mockGrid">
         <article className="bp-dashboard__card bp-dashboard__card--performance">
           <div className="bp-dashboard__cardHeader"><div><h2>Performance Tracker</h2><p>Hourly sales count vs. launch-day timing.</p></div></div>
@@ -181,7 +220,7 @@ async function BeforeDashboard() {
           <div className="bp-dashboard__statusGrid">
             {dashboard.systemStatus.map((item) => (
               <div className={item.active ? "bp-dashboard__statusItem bp-dashboard__statusItem--active" : "bp-dashboard__statusItem bp-dashboard__statusItem--attention"} key={item.label}>
-                <span className="bp-dashboard__statusIcon" aria-hidden="true">{item.icon}</span><div><strong>{item.label}</strong><small><i aria-hidden="true" />{item.detail}</small></div>
+                <span className="bp-dashboard__statusIcon" aria-hidden="true"><img src={item.logoUrl} alt="" /></span><div><strong>{item.label}</strong><small><i aria-hidden="true" />{item.detail}</small></div>
               </div>
             ))}
           </div>
