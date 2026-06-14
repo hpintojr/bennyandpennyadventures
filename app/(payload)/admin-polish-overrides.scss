@@ -3,20 +3,41 @@
 /* Move branding farther right so the collapse button no longer covers it. */
 .template-default .nav::before,
 .template-default aside::before {
-  padding-left: 4rem !important;
+  font-size: 1.5rem !important;
+  min-height: 5.35rem !important;
+  padding: 1.25rem 1.15rem 1.1rem 5rem !important;
 }
 
-/* Make the collapse button feel integrated with the teal sidebar. */
-.template-default .nav button,
-.template-default aside button {
-  background: rgba(4, 63, 73, 0.08) !important;
-  border: 1px solid rgba(4, 63, 73, 0.14) !important;
+/* Make the sidebar collapse control transparent and integrated. */
+.template-default .nav > button,
+.template-default aside > button,
+.template-default .nav button[aria-label*='Collapse'],
+.template-default .nav button[aria-label*='collapse'],
+.template-default .nav button[aria-label*='Open'],
+.template-default .nav button[aria-label*='open'],
+.template-default aside button[aria-label*='Collapse'],
+.template-default aside button[aria-label*='collapse'],
+.template-default aside button[aria-label*='Open'],
+.template-default aside button[aria-label*='open'] {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
   color: #043f49 !important;
 }
 
-.template-default .nav button:hover,
-.template-default aside button:hover {
-  background: rgba(4, 63, 73, 0.14) !important;
+.template-default .nav > button:hover,
+.template-default aside > button:hover,
+.template-default .nav button[aria-label*='Collapse']:hover,
+.template-default .nav button[aria-label*='collapse']:hover,
+.template-default .nav button[aria-label*='Open']:hover,
+.template-default .nav button[aria-label*='open']:hover,
+.template-default aside button[aria-label*='Collapse']:hover,
+.template-default aside button[aria-label*='collapse']:hover,
+.template-default aside button[aria-label*='Open']:hover,
+.template-default aside button[aria-label*='open']:hover {
+  background: rgba(4, 63, 73, 0.1) !important;
+  border-radius: 0.55rem !important;
+  box-shadow: none !important;
 }
 
 /* Hide Payload's collapsible Collections control completely. Adventure Hub is now our own static heading. */
@@ -63,7 +84,7 @@
 }
 
 .bp-dashboard__chart {
-  height: 178px !important;
+  height: 198px !important;
   padding-top: 0.75rem !important;
 }
 
@@ -77,57 +98,97 @@
 }
 
 .bp-dashboard__donut {
-  height: 132px !important;
+  height: 142px !important;
   margin: 0.7rem auto !important;
-  width: 132px !important;
+  width: 142px !important;
 }
 
 .bp-dashboard__donut::after {
-  height: 58px !important;
-  width: 58px !important;
+  height: 62px !important;
+  width: 62px !important;
 }
 
-/* Checkbox cleanup: remove the black-box feeling and make selections match the teal theme. */
+/* Checkbox cleanup: let Payload's native custom checkbox render, but remove the visible raw input overlay. */
 .template-default input[type='checkbox'] {
-  appearance: none !important;
-  -webkit-appearance: none !important;
-  align-items: center !important;
-  background: #fbfffc !important;
-  border: 1.5px solid rgba(6, 87, 102, 0.34) !important;
-  border-radius: 0.35rem !important;
-  box-shadow: 0 1px 3px rgba(4, 63, 73, 0.08) !important;
-  cursor: pointer !important;
-  display: inline-flex !important;
-  height: 1.18rem !important;
-  justify-content: center !important;
-  min-height: 1.18rem !important;
-  min-width: 1.18rem !important;
-  padding: 0 !important;
-  position: relative !important;
-  width: 1.18rem !important;
+  accent-color: #065766 !important;
+  appearance: auto !important;
+  -webkit-appearance: checkbox !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  min-height: 1rem !important;
+  min-width: 1rem !important;
+  opacity: 0 !important;
+  outline: 0 !important;
+  position: absolute !important;
+  transform: scale(0.85) !important;
+  width: 1rem !important;
+  z-index: 1 !important;
 }
 
 .template-default input[type='checkbox']::after {
-  color: #ffffff;
-  content: '✓';
-  font-size: 0.78rem;
-  font-weight: 950;
-  line-height: 1;
-  opacity: 0;
-  transform: scale(0.8);
+  content: none !important;
+  display: none !important;
 }
 
-.template-default input[type='checkbox']:checked {
-  background: #065766 !important;
-  border-color: #065766 !important;
+.template-default input[type='checkbox'] + span,
+.template-default input[type='checkbox'] ~ span,
+.template-default .checkbox-input__icon,
+.template-default .checkbox__icon {
+  background: #fbfffc !important;
+  border: 1.5px solid rgba(6, 87, 102, 0.3) !important;
+  border-radius: 0.35rem !important;
+  box-shadow: 0 1px 3px rgba(4, 63, 73, 0.08) !important;
 }
 
-.template-default input[type='checkbox']:checked::after {
-  opacity: 1;
-  transform: scale(1);
+/* Slim sort buttons so they do not look like tall teal pills. */
+.template-default .sort-column button,
+.template-default button[aria-label*='Sort'],
+.template-default button[aria-label*='sort'] {
+  align-items: center !important;
+  background: #e7f6f1 !important;
+  border: 1px solid rgba(6, 87, 102, 0.16) !important;
+  border-radius: 0.5rem !important;
+  box-shadow: none !important;
+  color: #043f49 !important;
+  display: inline-flex !important;
+  height: 1.8rem !important;
+  justify-content: center !important;
+  min-height: 1.8rem !important;
+  min-width: 1.8rem !important;
+  padding: 0 !important;
+  width: 1.8rem !important;
 }
 
-.template-default input[type='checkbox']:focus-visible {
-  box-shadow: 0 0 0 3px rgba(6, 87, 102, 0.16) !important;
-  outline: none !important;
+/* Selected-item action buttons should have stronger boundaries and centered text. */
+.template-default .list-selection button,
+.template-default .selection button,
+.template-default button[aria-label*='Select all'],
+.template-default button[aria-label*='Edit'],
+.template-default button[aria-label*='Delete'] {
+  align-items: center !important;
+  background: #e7f6f1 !important;
+  border: 1.5px solid rgba(6, 87, 102, 0.28) !important;
+  border-radius: 0.65rem !important;
+  box-shadow: 0 1px 4px rgba(4, 63, 73, 0.06) !important;
+  color: #043f49 !important;
+  display: inline-flex !important;
+  font-weight: 950 !important;
+  justify-content: center !important;
+  min-height: 2.35rem !important;
+  padding: 0.35rem 0.7rem !important;
+}
+
+/* Per-page select should be centered inside its teal control. */
+.template-default select[name='limit'],
+.template-default select[aria-label*='Per Page'],
+.template-default select[aria-label*='per page'] {
+  align-items: center !important;
+  background-position: right 0.65rem center !important;
+  display: inline-flex !important;
+  min-height: 2.35rem !important;
+  padding-bottom: 0.35rem !important;
+  padding-top: 0.35rem !important;
+  text-align: center !important;
+  text-align-last: center !important;
 }
