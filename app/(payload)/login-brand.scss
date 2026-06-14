@@ -1,0 +1,137 @@
+/* Focused login-screen override for Payload auth pages. */
+:root {
+  --bp-login-teal: #043f49;
+  --bp-login-teal-light: #065766;
+  --bp-login-coral: #eb6373;
+  --bp-login-coral-dark: #d94d5f;
+  --bp-login-gold: #d8b98d;
+  --bp-login-cream: #fff8ed;
+}
+
+.template-login,
+.template-create-first-user {
+  background: linear-gradient(135deg, #fff4e4 0%, #fffaf1 55%, #eef5ea 100%) !important;
+  color: var(--bp-login-teal) !important;
+}
+
+.template-login form,
+.template-create-first-user form,
+.template-login .login__form,
+.template-create-first-user .login__form {
+  position: relative !important;
+  width: min(34rem, calc(100vw - 2rem)) !important;
+  background: #fffdf8 !important;
+  border: 2px solid var(--bp-login-gold) !important;
+  border-radius: 1.35rem !important;
+  box-shadow: 0 2rem 5rem rgba(4, 63, 73, 0.18) !important;
+  padding: 8rem 2.25rem 2.25rem !important;
+}
+
+.template-login form::before,
+.template-create-first-user form::before,
+.template-login .login__form::before,
+.template-create-first-user .login__form::before {
+  content: "♥ Benny & Penny's Admin Panel";
+  position: absolute;
+  top: 1.8rem;
+  left: 1.25rem;
+  right: 1.25rem;
+  text-align: center;
+  color: var(--bp-login-teal) !important;
+  font-size: clamp(1.85rem, 3vw, 2.55rem);
+  font-weight: 950;
+  line-height: 1.05;
+}
+
+.template-login form::after,
+.template-create-first-user form::after,
+.template-login .login__form::after,
+.template-create-first-user .login__form::after {
+  content: "Books • Orders • Subscribers • Downloads";
+  position: absolute;
+  top: 5.45rem;
+  left: 1.25rem;
+  right: 1.25rem;
+  text-align: center;
+  color: var(--bp-login-teal-light) !important;
+  font-size: 1rem;
+  font-weight: 850;
+}
+
+.template-login label,
+.template-create-first-user label,
+.template-login .field-label,
+.template-create-first-user .field-label,
+.template-login .description,
+.template-create-first-user .description {
+  color: var(--bp-login-teal) !important;
+  font-size: 1.05rem !important;
+  font-weight: 950 !important;
+  opacity: 1 !important;
+}
+
+.template-login input,
+.template-create-first-user input,
+.template-login select,
+.template-create-first-user select {
+  min-height: 3.2rem !important;
+  background: #ffffff !important;
+  color: var(--bp-login-teal) !important;
+  -webkit-text-fill-color: var(--bp-login-teal) !important;
+  border: 2px solid var(--bp-login-gold) !important;
+  border-radius: 0.55rem !important;
+  font-size: 1.08rem !important;
+  font-weight: 800 !important;
+  box-shadow: none !important;
+  opacity: 1 !important;
+}
+
+.template-login input:-webkit-autofill,
+.template-create-first-user input:-webkit-autofill {
+  -webkit-text-fill-color: var(--bp-login-teal) !important;
+  box-shadow: 0 0 0 1000px #ffffff inset !important;
+}
+
+.template-login button,
+.template-create-first-user button,
+.template-login [type='submit'],
+.template-create-first-user [type='submit'],
+.template-login .btn,
+.template-create-first-user .btn {
+  min-height: 3.25rem !important;
+  background: var(--bp-login-coral) !important;
+  border: 2px solid var(--bp-login-coral) !important;
+  border-radius: 0.65rem !important;
+  color: #ffffff !important;
+  font-size: 1.08rem !important;
+  font-weight: 950 !important;
+  opacity: 1 !important;
+}
+
+.template-login button:disabled,
+.template-create-first-user button:disabled,
+.template-login [disabled],
+.template-create-first-user [disabled] {
+  background: var(--bp-login-coral) !important;
+  border-color: var(--bp-login-coral) !important;
+  color: #ffffff !important;
+  opacity: 0.9 !important;
+}
+
+.template-login a,
+.template-create-first-user a {
+  color: var(--bp-login-teal) !important;
+  font-weight: 900 !important;
+  text-decoration: underline !important;
+}
+
+.template-login .graphic-logo,
+.template-create-first-user .graphic-logo,
+.template-login .login__brand,
+.template-create-first-user .login__brand,
+.template-login .login__logo,
+.template-create-first-user .login__logo,
+.template-login .logo,
+.template-create-first-user .logo {
+  display: none !important;
+}
