@@ -26,12 +26,14 @@ type SidebarLink = {
   note?: string;
 };
 
+const customersFilterHref = "/admin/collections/users?where%5Brole%5D%5Bequals%5D=customer";
+
 const sidebarSections: { heading: string; links: SidebarLink[] }[] = [
   {
     heading: "Sales",
     links: [
       { label: "Orders", href: "/admin/collections/orders", Icon: Package },
-      { label: "Customers", href: "/admin/collections/users", Icon: Users },
+      { label: "Customers", href: customersFilterHref, Icon: Users },
       { label: "Abandoned Carts", Icon: ShoppingCart, note: "Coming soon" }
     ]
   },
