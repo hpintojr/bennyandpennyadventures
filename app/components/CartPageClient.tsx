@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { formatMoney } from "@/lib/books";
 import { useCart } from "./CartProvider";
@@ -7,6 +8,38 @@ import ImageSlot from "./ImageSlot";
 
 export default function CartPageClient() {
   const { items, subtotal, setQty, removeItem, clearCart } = useCart();
+  const [checkoutState, setCheckoutState] = useState<"idle" | "loading" | "error">("idle");
+  const [checkoutError, setCheckoutError] = useState("");
+
+  async function startCheckout() {
+    setCheckoutState("loading");
+    setCheckoutError("");
+
+    try {
+      const response = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items: items.map((item) => ({
+            slug: item.slug,
+            format: item.format,
+            qty: item.qty
+          }))
+        })
+      });
+
+      const data = (await response.json()) as { url?: string; error?: string };
+
+      if (!response.ok || !data.url) {
+        throw new Error(data.error || "Stripe checkout is not ready yet.");
+      }
+
+      window.location.href = data.url;
+    } catch (error) {
+      setCheckoutState("error");
+      setCheckoutError(error instanceof Error ? error.message : "Stripe checkout is not ready yet.");
+    }
+  }
 
   if (!items.length) {
     return (
@@ -25,7 +58,7 @@ export default function CartPageClient() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="font-serif text-4xl font-semibold text-teal sm:text-5xl">Your Cart <span className="text-coral">♥</span></h1>
-          <p className="mt-2 text-ink">Review your selected book formats. Stripe checkout gets wired next.</p>
+          <p className="mt-2 text-ink">Review your selected book formats, then continue to Stripe sandbox checkout.</p>
         </div>
         <button type="button" onClick={clearCart} className="btn-ghost self-start">Clear cart</button>
       </div>
@@ -53,8 +86,11 @@ export default function CartPageClient() {
 
       <div className="mt-8 flex flex-col items-end gap-4 border-t border-tan pt-6 text-right">
         <p className="text-2xl text-teal">Subtotal: <span className="font-serif font-semibold">{formatMoney(subtotal)}</span></p>
-        <button type="button" disabled className="btn cursor-not-allowed opacity-60">Proceed to Checkout — Stripe coming soon</button>
-        <p className="max-w-xl text-sm text-[#6b7d80]">This deploy package includes a working browser cart for testing. Stripe Checkout and Cloudflare R2 signed ebook delivery are left as the next integration layer.</p>
+        <button type="button" onClick={startCheckout} disabled={checkoutState === "loading"} className="btn disabled:cursor-not-allowed disabled:opacity-70">
+          {checkoutState === "loading" ? "Opening Stripe Checkout…" : "Proceed to Stripe Checkout ♥"}
+        </button>
+        {checkoutState === "error" ? <p className="max-w-xl text-sm font-bold text-coral">{checkoutError}</p> : null}
+        <p className="max-w-xl text-sm text-[#6b7d80]">Stripe sandbox checkout uses test keys only. Paid files stay private in Cloudflare R2 and will deliver through signed links after webhook fulfillment is completed.</p>
       </div>
     </div>
   );
