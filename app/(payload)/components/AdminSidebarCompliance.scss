@@ -20,7 +20,54 @@
 }
 
 .bp-admin-nav-extra--top {
-  margin: -2.62rem 0 0.35rem !important;
+  margin: 0.25rem 0 0.35rem !important;
+}
+
+.bp-admin-sidebar-brand {
+  align-items: center;
+  border-bottom: 2px solid rgba(6, 87, 102, 0.13);
+  display: flex;
+  flex-direction: column;
+  gap: 0.52rem;
+  margin: 0 -0.75rem 1.5rem;
+  min-height: 9.25rem;
+  padding: 0.85rem 1.25rem 1.15rem 3.65rem;
+  text-align: center;
+}
+
+.bp-admin-sidebar-brand__heart {
+  align-items: center;
+  background: #eb6373;
+  border-radius: 999px;
+  box-shadow: 0 12px 28px rgba(235, 99, 115, 0.24);
+  color: #ffffff;
+  display: flex;
+  font-family: 'Nunito', ui-sans-serif, system-ui, sans-serif;
+  font-size: 1.2rem;
+  font-weight: 950;
+  height: 2.28rem;
+  justify-content: center;
+  line-height: 1;
+  width: 2.28rem;
+}
+
+.bp-admin-sidebar-brand__title {
+  color: #043f49;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.72rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 0.94;
+}
+
+.bp-admin-sidebar-brand__subtitle {
+  color: #065766;
+  font-size: 0.74rem;
+  font-weight: 950;
+  letter-spacing: 0.16em;
+  line-height: 1;
+  margin-top: 0.05rem;
+  text-transform: uppercase;
 }
 
 .bp-admin-nav-extra__hubLabel {
