@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description: "Privacy Policy for Benny & Penny's Adventures."
 };
 
-const contactEmail = "hello@bennyandpenny.com";
+const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "hello@bennyandpenny.com";
 
 export default function PrivacyPage() {
   return (
@@ -18,6 +18,16 @@ export default function PrivacyPage() {
         <p className="mt-4 text-ink">
           Benny &amp; Penny&rsquo;s Adventures respects your privacy. This Privacy Policy explains how we collect, use, and protect information when you visit our website, contact us, join our email list, or purchase digital, audio, or print products from us.
         </p>
+
+        <div className="mt-5 rounded-3xl border border-tan bg-green p-5 text-sm text-ink">
+          <p className="font-extrabold text-teal">Additional privacy notices and request pages:</p>
+          <ul className="mt-3 list-disc space-y-2 pl-6">
+            <li><a className="font-extrabold text-coral" href="/privacy/california">California Privacy Notice</a></li>
+            <li><a className="font-extrabold text-coral" href="/privacy/state-rights">State Privacy Rights</a></li>
+            <li><a className="font-extrabold text-coral" href="/privacy/requests">Privacy Requests / Do Not Sell or Share</a></li>
+            <li><a className="font-extrabold text-coral" href="/sms-terms">Messaging Terms</a></li>
+          </ul>
+        </div>
 
         <p className="mt-4 rounded-2xl border border-tan bg-blush p-4 text-sm text-ink">
           This website is created for families, parents, caregivers, educators, and children, but website forms, purchases, newsletter signups, and account-related activity are intended for adults. We do not knowingly collect personal information directly from children.
@@ -32,6 +42,7 @@ export default function PrivacyPage() {
           <li>Your email address when you join our newsletter or email list.</li>
           <li>Opt-in consent details, such as checkbox selections, consent text shown, timestamp, IP address, and browser/user-agent information.</li>
           <li>Purchase and order information when you buy digital, audio, or print products.</li>
+          <li>Billing and shipping details needed to process orders and support fulfillment.</li>
           <li>Download or access information for PDF, EPUB, audiobook, or audio products, such as download count, access status, file type, and expiration details.</li>
         </ul>
 
@@ -44,6 +55,7 @@ export default function PrivacyPage() {
           <li>Send SMS messages only when you affirmatively opt in, such as messages about your inquiry, orders, downloads, support, and related updates.</li>
           <li>Process purchases and provide access to digital downloads, audiobooks, audio files, or print orders.</li>
           <li>Track download/access limits and help prevent unauthorized sharing.</li>
+          <li>Maintain consent, transaction, tax/accounting, customer support, and security records.</li>
           <li>Improve the website, customer experience, and product offerings.</li>
         </ul>
 
@@ -54,7 +66,7 @@ export default function PrivacyPage() {
 
         <h2 className="mt-8 font-serif text-2xl text-teal">SMS/Text Message Opt-In</h2>
         <p className="mt-2 text-ink">
-          If you choose to opt in to SMS messages, Benny &amp; Penny&rsquo;s Adventures may send text messages about your inquiry, orders, downloads, support, and related updates. Message frequency varies. Message and data rates may apply. Reply STOP to opt out and HELP for help. Consent to receive SMS messages is not a condition of purchase.
+          If you choose to opt in to SMS messages, Benny &amp; Penny&rsquo;s Adventures may send text messages about your inquiry, orders, downloads, support, and related updates. Message frequency varies. Message and data rates may apply. Reply STOP to opt out and HELP for help. Consent to receive SMS messages is not a condition of purchase. See our <a className="font-extrabold text-coral" href="/sms-terms">Messaging Terms</a>.
         </p>
         <p className="mt-3 text-ink">
           We do not sell your personal information. We do not share mobile opt-in data or SMS consent with third parties for their own marketing purposes.
@@ -62,7 +74,7 @@ export default function PrivacyPage() {
 
         <h2 className="mt-8 font-serif text-2xl text-teal">Newsletter and Email List</h2>
         <p className="mt-2 text-ink">
-          If you join our email list, we may send you updates about Benny &amp; Penny&rsquo;s Adventures, new books, resources, printables, and related announcements. You can unsubscribe from marketing emails at any time using the unsubscribe link in those emails or by contacting us.
+          If you join our email list, we may send you updates about Benny &amp; Penny&rsquo;s Adventures, new books, resources, printables, and related announcements. You can unsubscribe from marketing emails at any time using the unsubscribe link in those emails or by contacting us. Marketing emails should include a valid postal address and a clear unsubscribe method.
         </p>
 
         <h2 className="mt-8 font-serif text-2xl text-teal">Payments</h2>
@@ -85,11 +97,11 @@ export default function PrivacyPage() {
 
         <h2 className="mt-8 font-serif text-2xl text-teal">Cookies and Analytics</h2>
         <p className="mt-2 text-ink">
-          We may use basic cookies, analytics, or similar technologies to understand website traffic, improve the website, and support site functionality. If additional analytics or advertising tools are added later, this policy should be updated to describe them.
+          We may use basic cookies, analytics, or similar technologies to understand website traffic, improve the website, and support site functionality. If additional analytics, advertising, or targeted advertising tools are added later, this policy and related opt-out pages should be updated before launch.
         </p>
 
         <h2 className="mt-8 font-serif text-2xl text-teal">How We Share Information</h2>
-        <p className="mt-2 text-ink">We do not sell personal information. We may share information with trusted service providers who help us operate the website, send emails, process payments, deliver digital/audio files, fulfill print orders, or comply with legal obligations.</p>
+        <p className="mt-2 text-ink">We do not sell personal information. We may share information with trusted service providers who help us operate the website, send emails, process payments, deliver digital/audio files, fulfill print orders, or comply with legal obligations. We do not share mobile opt-in data or SMS consent with third parties for their own marketing purposes.</p>
 
         <h2 className="mt-8 font-serif text-2xl text-teal">Data Security</h2>
         <p className="mt-2 text-ink">
@@ -98,7 +110,7 @@ export default function PrivacyPage() {
 
         <h2 className="mt-8 font-serif text-2xl text-teal">Your Choices</h2>
         <p className="mt-2 text-ink">
-          You may contact us to request that we update, correct, or delete information you have provided, subject to legal, accounting, security, and transaction recordkeeping needs. You may unsubscribe from marketing emails at any time. You may opt out of SMS messages by replying STOP.
+          You may contact us to request that we update, correct, or delete information you have provided, subject to legal, accounting, security, transaction, and recordkeeping needs. You may unsubscribe from marketing emails at any time. You may opt out of SMS messages by replying STOP. State-specific rights and request options are available through our <a className="font-extrabold text-coral" href="/privacy/requests">Privacy Requests page</a>.
         </p>
 
         <h2 className="mt-8 font-serif text-2xl text-teal">Children&rsquo;s Privacy</h2>
