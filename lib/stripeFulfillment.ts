@@ -60,10 +60,20 @@ function getString(value: unknown): string | null {
   return typeof value === "string" && value.trim() ? value.trim() : null;
 }
 
+function centsToDollars(value: number | null | undefined) {
+  return Number(((value || 0) / 100).toFixed(2));
+}
+
 function getPaymentIntentId(session: Stripe.Checkout.Session): string | null {
   if (!session.payment_intent) return null;
   if (typeof session.payment_intent === "string") return session.payment_intent;
   return session.payment_intent.id;
+}
+
+function getStripeCustomerId(session: Stripe.Checkout.Session): string | null {
+  if (!session.customer) return null;
+  if (typeof session.customer === "string") return session.customer;
+  return session.customer.id;
 }
 
 function getCustomerEmail(session: Stripe.Checkout.Session): string | null {
@@ -79,6 +89,31 @@ function getAccessExpiresAt() {
   const date = new Date();
   date.setDate(date.getDate() + ACCESS_DAYS);
   return date.toISOString();
+}
+
+function stripeAddressToPayloadAddress(
+  name: string | null | undefined,
+  address: Stripe.Address | null | undefined
+) {
+  if (!address) return undefined;
+
+  return {
+    name: name || undefined,
+    line1: address.line1 || undefined,
+    line2: address.line2 || undefined,
+    city: address.city || undefined,
+    state: address.state || undefined,
+    postalCode: address.postal_code || undefined,
+    country: address.country || undefined
+  };
+}
+
+function getBillingAddress(session: Stripe.Checkout.Session) {
+  return stripeAddressToPayloadAddress(session.customer_details?.name, session.customer_details?.address);
+}
+
+function getShippingAddress(session: Stripe.Checkout.Session) {
+  return stripeAddressToPayloadAddress(session.shipping_details?.name, session.shipping_details?.address);
 }
 
 function lineItemToFulfillmentItem(lineItem: Stripe.LineItem): FulfillmentLineItem {
@@ -299,9 +334,15 @@ export async function fulfillCheckoutSession(session: Stripe.Checkout.Session): 
       customerEmail,
       status: "paid",
       stripeCheckoutSessionId: session.id,
+      stripeCustomerId: getStripeCustomerId(session),
       stripePaymentIntentId: getPaymentIntentId(session),
-      total: Number(((session.amount_total || 0) / 100).toFixed(2)),
+      total: centsToDollars(session.amount_total),
+      subtotal: centsToDollars(session.amount_subtotal),
+      taxTotal: centsToDollars(session.total_details?.amount_tax),
+      shippingTotal: centsToDollars(session.total_details?.amount_shipping),
       currency: session.currency || "usd",
+      billingAddress: getBillingAddress(session),
+      shippingAddress: getShippingAddress(session),
       notes: "Created automatically from Stripe checkout.session.completed."
     }
   })) as PayloadDoc;
