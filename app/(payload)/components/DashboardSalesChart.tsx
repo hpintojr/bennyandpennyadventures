@@ -6,50 +6,27 @@ export type DashboardChartOrder = {
   createdAt: string | null;
   status: string;
   total: number;
+  podCount: number;
+  digitalDownloadCount: number;
 };
 
-type SalesRange =
-  | "Today"
-  | "Last 3 days"
-  | "Last 7 days"
-  | "Last 14 days"
-  | "Last 30 days"
-  | "Last 45 days"
-  | "Last 60 days"
-  | "Last 90 days"
-  | "Last 120 days"
-  | "This Past Year";
+type SalesRange = "Today" | "Last 7 days" | "Last 30 days" | "Last 90 days" | "This Past Year";
+type SeriesKey = "totalSales" | "podOrders" | "digitalDownloads";
+type Bucket = { key: string; label: string; totalSales: number; podOrders: number; digitalDownloads: number };
 
-type SalesBucket = {
-  key: string;
-  label: string;
-  revenue: number;
-  orders: number;
-};
-
-const salesRanges: SalesRange[] = [
-  "Today",
-  "Last 3 days",
-  "Last 7 days",
-  "Last 14 days",
-  "Last 30 days",
-  "Last 45 days",
-  "Last 60 days",
-  "Last 90 days",
-  "Last 120 days",
-  "This Past Year"
+const ranges: SalesRange[] = ["Today", "Last 7 days", "Last 30 days", "Last 90 days", "This Past Year"];
+const series: { key: SeriesKey; label: string; className: string }[] = [
+  { key: "totalSales", label: "Total Sales", className: "sales" },
+  { key: "podOrders", label: "POD Orders (Lulu)", className: "pod" },
+  { key: "digitalDownloads", label: "Digital Downloads", className: "digital" }
 ];
 
-function formatMoney(value: number) {
-  return new Intl.NumberFormat("en-US", { currency: "USD", style: "currency" }).format(value);
+function emptyBucket(key: string, label: string): Bucket {
+  return { key, label, totalSales: 0, podOrders: 0, digitalDownloads: 0 };
 }
 
-function dateKey(date: Date) {
-  return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
-}
-
-function monthKey(date: Date) {
-  return `${date.getFullYear()}-${date.getMonth()}`;
+function dayStart(date: Date) {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
 }
 
 function addDays(date: Date, amount: number) {
@@ -58,194 +35,149 @@ function addDays(date: Date, amount: number) {
   return next;
 }
 
-function startOfDay(date: Date) {
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+function dayKey(date: Date) {
+  return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
 }
 
-function getRangeDays(range: SalesRange) {
-  if (range === "Today" || range === "This Past Year") return null;
-  return Number(range.match(/\d+/)?.[0] || 30);
+function monthKey(date: Date) {
+  return `${date.getFullYear()}-${date.getMonth()}`;
 }
 
-function shouldGroupByWeek(range: SalesRange) {
-  const days = getRangeDays(range);
-  return Boolean(days && days >= 14 && days <= 60);
-}
-
-function shouldGroupByMonth(range: SalesRange) {
-  if (range === "This Past Year") return true;
-  const days = getRangeDays(range);
-  return Boolean(days && days > 60);
-}
-
-function buildWeeklyBucketsForRange(range: SalesRange): SalesBucket[] {
+function rangeStart(range: SalesRange) {
   const now = new Date();
-  const days = getRangeDays(range) || 30;
-  const start = addDays(startOfDay(now), -(days - 1));
-  const buckets: SalesBucket[] = [];
-
-  for (let weekIndex = 0, cursor = new Date(start); cursor <= now; weekIndex += 1, cursor = addDays(start, weekIndex * 7)) {
-    const weekStart = new Date(cursor);
-    const weekEnd = addDays(weekStart, 6);
-    const displayEnd = weekEnd > now ? now : weekEnd;
-
-    buckets.push({
-      key: dateKey(weekStart),
-      label: `${new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(weekStart)}-${new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(displayEnd)}`,
-      revenue: 0,
-      orders: 0
-    });
-  }
-
-  return buckets;
+  if (range === "Today") return dayStart(now);
+  if (range === "Last 7 days") return addDays(dayStart(now), -6);
+  if (range === "Last 30 days") return addDays(dayStart(now), -29);
+  if (range === "Last 90 days") return addDays(dayStart(now), -89);
+  return new Date(now.getFullYear(), now.getMonth() - 11, 1);
 }
 
-function buildMonthlyBucketsForRange(range: SalesRange): SalesBucket[] {
-  const now = new Date();
-  const start = range === "This Past Year"
-    ? new Date(now.getFullYear(), now.getMonth() - 11, 1)
-    : addDays(startOfDay(now), -((getRangeDays(range) || 30) - 1));
-
-  const buckets: SalesBucket[] = [];
-  const cursor = new Date(start.getFullYear(), start.getMonth(), 1);
-  const end = new Date(now.getFullYear(), now.getMonth(), 1);
-
-  while (cursor <= end) {
-    const date = new Date(cursor);
-    buckets.push({
-      key: monthKey(date),
-      label: new Intl.DateTimeFormat("en-US", { month: "short" }).format(date),
-      revenue: 0,
-      orders: 0
-    });
-    cursor.setMonth(cursor.getMonth() + 1);
-  }
-
-  return buckets;
-}
-
-function buildEmptyBuckets(range: SalesRange): SalesBucket[] {
+function buildEmptyBuckets(range: SalesRange) {
   const now = new Date();
 
   if (range === "Today") {
-    return Array.from({ length: 24 }, (_, hour) => {
-      const labelDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour);
-      return {
-        key: String(hour),
-        label: new Intl.DateTimeFormat("en-US", { hour: "numeric" }).format(labelDate),
-        revenue: 0,
-        orders: 0
-      };
-    });
+    return Array.from({ length: 24 }, (_, hour) => emptyBucket(String(hour), new Intl.DateTimeFormat("en-US", { hour: "numeric" }).format(new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour))));
   }
 
-  if (shouldGroupByWeek(range)) {
-    return buildWeeklyBucketsForRange(range);
+  if (range === "Last 90 days" || range === "This Past Year") {
+    const start = rangeStart(range);
+    const cursor = new Date(start.getFullYear(), start.getMonth(), 1);
+    const end = new Date(now.getFullYear(), now.getMonth(), 1);
+    const buckets: Bucket[] = [];
+
+    while (cursor <= end) {
+      const date = new Date(cursor);
+      buckets.push(emptyBucket(monthKey(date), new Intl.DateTimeFormat("en-US", { month: "short" }).format(date)));
+      cursor.setMonth(cursor.getMonth() + 1);
+    }
+
+    return buckets;
   }
 
-  if (shouldGroupByMonth(range)) {
-    return buildMonthlyBucketsForRange(range);
-  }
-
-  const days = getRangeDays(range) || 30;
-  const start = addDays(startOfDay(now), -(days - 1));
-
+  const start = rangeStart(range);
+  const days = range === "Last 7 days" ? 7 : 30;
   return Array.from({ length: days }, (_, index) => {
     const date = addDays(start, index);
-    return {
-      key: dateKey(date),
-      label: new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(date),
-      revenue: 0,
-      orders: 0
-    };
+    return emptyBucket(dayKey(date), new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(date));
   });
 }
 
-function getWeekBucketKey(date: Date, range: SalesRange) {
-  const days = getRangeDays(range) || 30;
-  const start = addDays(startOfDay(new Date()), -(days - 1));
-  const dayDifference = Math.floor((startOfDay(date).getTime() - start.getTime()) / 86400000);
-  const weekStart = addDays(start, Math.floor(Math.max(0, dayDifference) / 7) * 7);
-  return dateKey(weekStart);
-}
-
-function orderKeyForRange(date: Date, range: SalesRange) {
+function bucketKeyForDate(date: Date, range: SalesRange) {
   if (range === "Today") return String(date.getHours());
-  if (shouldGroupByWeek(range)) return getWeekBucketKey(date, range);
-  if (shouldGroupByMonth(range)) return monthKey(date);
-  return dateKey(date);
+  if (range === "Last 90 days" || range === "This Past Year") return monthKey(date);
+  return dayKey(date);
 }
 
-function isWithinRange(date: Date, range: SalesRange) {
-  const now = new Date();
-
-  if (range === "Today") {
-    return date >= startOfDay(now) && date <= now;
-  }
-
-  if (range === "This Past Year") {
-    const start = new Date(now.getFullYear(), now.getMonth() - 11, 1);
-    return date >= start && date <= now;
-  }
-
-  const days = getRangeDays(range) || 30;
-  const start = addDays(startOfDay(now), -(days - 1));
-  return date >= start && date <= now;
+function isSale(status: string) {
+  return ["paid", "fulfilled", "complete", "completed", "shipped"].includes(status.toLowerCase());
 }
 
 function buildBuckets(orders: DashboardChartOrder[], range: SalesRange) {
   const buckets = buildEmptyBuckets(range);
   const byKey = new Map(buckets.map((bucket) => [bucket.key, bucket]));
+  const start = rangeStart(range);
+  const now = new Date();
 
-  for (const order of orders) {
-    if (!order.createdAt || order.status.toLowerCase() !== "paid") continue;
+  orders.forEach((order) => {
+    if (!order.createdAt || !isSale(order.status)) return;
     const date = new Date(order.createdAt);
-    if (Number.isNaN(date.getTime()) || !isWithinRange(date, range)) continue;
+    if (Number.isNaN(date.getTime()) || date < start || date > now) return;
+    const bucket = byKey.get(bucketKeyForDate(date, range));
+    if (!bucket) return;
 
-    const bucket = byKey.get(orderKeyForRange(date, range));
-    if (!bucket) continue;
+    bucket.totalSales += 1;
+    bucket.podOrders += order.podCount > 0 ? 1 : 0;
+    bucket.digitalDownloads += order.digitalDownloadCount;
+  });
 
-    bucket.orders += 1;
-    bucket.revenue += order.total;
-  }
+  return buckets;
+}
 
-  const maxRevenue = Math.max(...buckets.map((bucket) => bucket.revenue), 1);
+function buildPoints(buckets: Bucket[], key: SeriesKey, maxValue: number) {
+  const width = 640;
+  const height = 220;
+  const paddingX = 28;
+  const paddingY = 24;
+  const denominator = Math.max(buckets.length - 1, 1);
 
-  return buckets.map((bucket) => ({
-    ...bucket,
-    height: bucket.revenue > 0 ? Math.max(10, Math.round((bucket.revenue / maxRevenue) * 100)) : 4,
-    tooltip: `${bucket.label}: ${formatMoney(bucket.revenue)} · ${bucket.orders} orders`
-  }));
+  return buckets.map((bucket, index) => {
+    const x = paddingX + (index / denominator) * (width - paddingX * 2);
+    const y = height - paddingY - (bucket[key] / maxValue) * (height - paddingY * 2);
+    return { bucket, value: bucket[key], x, y };
+  });
 }
 
 export default function DashboardSalesChart({ orders }: { orders: DashboardChartOrder[] }) {
-  const [range, setRange] = useState<SalesRange>("Last 30 days");
+  const [range, setRange] = useState<SalesRange>("Today");
   const buckets = useMemo(() => buildBuckets(orders, range), [orders, range]);
+  const maxValue = Math.max(1, ...buckets.flatMap((bucket) => [bucket.totalSales, bucket.podOrders, bucket.digitalDownloads]));
+  const labelStep = Math.max(1, Math.ceil(buckets.length / 8));
 
   return (
-    <>
-      <select aria-label="Sales period" value={range} onChange={(event) => setRange(event.target.value as SalesRange)}>
-        {salesRanges.map((rangeOption) => <option value={rangeOption} key={rangeOption}>{rangeOption}</option>)}
-      </select>
-
-      <div
-        className="bp-dashboard__chart"
-        aria-label={`Sales performance for ${range}`}
-        style={{ gridTemplateColumns: `repeat(${buckets.length}, minmax(64px, 1fr))` }}
-      >
-        {buckets.map((bar) => (
-          <div
-            className="bp-dashboard__barWrap"
-            data-tooltip={bar.tooltip}
-            key={bar.key}
-            tabIndex={0}
-            title={bar.tooltip}
-          >
-            <span style={{ height: `${bar.height}%` }} />
-            <small>{bar.label}</small>
-          </div>
-        ))}
+    <div className="bp-performance-tracker">
+      <div className="bp-performance-tracker__toolbar">
+        <div className="bp-performance-tracker__legend">
+          {series.map((item) => (
+            <span className={`bp-performance-tracker__legendItem bp-performance-tracker__legendItem--${item.className}`} key={item.key}>
+              <i aria-hidden="true" /> {item.label}
+            </span>
+          ))}
+        </div>
+        <select aria-label="Performance period" value={range} onChange={(event) => setRange(event.target.value as SalesRange)}>
+          {ranges.map((rangeOption) => <option value={rangeOption} key={rangeOption}>{rangeOption}</option>)}
+        </select>
       </div>
-    </>
+
+      <div className="bp-performance-chart" role="img" aria-label={`Performance tracker for ${range}`}>
+        <svg viewBox="0 0 640 260" preserveAspectRatio="none">
+          <g className="bp-performance-chart__grid" aria-hidden="true">
+            {[0, 1, 2, 3].map((line) => <line x1="28" x2="612" y1={24 + line * 48} y2={24 + line * 48} key={line} />)}
+          </g>
+
+          {series.map((item) => {
+            const points = buildPoints(buckets, item.key, maxValue);
+            return (
+              <g key={item.key}>
+                <polyline className={`bp-performance-chart__line bp-performance-chart__line--${item.className}`} points={points.map((point) => `${point.x},${point.y}`).join(" ")} />
+                {points.map((point) => (
+                  <circle className={`bp-performance-chart__dot bp-performance-chart__dot--${item.className}`} cx={point.x} cy={point.y} r="4.5" key={`${item.key}-${point.bucket.key}`} tabIndex={0}>
+                    <title>{`${point.bucket.label} · ${item.label}: ${point.value}`}</title>
+                  </circle>
+                ))}
+              </g>
+            );
+          })}
+
+          <g className="bp-performance-chart__axis" aria-hidden="true">
+            {buckets.filter((_, index) => index % labelStep === 0).map((bucket) => {
+              const index = buckets.findIndex((item) => item.key === bucket.key);
+              const denominator = Math.max(buckets.length - 1, 1);
+              const x = 28 + (index / denominator) * 584;
+              return <text x={x} y="248" textAnchor="middle" key={bucket.key}>{bucket.label}</text>;
+            })}
+          </g>
+        </svg>
+      </div>
+    </div>
   );
 }
