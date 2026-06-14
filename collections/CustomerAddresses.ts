@@ -2,10 +2,14 @@ import type { CollectionConfig } from "payload";
 
 export const CustomerAddresses: CollectionConfig = {
   slug: "customer-addresses",
+  labels: {
+    singular: "Customer Address",
+    plural: "Customer Addresses"
+  },
   admin: {
-    hidden: true,
     useAsTitle: "fullName",
-    defaultColumns: ["fullName", "customer", "city", "state", "phone"]
+    description: "Structured customer addresses collected through checkout and customer account workflows.",
+    defaultColumns: ["fullName", "customer", "street1", "city", "state", "postalCode", "country", "phone"]
   },
   fields: [
     { name: "customer", type: "relationship", relationTo: "users", required: true },
@@ -20,10 +24,7 @@ export const CustomerAddresses: CollectionConfig = {
     {
       name: "phone",
       type: "text",
-      label: "Shipping phone number",
-      admin: {
-        description: "Optional. Used only for shipping, order, or support issues."
-      }
+      label: "Phone number"
     },
     { name: "isDefaultShipping", type: "checkbox", defaultValue: false }
   ]
