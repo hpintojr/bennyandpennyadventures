@@ -19,6 +19,16 @@
   margin: 0.38rem 0 0.65rem;
 }
 
+.bp-admin-nav-extra__hubLabel {
+  color: #043f49;
+  font-size: 1.02rem;
+  font-weight: 950;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+  margin: 0.08rem 0 0.38rem;
+  text-align: center;
+}
+
 .bp-admin-nav-extra__section {
   display: grid;
   gap: 0.18rem;
@@ -64,6 +74,12 @@
   color: #043f49;
   font-size: 1rem;
   text-align: center;
+}
+
+.bp-admin-nav-extra__link--logout span:first-child {
+  font-size: 0.72rem;
+  line-height: 1;
+  overflow-wrap: anywhere;
 }
 
 .bp-admin-nav-extra__link em {
