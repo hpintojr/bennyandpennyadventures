@@ -78,7 +78,7 @@ async function saveContactSubmission({
   consentUserAgent: string;
 }) {
   const payload = await getPayload({ config });
-  await payload.create({
+  const created = await payload.create({
     collection: "contact-submissions",
     data: {
       name,
@@ -96,6 +96,55 @@ async function saveContactSubmission({
       status: "new"
     }
   });
+
+  const relatedId = String((created as { id?: string | number }).id || "");
+
+  const consentEvents = [
+    {
+      consentType: "contact-consent",
+      optIn: contactConsent,
+      consentText: "User agreed that Benny & Penny's Adventures may contact them about this inquiry using the information provided."
+    },
+    emailOptIn
+      ? {
+          consentType: "email-marketing",
+          optIn: true,
+          consentText: "User agreed to receive occasional email updates about books, resources, releases, and family support content."
+        }
+      : null,
+    smsOptIn
+      ? {
+          consentType: "sms",
+          optIn: true,
+          consentText: smsConsentText
+        }
+      : null
+  ].filter(Boolean) as { consentType: string; optIn: boolean; consentText: string }[];
+
+  for (const event of consentEvents) {
+    try {
+      await payload.create({
+        collection: "consent-logs" as never,
+        data: {
+          source: "contact-form",
+          consentType: event.consentType,
+          name,
+          email,
+          phone: phone || undefined,
+          optIn: event.optIn,
+          consentText: event.consentText,
+          sourcePath: "/contact",
+          ipAddress: consentIpAddress || undefined,
+          userAgent: consentUserAgent || undefined,
+          relatedCollection: "contact-submissions",
+          relatedId,
+          metadata: { inquiryType }
+        } as never
+      });
+    } catch (consentLogError) {
+      console.error("Contact submission accepted, but consent log creation failed", consentLogError);
+    }
+  }
 }
 
 async function sendContactNotification({
