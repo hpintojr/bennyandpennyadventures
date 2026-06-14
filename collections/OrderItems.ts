@@ -3,6 +3,7 @@ import type { CollectionConfig } from "payload";
 export const OrderItems: CollectionConfig = {
   slug: "order-items",
   admin: {
+    hidden: true,
     useAsTitle: "title",
     defaultColumns: ["title", "order", "format", "quantity", "unitPrice"]
   },
