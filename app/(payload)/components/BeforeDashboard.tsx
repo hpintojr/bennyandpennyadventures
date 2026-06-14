@@ -9,16 +9,8 @@ import "./RegionCompact.scss";
 
 type PayloadDoc = { id?: string | number; createdAt?: string; [key: string]: unknown };
 type PayloadListResult = { docs: PayloadDoc[]; totalDocs: number; ok: boolean };
-type RecentOrder = {
-  id: string;
-  href: string;
-  orderId: string;
-  customerName: string;
-  status: string;
-  tone: string;
-  total: string;
-  created: string;
-};
+type RecentOrder = { id: string; href: string; orderId: string; customerName: string; status: string; tone: string; total: string; created: string };
+type RecentSubscriber = { id: string; href: string; name: string; email: string; dateJoined: string; status: string };
 type StatusItem = { label: string; detail: string; logoUrl: string; active: boolean };
 type FunnelItem = { label: string; value: number; width: number };
 type StatCard = { label: string; value: string; note: string; trend: string; icon: string };
@@ -50,6 +42,13 @@ function formatDate(value: unknown) {
   return new Intl.DateTimeFormat("en-US", { dateStyle: "medium", timeStyle: "short" }).format(date);
 }
 
+function formatShortDate(value: unknown) {
+  if (typeof value !== "string") return "—";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "—";
+  return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(date);
+}
+
 function getObject(value: unknown): Record<string, unknown> | null {
   return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : null;
 }
@@ -71,6 +70,11 @@ function customerName(order: PayloadDoc) {
   }
   const email = getString(order.customerEmail, "Customer");
   return email.includes("@") ? email.split("@")[0] : email;
+}
+
+function subscriberName(subscriber: PayloadDoc) {
+  const fullName = [getString(subscriber.firstName), getString(subscriber.lastName)].filter(Boolean).join(" ").trim();
+  return fullName || "Subscriber";
 }
 
 function statusLabel(status: string) {
@@ -137,7 +141,7 @@ async function getDashboardData() {
     safeFind("orders", { limit: 500, sort: "-createdAt" }),
     safeFind("orders", { limit: 1, where: { status: { equals: "pending" } } }),
     safeFind("order-items", { limit: 500, sort: "-createdAt" }),
-    safeFind("subscribers", { limit: 1 }),
+    safeFind("subscribers", { limit: 5, sort: "-createdAt" }),
     safeFind("downloads", { limit: 1 }),
     safeFind("books", { limit: 1 }),
     safeFind("users", { limit: 1 })
@@ -171,6 +175,19 @@ async function getDashboardData() {
     };
   });
 
+  const latestSubscribers: RecentSubscriber[] = subscribers.docs.map((subscriber) => {
+    const id = typeof subscriber.id === "string" || typeof subscriber.id === "number" ? String(subscriber.id) : getString(subscriber.email, "subscriber");
+    const unsubscribed = Boolean(getString(subscriber.unsubscribedAt));
+    return {
+      id,
+      href: `/admin/collections/subscribers/${id}`,
+      name: subscriberName(subscriber),
+      email: getString(subscriber.email, "—"),
+      dateJoined: formatShortDate(subscriber.createdAt),
+      status: unsubscribed ? "Unsubscribed" : "Active"
+    };
+  });
+
   const chartOrders: DashboardChartOrder[] = allOrders.docs.map((order) => {
     const id = typeof order.id === "string" || typeof order.id === "number" ? String(order.id) : "";
     const rollup = rollups.get(id) || { podCount: 0, digitalDownloadCount: 0 };
@@ -189,10 +206,10 @@ async function getDashboardData() {
     stats,
     chartOrders,
     recentOrders,
+    latestSubscribers,
     systemStatus,
     pendingOrderCount: pendingOrders.totalDocs,
-    funnel: buildFunnel(allOrders.totalDocs, pendingOrders.totalDocs, completedOrders.length, subscribers.totalDocs, orderItems.totalDocs),
-    counts: { books: books.totalDocs, subscribers: subscribers.totalDocs }
+    funnel: buildFunnel(allOrders.totalDocs, pendingOrders.totalDocs, completedOrders.length, subscribers.totalDocs, orderItems.totalDocs)
   };
 }
 
@@ -248,6 +265,11 @@ async function BeforeDashboard() {
         <article className="bp-dashboard__card bp-dashboard__card--orders">
           <div className="bp-dashboard__cardHeader bp-dashboard__cardHeader--compact"><div><h2>Recent Orders</h2><p>{dashboard.pendingOrderCount} pending orders need review.</p></div><Link className="bp-dashboard__primaryAction" href="/admin/collections/orders">Bulk Fulfill Pending Orders</Link></div>
           <div className="bp-dashboard__tableShell"><table><thead><tr><th>Order ID</th><th>Customer Name</th><th>Status</th><th>Total</th><th>Created</th><th>View Details</th></tr></thead><tbody>{dashboard.recentOrders.length ? dashboard.recentOrders.map((order) => (<tr key={order.id}><td>{order.orderId}</td><td>{order.customerName}</td><td><span className={`bp-dashboard__pill bp-dashboard__pill--${order.tone}`}>{order.status}</span></td><td>{order.total}</td><td>{order.created}</td><td><Link className="bp-dashboard__detailButton" href={order.href}>View Details</Link></td></tr>)) : (<tr><td colSpan={6}>No orders yet.</td></tr>)}</tbody></table></div>
+        </article>
+
+        <article className="bp-dashboard__card bp-dashboard__card--subscribers">
+          <div className="bp-dashboard__cardHeader bp-dashboard__cardHeader--compact"><div><h2>Latest Subscribers</h2><p>Newest newsletter and resource-library signups.</p></div><Link className="bp-dashboard__detailButton" href="/admin/collections/subscribers">View All</Link></div>
+          <div className="bp-dashboard__tableShell"><table><thead><tr><th>Name</th><th>Email</th><th>Date Joined</th><th>Status</th></tr></thead><tbody>{dashboard.latestSubscribers.length ? dashboard.latestSubscribers.map((subscriber) => (<tr key={subscriber.id}><td><Link href={subscriber.href}>♥ {subscriber.name}</Link></td><td>{subscriber.email}</td><td>{subscriber.dateJoined}</td><td><span className="bp-dashboard__pill bp-dashboard__pill--success">{subscriber.status}</span></td></tr>)) : (<tr><td colSpan={4}>No subscribers yet.</td></tr>)}</tbody></table></div>
         </article>
 
         <article className="bp-dashboard__card bp-dashboard__card--funnel">
