@@ -4,7 +4,10 @@ import { getPayload } from "payload";
 import type Stripe from "stripe";
 import { getStripe } from "@/lib/stripe";
 
-type PayloadClient = Awaited<ReturnType<typeof getPayload>>;
+type PayloadClient = {
+  find: (args: Record<string, unknown>) => Promise<unknown>;
+  create: (args: Record<string, unknown>) => Promise<unknown>;
+};
 
 type PayloadDoc = {
   id: string | number;
@@ -98,12 +101,12 @@ function lineItemToFulfillmentItem(lineItem: Stripe.LineItem): FulfillmentLineIt
 }
 
 async function getPayloadClient(): Promise<PayloadClient> {
-  return getPayload({ config });
+  return (await getPayload({ config })) as PayloadClient;
 }
 
 async function findExistingOrder(payload: PayloadClient, sessionId: string): Promise<PayloadDoc | null> {
   const result = (await payload.find({
-    collection: "orders" as never,
+    collection: "orders",
     limit: 1,
     where: {
       stripeCheckoutSessionId: {
@@ -117,7 +120,7 @@ async function findExistingOrder(payload: PayloadClient, sessionId: string): Pro
 
 async function findOrCreateCustomer(payload: PayloadClient, email: string): Promise<PayloadDoc> {
   const result = (await payload.find({
-    collection: "users" as never,
+    collection: "users",
     limit: 1,
     where: {
       email: {
@@ -130,7 +133,7 @@ async function findOrCreateCustomer(payload: PayloadClient, email: string): Prom
   if (existingUser) return existingUser;
 
   return (await payload.create({
-    collection: "users" as never,
+    collection: "users",
     data: {
       email,
       password: crypto.randomBytes(24).toString("base64url"),
@@ -143,7 +146,7 @@ async function findBookBySlug(payload: PayloadClient, slug: string | null): Prom
   if (!slug) return null;
 
   const result = (await payload.find({
-    collection: "books" as never,
+    collection: "books",
     limit: 1,
     where: {
       slug: {
@@ -172,7 +175,7 @@ async function createOrderItem(
   item: FulfillmentLineItem
 ) {
   await payload.create({
-    collection: "order-items" as never,
+    collection: "order-items",
     data: {
       order: orderId,
       book: book?.id,
@@ -195,7 +198,7 @@ async function createAccessGrant(
   if (item.format !== "digital" && item.format !== "audiobook") return false;
 
   await payload.create({
-    collection: "access-grants" as never,
+    collection: "access-grants",
     data: {
       customer: customerId,
       book: book.id,
@@ -220,7 +223,7 @@ async function createDownloadRecord(
   label: string
 ) {
   await payload.create({
-    collection: "downloads" as never,
+    collection: "downloads",
     data: {
       customer: customerId,
       order: orderId,
@@ -289,7 +292,7 @@ export async function fulfillCheckoutSession(session: Stripe.Checkout.Session): 
 
   const customer = await findOrCreateCustomer(payload, customerEmail);
   const order = (await payload.create({
-    collection: "orders" as never,
+    collection: "orders",
     data: {
       orderNumber,
       customer: customer.id,
