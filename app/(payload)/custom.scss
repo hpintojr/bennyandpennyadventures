@@ -1,23 +1,24 @@
-/* Benny & Penny Payload Admin theme. Warm, branded, high-contrast admin shell. */
+/* Benny & Penny Payload Admin theme. Softer teal-forward branded admin shell. */
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap');
 
 :root {
-  --bp-cream: #fff8ed;
-  --bp-panel: #fffefa;
-  --bp-sidebar: #fbeccb;
-  --bp-sidebar-deep: #f7dcae;
+  --bp-cream: #f6fbf7;
+  --bp-panel: #fbfffc;
+  --bp-sidebar: #d8eee7;
+  --bp-sidebar-deep: #a9d4c5;
   --bp-mint: #cfeae0;
   --bp-teal: #065766;
   --bp-teal-deep: #043f49;
   --bp-coral: #eb6373;
   --bp-coral-deep: #d94d5f;
   --bp-gold: #d8b98d;
+  --bp-soft-row: #edf8f4;
   --theme-text: var(--bp-teal-deep);
-  --theme-elevation-0: #fffefa;
-  --theme-elevation-50: #fff7e9;
-  --theme-elevation-100: #f8ead5;
-  --theme-elevation-150: #efd9bd;
-  --theme-elevation-200: #e6caa7;
+  --theme-elevation-0: #fbfffc;
+  --theme-elevation-50: #f2fbf7;
+  --theme-elevation-100: #e3f3ee;
+  --theme-elevation-150: #d1eae2;
+  --theme-elevation-200: #bfe0d6;
   --theme-input-bg: #ffffff;
   --theme-success-500: var(--bp-teal);
   --theme-error-500: var(--bp-coral);
@@ -33,14 +34,14 @@ body,
 }
 
 body {
-  background: radial-gradient(circle at top right, rgba(196, 224, 212, 0.35), transparent 30%), var(--bp-cream) !important;
+  background: radial-gradient(circle at top right, rgba(169, 212, 197, 0.45), transparent 30%), linear-gradient(180deg, #f7fcfa 0%, #eef8f4 100%) !important;
 }
 
 /* Admin navigation */
 .template-default .nav,
 .template-default aside {
-  background: linear-gradient(180deg, var(--bp-sidebar) 0%, var(--bp-sidebar-deep) 100%) !important;
-  border-right: 2px solid rgba(216, 185, 141, 0.75) !important;
+  background: linear-gradient(180deg, #dff4ee 0%, var(--bp-sidebar) 46%, var(--bp-sidebar-deep) 100%) !important;
+  border-right: 2px solid rgba(6, 87, 102, 0.18) !important;
   color: var(--bp-teal-deep) !important;
 }
 
@@ -55,19 +56,19 @@ body {
   font-size: 1.2rem;
   font-weight: 800;
   line-height: 1.08;
-  border-bottom: 2px solid rgba(216, 185, 141, 0.55);
+  border-bottom: 2px solid rgba(6, 87, 102, 0.16);
 }
 
 .template-default .nav::after,
 .template-default aside::after {
   content: '🧸';
   align-items: center;
-  background: rgba(255, 253, 248, 0.72) url('/admin/bear-sidebar-placeholder.png') center / contain no-repeat;
+  background: rgba(251, 255, 252, 0.62) url('/admin/bear-sidebar-placeholder.png') center / contain no-repeat;
   border: 1px dashed rgba(4, 63, 73, 0.24);
   border-radius: 18px;
   bottom: 4.25rem;
   box-shadow: 0 12px 28px rgba(4, 63, 73, 0.1);
-  color: rgba(4, 63, 73, 0.42);
+  color: rgba(4, 63, 73, 0.34);
   display: flex;
   font-size: 3.5rem;
   height: 118px;
@@ -93,28 +94,29 @@ body {
 
 .template-default .nav a,
 .template-default aside a {
-  border-radius: 0.65rem !important;
-  margin: 0.12rem 0.7rem !important;
-  padding: 0.55rem 0.72rem !important;
+  border-radius: 0.75rem !important;
+  margin: 0.12rem 0.75rem !important;
+  padding: 0.62rem 0.78rem !important;
 }
 
 .template-default .nav a[aria-current='page'],
 .template-default aside a[aria-current='page'],
 .template-default .nav a:hover,
 .template-default aside a:hover {
-  background: var(--bp-mint) !important;
+  background: #f7fffb !important;
   color: var(--bp-teal-deep) !important;
-  box-shadow: inset 4px 0 0 var(--bp-coral) !important;
+  box-shadow: inset 4px 0 0 var(--bp-teal), 0 8px 18px rgba(4, 63, 73, 0.08) !important;
 }
 
 .template-default .nav-group__label,
 .template-default .collapsible__toggle,
 .template-default .nav-group__toggle {
-  background: rgba(196, 224, 212, 0.55) !important;
-  border-radius: 0.65rem !important;
+  background: rgba(6, 87, 102, 0.1) !important;
+  border: 1px solid rgba(6, 87, 102, 0.12) !important;
+  border-radius: 0.85rem !important;
   color: var(--bp-teal-deep) !important;
-  margin: 0.5rem 0.7rem 0.2rem !important;
-  padding: 0.55rem 0.72rem !important;
+  margin: 0.8rem 0.75rem 0.45rem !important;
+  padding: 0.56rem 0.8rem !important;
 }
 
 /* Keep the visual sidebar focused on the core workflow. Direct routes still work. */
@@ -122,7 +124,6 @@ body {
 .template-default a[href='/admin/collections/contact-submissions'],
 .template-default a[href='/admin/collections/order-items'],
 .template-default a[href='/admin/collections/downloads'],
-.template-default a[href='/admin/collections/support-tickets'],
 .template-default a[href='/admin/collections/support-messages'],
 .template-default a[href='/admin/collections/access-grants'],
 .template-default a[href='/admin/collections/audit-logs'] {
@@ -178,8 +179,8 @@ body {
 .template-default .document-fields,
 .template-default .field-type,
 .template-default table {
-  background: #fffaf1 !important;
-  border-color: rgba(216, 185, 141, 0.5) !important;
+  background: var(--bp-panel) !important;
+  border-color: rgba(6, 87, 102, 0.14) !important;
 }
 
 .template-default .collection-list,
@@ -192,12 +193,12 @@ body {
 
 .template-default table tr:nth-child(even),
 .template-default .table tbody tr:nth-child(even) {
-  background: #fff0d8 !important;
+  background: var(--bp-soft-row) !important;
 }
 
 .template-default table tr:nth-child(odd),
 .template-default .table tbody tr:nth-child(odd) {
-  background: #fffdf8 !important;
+  background: #fbfffc !important;
 }
 
 .template-default table th,
@@ -213,7 +214,7 @@ select {
   background-color: #ffffff !important;
   color: var(--bp-teal-deep) !important;
   -webkit-text-fill-color: var(--bp-teal-deep) !important;
-  border: 2px solid rgba(216, 185, 141, 0.95) !important;
+  border: 2px solid rgba(6, 87, 102, 0.24) !important;
   border-radius: 0.65rem !important;
   font-family: 'Nunito', ui-sans-serif, system-ui, sans-serif !important;
   font-size: 1.08rem !important;
@@ -226,8 +227,8 @@ select {
 input:focus,
 textarea:focus,
 select:focus {
-  border-color: var(--bp-coral) !important;
-  box-shadow: 0 0 0 3px rgba(235, 99, 115, 0.18) !important;
+  border-color: var(--bp-teal) !important;
+  box-shadow: 0 0 0 3px rgba(6, 87, 102, 0.16) !important;
   outline: none !important;
 }
 
@@ -242,7 +243,7 @@ input:-webkit-autofill:hover,
 input:-webkit-autofill:focus {
   -webkit-text-fill-color: var(--bp-teal-deep) !important;
   box-shadow: 0 0 0 1000px #ffffff inset !important;
-  border: 2px solid rgba(216, 185, 141, 0.95) !important;
+  border: 2px solid rgba(6, 87, 102, 0.24) !important;
 }
 
 label,
@@ -290,8 +291,8 @@ button:disabled,
 .template-default .btn--style-secondary,
 .template-default .btn--style-pill,
 .template-default .btn--style-subtle {
-  background: #fff2df !important;
-  border-color: rgba(216, 185, 141, 0.95) !important;
+  background: #f7fffb !important;
+  border-color: rgba(6, 87, 102, 0.22) !important;
   color: var(--bp-teal-deep) !important;
   font-weight: 850 !important;
 }
@@ -299,13 +300,13 @@ button:disabled,
 /* Login screen */
 .template-login,
 .template-create-first-user {
-  background: linear-gradient(135deg, #fff4e4 0%, #fffaf1 55%, #eef5ea 100%) !important;
+  background: linear-gradient(135deg, #e7f6f1 0%, #f7fcfa 55%, #dff4ee 100%) !important;
 }
 
 .template-login form,
 .template-create-first-user form {
-  background: rgba(255, 253, 248, 0.92) !important;
-  border: 1px solid rgba(216, 185, 141, 0.68) !important;
+  background: rgba(251, 255, 252, 0.92) !important;
+  border: 1px solid rgba(6, 87, 102, 0.18) !important;
   border-radius: 18px !important;
   box-shadow: 0 20px 48px rgba(4, 63, 73, 0.12) !important;
   padding: 1.25rem !important;
