@@ -3,6 +3,7 @@ import type { CollectionConfig } from "payload";
 export const ContactSubmissions: CollectionConfig = {
   slug: "contact-submissions",
   admin: {
+    hidden: true,
     useAsTitle: "name",
     defaultColumns: ["name", "email", "inquiryType", "status", "createdAt"]
   },
