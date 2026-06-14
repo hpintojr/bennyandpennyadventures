@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import ClearCartOnSuccess from "@/app/components/ClearCartOnSuccess";
 import { fulfillCheckoutSessionById, type FulfillmentSummary } from "@/lib/stripeFulfillment";
 import SiteShell from "../../components/SiteShell";
 
@@ -42,6 +43,7 @@ export default async function ThankYouPage({ searchParams }: ThankYouPageProps) 
 
   return (
     <SiteShell>
+      <ClearCartOnSuccess shouldClear={Boolean(sessionId)} />
       <section className="page-wrap flex min-h-[60vh] flex-col items-center justify-center pb-20 pt-10 text-center">
         <h1 className="font-serif text-5xl font-semibold text-teal">Thank You!</h1>
         <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-ink">Thank you for your Benny &amp; Penny order. We are preparing your purchase details and delivery access.</p>
