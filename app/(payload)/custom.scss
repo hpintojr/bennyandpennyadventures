@@ -1,8 +1,10 @@
-/* Benny & Penny Payload Admin branding. Keep Payload layout intact; improve visibility, login clarity, and brand tone. */
+/* Benny & Penny Payload Admin theme. Higher contrast, cleaner alignment, and site-matching fonts. */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap');
+
 :root {
   --bp-cream: #fff8ed;
-  --bp-cream-soft: #fbead2;
   --bp-panel: #fffdf8;
+  --bp-sidebar: #fff0d8;
   --bp-teal: #065766;
   --bp-teal-deep: #043f49;
   --bp-coral: #eb6373;
@@ -19,59 +21,37 @@
   --theme-error-500: var(--bp-coral);
 }
 
-body {
-  background: var(--bp-cream) !important;
+html,
+body,
+.template-default,
+.template-login,
+.template-create-first-user {
+  font-family: 'Nunito', ui-sans-serif, system-ui, sans-serif !important;
   color: var(--bp-teal-deep) !important;
 }
 
-/* Admin shell */
+body {
+  background: var(--bp-cream) !important;
+}
+
+/* Admin navigation */
 .template-default .nav,
 .template-default aside {
-  background: linear-gradient(180deg, #fff1dc 0%, #f6e3c8 100%) !important;
-  border-right: 1px solid rgba(216, 185, 141, 0.65) !important;
+  background: linear-gradient(180deg, var(--bp-sidebar) 0%, #f9dfb9 100%) !important;
+  border-right: 2px solid rgba(216, 185, 141, 0.75) !important;
   color: var(--bp-teal-deep) !important;
 }
 
 .template-default .nav::before,
 .template-default aside::before {
-  content: "♥ Benny & Penny Admin";
+  content: '♥ Benny & Penny Admin';
   display: block;
-  padding: 1rem 1.15rem 0.85rem;
+  padding: 1.05rem 1.15rem 1rem;
   color: var(--bp-teal-deep);
-  font-size: 1rem;
-  font-weight: 900;
-  letter-spacing: 0.01em;
-  border-bottom: 1px solid rgba(216, 185, 141, 0.45);
-}
-
-.template-default .app-header::after {
-  content: none !important;
-}
-
-/* Replace small Payload mark/breadcrumb mark visually with a heart where Payload places a mini logo. */
-.template-default .app-header svg:first-child,
-.template-default header svg:first-child,
-.template-default .breadcrumbs svg:first-child,
-.template-login svg,
-.template-create-first-user svg {
-  display: none !important;
-}
-
-.template-default .app-header::before,
-.template-default header::before,
-.template-default .breadcrumbs::before {
-  content: "♥";
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.4rem;
-  height: 1.4rem;
-  margin-right: 0.45rem;
-  border-radius: 999px;
-  background: var(--bp-coral);
-  color: #ffffff;
-  font-size: 0.85rem;
-  font-weight: 900;
+  font-size: 1.05rem;
+  font-weight: 950;
+  line-height: 1.1;
+  border-bottom: 2px solid rgba(216, 185, 141, 0.55);
 }
 
 .template-default .nav a,
@@ -81,17 +61,24 @@ body {
 .template-default .collapsible__toggle,
 .template-default .nav-group__toggle {
   color: var(--bp-teal-deep) !important;
-  font-size: 0.96rem !important;
-  font-weight: 750 !important;
+  font-size: 1rem !important;
+  font-weight: 850 !important;
+  line-height: 1.25 !important;
+}
+
+.template-default .nav a,
+.template-default aside a {
+  padding-top: 0.38rem !important;
+  padding-bottom: 0.38rem !important;
 }
 
 .template-default .nav a[aria-current='page'],
 .template-default aside a[aria-current='page'],
 .template-default .nav a:hover,
 .template-default aside a:hover {
+  background: rgba(235, 99, 115, 0.18) !important;
   color: var(--bp-teal-deep) !important;
-  background: rgba(235, 99, 115, 0.16) !important;
-  border-radius: 0.6rem !important;
+  border-radius: 0.55rem !important;
 }
 
 .template-default main,
@@ -105,27 +92,56 @@ body {
 .template-default h3,
 .template-default .doc-header__title {
   color: var(--bp-teal) !important;
-  font-weight: 900 !important;
+  font-family: 'Playfair Display', Georgia, serif !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.02em !important;
 }
 
-.template-default .doc-header,
+.template-default .app-header::after {
+  content: none !important;
+}
+
+.template-default .app-header svg:first-child,
+.template-default header svg:first-child,
+.template-default .breadcrumbs svg:first-child {
+  display: none !important;
+}
+
+.template-default .breadcrumbs::before,
+.template-default .app-header::before,
+.template-default header::before {
+  content: '♥';
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-right: 0.5rem;
+  border-radius: 999px;
+  background: var(--bp-coral);
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 950;
+}
+
+/* Content contrast */
 .template-default .collection-list,
 .template-default .render-fields,
 .template-default .document-fields,
 .template-default .field-type,
 .template-default table {
-  background: rgba(255, 248, 237, 0.72) !important;
-  border-color: rgba(216, 185, 141, 0.45) !important;
+  background: #fffaf1 !important;
+  border-color: rgba(216, 185, 141, 0.5) !important;
 }
 
 .template-default table tr:nth-child(even),
 .template-default .table tbody tr:nth-child(even) {
-  background: rgba(255, 241, 220, 0.85) !important;
+  background: #fff0d8 !important;
 }
 
 .template-default table tr:nth-child(odd),
 .template-default .table tbody tr:nth-child(odd) {
-  background: rgba(255, 253, 248, 0.95) !important;
+  background: #fffdf8 !important;
 }
 
 .template-default input,
@@ -133,8 +149,9 @@ body {
 .template-default select {
   background: #ffffff !important;
   color: var(--bp-teal-deep) !important;
-  border: 1px solid rgba(216, 185, 141, 0.85) !important;
+  border: 2px solid rgba(216, 185, 141, 0.85) !important;
   font-size: 1rem !important;
+  font-weight: 700 !important;
 }
 
 .template-default .btn--style-primary,
@@ -142,7 +159,7 @@ body {
   background: var(--bp-coral) !important;
   border-color: var(--bp-coral) !important;
   color: #ffffff !important;
-  font-weight: 850 !important;
+  font-weight: 900 !important;
 }
 
 .template-default .btn--style-primary:hover,
@@ -155,116 +172,48 @@ body {
 .template-default .btn--style-pill,
 .template-default .btn--style-subtle {
   background: #fff2df !important;
-  border-color: rgba(216, 185, 141, 0.9) !important;
+  border-color: rgba(216, 185, 141, 0.95) !important;
   color: var(--bp-teal-deep) !important;
-  font-weight: 800 !important;
+  font-weight: 850 !important;
 }
 
-/* Login / first-user screen */
+/* Login screen contrast fallback until Payload graphics config is applied. */
 .template-login,
 .template-create-first-user {
-  background:
-    radial-gradient(circle at 16% 12%, rgba(235, 99, 115, 0.22), transparent 28rem),
-    radial-gradient(circle at 84% 18%, rgba(6, 87, 102, 0.14), transparent 24rem),
-    linear-gradient(135deg, #fff4e4 0%, #fffaf1 48%, #eef5ea 100%) !important;
-  color: var(--bp-teal-deep) !important;
-}
-
-.template-login::before,
-.template-create-first-user::before {
-  content: "♥ Benny & Penny's Admin Panel";
-  position: fixed;
-  top: calc(50% - 14.75rem);
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 20;
-  width: min(38rem, calc(100vw - 2rem));
-  text-align: center;
-  color: var(--bp-teal-deep);
-  font-size: clamp(2rem, 3vw, 3rem);
-  font-weight: 950;
-  line-height: 1.05;
-  text-shadow: 0 1px 0 #ffffff;
-}
-
-.template-login::after,
-.template-create-first-user::after {
-  content: "Manage books, orders, subscribers, downloads, and family adventure content.";
-  position: fixed;
-  top: calc(50% - 11.15rem);
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 20;
-  width: min(39rem, calc(100vw - 2rem));
-  text-align: center;
-  color: var(--bp-teal);
-  font-size: 1.05rem;
-  font-weight: 800;
-}
-
-.template-login form,
-.template-create-first-user form,
-.template-login .login__form,
-.template-create-first-user .login__form {
-  width: min(34rem, calc(100vw - 2rem)) !important;
-  background: rgba(255, 253, 248, 0.98) !important;
-  border: 2px solid rgba(216, 185, 141, 0.78) !important;
-  border-radius: 1.35rem !important;
-  box-shadow: 0 2rem 5rem rgba(4, 63, 73, 0.18) !important;
-  padding: 2.25rem !important;
+  background: linear-gradient(135deg, #fff4e4 0%, #fffaf1 55%, #eef5ea 100%) !important;
 }
 
 .template-login label,
 .template-create-first-user label,
 .template-login .field-label,
-.template-create-first-user .field-label,
-.template-login .description,
-.template-create-first-user .description {
+.template-create-first-user .field-label {
   color: var(--bp-teal-deep) !important;
-  font-size: 1.02rem !important;
-  font-weight: 900 !important;
-}
-
-.template-login input,
-.template-create-first-user input,
-.template-login select,
-.template-create-first-user select {
-  min-height: 3rem !important;
-  background: #ffffff !important;
-  color: var(--bp-teal-deep) !important;
-  border: 2px solid var(--bp-gold) !important;
-  border-radius: 0.55rem !important;
-  font-size: 1.08rem !important;
-  font-weight: 700 !important;
-}
-
-.template-login input:focus,
-.template-create-first-user input:focus {
-  border-color: var(--bp-teal) !important;
-  box-shadow: 0 0 0 3px rgba(6, 87, 102, 0.16) !important;
-}
-
-.template-login button[type='submit'],
-.template-create-first-user button[type='submit'],
-.template-login .btn--style-primary,
-.template-create-first-user .btn--style-primary {
-  min-height: 3.1rem !important;
-  background: var(--bp-coral) !important;
-  border: 2px solid var(--bp-coral) !important;
-  border-radius: 0.65rem !important;
-  color: #ffffff !important;
-  font-size: 1.08rem !important;
+  font-size: 1.05rem !important;
   font-weight: 950 !important;
   opacity: 1 !important;
 }
 
-.template-login button[type='submit']:disabled,
-.template-create-first-user button[type='submit']:disabled,
-.template-login .btn--disabled,
-.template-create-first-user .btn--disabled {
-  background: #ee8792 !important;
-  border-color: #ee8792 !important;
+.template-login input,
+.template-create-first-user input {
+  background: #ffffff !important;
+  color: var(--bp-teal-deep) !important;
+  -webkit-text-fill-color: var(--bp-teal-deep) !important;
+  border: 2px solid var(--bp-gold) !important;
+  min-height: 3.15rem !important;
+  font-size: 1.08rem !important;
+  font-weight: 800 !important;
+}
+
+.template-login button,
+.template-create-first-user button,
+.template-login [type='submit'],
+.template-create-first-user [type='submit'] {
+  background: var(--bp-coral) !important;
+  border-color: var(--bp-coral) !important;
   color: #ffffff !important;
+  min-height: 3.15rem !important;
+  font-size: 1.08rem !important;
+  font-weight: 950 !important;
   opacity: 1 !important;
 }
 
@@ -273,11 +222,4 @@ body {
   color: var(--bp-teal-deep) !important;
   font-weight: 900 !important;
   text-decoration: underline !important;
-}
-
-.template-login [class*='logo'],
-.template-login [class*='Logo'],
-.template-create-first-user [class*='logo'],
-.template-create-first-user [class*='Logo'] {
-  display: none !important;
 }
