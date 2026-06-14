@@ -5,6 +5,15 @@ import { getStripe } from "@/lib/stripe";
 
 export const runtime = "nodejs";
 
+export async function GET() {
+  return NextResponse.json({
+    ok: true,
+    route: "/api/stripe/webhook",
+    status: "Stripe webhook endpoint is online. Stripe events must be sent as signed POST requests.",
+    accepts: ["checkout.session.completed", "payment_intent.payment_failed"]
+  });
+}
+
 export async function POST(request: Request) {
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
