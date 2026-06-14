@@ -1,4 +1,5 @@
 import config from "@payload-config";
+import { BookCopy, Mail, Package, Wallet, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { getPayload } from "payload";
 import React from "react";
@@ -13,7 +14,7 @@ type RecentOrder = { id: string; href: string; orderId: string; customerName: st
 type RecentSubscriber = { id: string; href: string; name: string; email: string; dateJoined: string; status: string };
 type StatusItem = { label: string; detail: string; logoUrl: string; active: boolean };
 type FunnelItem = { label: string; value: number; width: number };
-type StatCard = { label: string; value: string; note: string; trend: string; icon: string };
+type StatCard = { label: string; value: string; note: string; trend: string; Icon: LucideIcon };
 
 const serviceLogos = {
   payload: "https://cdn.jsdelivr.net/gh/selfhst/icons/svg/payload.svg",
@@ -154,10 +155,10 @@ async function getDashboardData() {
   const hasStripeRecords = allOrders.docs.some((order) => getString(order.stripeCheckoutSessionId) || getString(order.stripePaymentIntentId));
 
   const stats: StatCard[] = [
-    { label: "Total Revenue", value: formatMoney(totalRevenue), note: "Paid Stripe orders", trend: `${completedOrders.length} paid`, icon: "♡" },
-    { label: "Orders", value: String(allOrders.totalDocs), note: "Total order records", trend: "Live", icon: "▤" },
-    { label: "Items Sold", value: String(totalItems), note: "Order Detail quantity", trend: `${orderItems.totalDocs} rows`, icon: "📚" },
-    { label: "Subscribers", value: String(subscribers.totalDocs), note: "Community list", trend: "Live", icon: "💌" }
+    { label: "Total Revenue", value: formatMoney(totalRevenue), note: "Paid Stripe orders", trend: `${completedOrders.length} paid`, Icon: Wallet },
+    { label: "Orders", value: String(allOrders.totalDocs), note: "Total order records", trend: "Live", Icon: Package },
+    { label: "Items Sold", value: String(totalItems), note: "Order Detail quantity", trend: `${orderItems.totalDocs} rows`, Icon: BookCopy },
+    { label: "Subscribers", value: String(subscribers.totalDocs), note: "Community list", trend: "Live", Icon: Mail }
   ];
 
   const recentOrders: RecentOrder[] = orders.docs.map((order) => {
@@ -234,9 +235,9 @@ async function BeforeDashboard() {
       </header>
 
       <div className="bp-dashboard__stats" aria-label="Dashboard key performance indicators">
-        {dashboard.stats.map((stat) => (
+        {dashboard.stats.map(({ Icon, ...stat }) => (
           <article className="bp-dashboard__stat" key={stat.label}>
-            <div className="bp-dashboard__statIcon" aria-hidden="true">{stat.icon}</div>
+            <div className="bp-dashboard__statIcon" aria-hidden="true"><Icon size={18} strokeWidth={2.5} /></div>
             <p>{stat.label}</p>
             <strong>{stat.value}</strong>
             <small>{stat.note}</small>
