@@ -3,6 +3,7 @@ import type { CollectionConfig } from "payload";
 export const SupportTickets: CollectionConfig = {
   slug: "support-tickets",
   admin: {
+    hidden: true,
     useAsTitle: "subject",
     defaultColumns: ["subject", "customer", "relatedOrder", "status", "priority"]
   },
