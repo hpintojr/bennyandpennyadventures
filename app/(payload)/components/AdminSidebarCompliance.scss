@@ -20,12 +20,13 @@
 }
 
 .bp-admin-nav-extra__hubLabel {
-  color: #043f49;
-  font-size: 1.02rem;
+  color: #043f49ab;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.2rem;
   font-weight: 950;
   letter-spacing: 0.02em;
   line-height: 1.1;
-  margin: 0.08rem 0 0.38rem;
+  margin: 0.08rem 0 1rem;
   text-align: center;
 }
 
@@ -70,16 +71,17 @@
   transform: translateY(-1px);
 }
 
-.bp-admin-nav-extra__link span:first-child {
+.bp-admin-nav-extra__link span:first-child,
+.bp-admin-nav-extra__iconSvg {
   color: #043f49;
   font-size: 1rem;
+  height: 1rem;
   text-align: center;
+  width: 1rem;
 }
 
-.bp-admin-nav-extra__link--logout span:first-child {
-  font-size: 0.72rem;
-  line-height: 1;
-  overflow-wrap: anywhere;
+.bp-admin-nav-extra__iconSvg {
+  display: block;
 }
 
 .bp-admin-nav-extra__link em {
