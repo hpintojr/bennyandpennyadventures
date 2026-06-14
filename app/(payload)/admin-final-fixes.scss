@@ -8,17 +8,120 @@
   padding: 1.25rem 1.15rem 1.1rem 5rem !important;
 }
 
-/* Sidebar open/collapse control: remove white button background in all states. */
-.template-default button[aria-label*='Open'],
-.template-default button[aria-label*='open'],
-.template-default button[aria-label*='Collapse'],
-.template-default button[aria-label*='collapse'],
-.template-default button[title*='Open'],
-.template-default button[title*='open'],
-.template-default button[title*='Collapse'],
-.template-default button[title*='collapse'],
-.template-default [class*='nav'] > button,
-.template-default [class*='Nav'] > button {
+/* Dashboard needs breathing room now that Payload breadcrumbs are hidden. */
+.bp-dashboard__topbar {
+  margin-top: 1.35rem !important;
+}
+
+/* Sidebar open/collapse control: normalize stacked Payload hamburger pieces into one clean button. */
+.template-default .nav-toggler,
+.template-default .template-default__nav-toggler,
+.template-default button.nav-toggler,
+.template-default button.template-default__nav-toggler {
+  align-items: center !important;
+  background: rgba(247, 253, 254, 0.82) !important;
+  border: 1px solid rgba(6, 87, 102, 0.18) !important;
+  border-radius: 0.85rem !important;
+  box-shadow: 0 10px 24px rgba(20, 36, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.72) !important;
+  color: #043f49 !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  height: 2.35rem !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+  min-height: 2.35rem !important;
+  min-width: 2.35rem !important;
+  overflow: visible !important;
+  padding: 0 !important;
+  pointer-events: auto !important;
+  position: relative !important;
+  width: 2.35rem !important;
+  z-index: 100 !important;
+}
+
+.template-default .nav-toggler:hover,
+.template-default .template-default__nav-toggler:hover,
+.template-default button.nav-toggler:hover,
+.template-default button.template-default__nav-toggler:hover {
+  background: linear-gradient(135deg, rgba(178, 232, 239, 0.96), rgba(213, 247, 249, 0.96)) !important;
+  border-color: rgba(6, 87, 102, 0.26) !important;
+  box-shadow: 0 12px 28px rgba(20, 36, 42, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.72) !important;
+}
+
+.template-default .nav-toggler .hamburger,
+.template-default .template-default__nav-toggler .hamburger,
+.template-default .nav-toggler .hamburger__close-icon,
+.template-default .template-default__nav-toggler .hamburger__close-icon,
+.template-default .nav-toggler .hamburger__open-icon,
+.template-default .template-default__nav-toggler .hamburger__open-icon {
+  align-items: center !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: #043f49 !important;
+  display: inline-flex !important;
+  height: 1.2rem !important;
+  justify-content: center !important;
+  left: auto !important;
+  line-height: 1 !important;
+  margin: 0 !important;
+  min-height: 0 !important;
+  min-width: 0 !important;
+  overflow: visible !important;
+  padding: 0 !important;
+  position: static !important;
+  top: auto !important;
+  transform: none !important;
+  width: 1.2rem !important;
+}
+
+.template-default .nav-toggler .hamburger::before,
+.template-default .nav-toggler .hamburger::after,
+.template-default .nav-toggler .hamburger__close-icon::before,
+.template-default .nav-toggler .hamburger__close-icon::after,
+.template-default .template-default__nav-toggler .hamburger::before,
+.template-default .template-default__nav-toggler .hamburger::after,
+.template-default .template-default__nav-toggler .hamburger__close-icon::before,
+.template-default .template-default__nav-toggler .hamburger__close-icon::after {
+  content: none !important;
+  display: none !important;
+}
+
+.template-default .nav-toggler .icon,
+.template-default .template-default__nav-toggler .icon,
+.template-default .nav-toggler svg,
+.template-default .template-default__nav-toggler svg {
+  color: #043f49 !important;
+  display: block !important;
+  flex: 0 0 auto !important;
+  height: 1.08rem !important;
+  margin: 0 !important;
+  max-height: 1.08rem !important;
+  max-width: 1.08rem !important;
+  overflow: visible !important;
+  pointer-events: none !important;
+  width: 1.08rem !important;
+}
+
+.template-default .nav-toggler svg .stroke,
+.template-default .template-default__nav-toggler svg .stroke,
+.template-default .nav-toggler svg path,
+.template-default .template-default__nav-toggler svg path {
+  stroke: #043f49 !important;
+  stroke-width: 2.4 !important;
+}
+
+/* Sidebar open/collapse control: remove white button background in broad Payload states. */
+.template-default button[aria-label*='Open']:not(.nav-toggler):not(.template-default__nav-toggler),
+.template-default button[aria-label*='open']:not(.nav-toggler):not(.template-default__nav-toggler),
+.template-default button[aria-label*='Collapse']:not(.nav-toggler):not(.template-default__nav-toggler),
+.template-default button[aria-label*='collapse']:not(.nav-toggler):not(.template-default__nav-toggler),
+.template-default button[title*='Open']:not(.nav-toggler):not(.template-default__nav-toggler),
+.template-default button[title*='open']:not(.nav-toggler):not(.template-default__nav-toggler),
+.template-default button[title*='Collapse']:not(.nav-toggler):not(.template-default__nav-toggler),
+.template-default button[title*='collapse']:not(.nav-toggler):not(.template-default__nav-toggler),
+.template-default [class*='nav'] > button:not(.nav-toggler):not(.template-default__nav-toggler),
+.template-default [class*='Nav'] > button:not(.nav-toggler):not(.template-default__nav-toggler) {
   background: transparent !important;
   background-color: transparent !important;
   border: 0 !important;
@@ -26,15 +129,15 @@
   color: #043f49 !important;
 }
 
-.template-default button[aria-label*='Open']:hover,
-.template-default button[aria-label*='open']:hover,
-.template-default button[aria-label*='Collapse']:hover,
-.template-default button[aria-label*='collapse']:hover,
-.template-default button[title*='Open']:hover,
-.template-default button[title*='open']:hover,
-.template-default button[title*='Collapse']:hover,
-.template-default [class*='nav'] > button:hover,
-.template-default [class*='Nav'] > button:hover {
+.template-default button[aria-label*='Open']:not(.nav-toggler):not(.template-default__nav-toggler):hover,
+.template-default button[aria-label*='open']:not(.nav-toggler):not(.template-default__nav-toggler):hover,
+.template-default button[aria-label*='Collapse']:not(.nav-toggler):not(.template-default__nav-toggler):hover,
+.template-default button[aria-label*='collapse']:not(.nav-toggler):not(.template-default__nav-toggler):hover,
+.template-default button[title*='Open']:not(.nav-toggler):not(.template-default__nav-toggler):hover,
+.template-default button[title*='open']:not(.nav-toggler):not(.template-default__nav-toggler):hover,
+.template-default button[title*='Collapse']:not(.nav-toggler):not(.template-default__nav-toggler):hover,
+.template-default [class*='nav'] > button:not(.nav-toggler):not(.template-default__nav-toggler):hover,
+.template-default [class*='Nav'] > button:not(.nav-toggler):not(.template-default__nav-toggler):hover {
   background: rgba(4, 63, 73, 0.08) !important;
   border-radius: 0.55rem !important;
   box-shadow: none !important;
