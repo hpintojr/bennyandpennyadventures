@@ -75,6 +75,8 @@ export async function AdminBeforeNavLinks() {
 
   return (
     <div className="bp-admin-nav-extra bp-admin-nav-extra--top">
+      <div className="bp-admin-nav-extra__hubLabel">Adventure Hub</div>
+
       <Link className="bp-admin-nav-extra__link bp-admin-nav-extra__link--active" href="/admin">
         <span aria-hidden="true">⌂</span>
         Dashboard
