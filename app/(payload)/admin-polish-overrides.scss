@@ -1,0 +1,114 @@
+/* Final polish overrides for the Benny & Penny admin shell. Keep this loaded after custom.scss. */
+
+/* Move branding farther right so the collapse button no longer covers it. */
+.template-default .nav::before,
+.template-default aside::before {
+  padding-left: 4rem !important;
+}
+
+/* Make the collapse button feel integrated with the teal sidebar. */
+.template-default .nav button,
+.template-default aside button {
+  background: rgba(4, 63, 73, 0.08) !important;
+  border: 1px solid rgba(4, 63, 73, 0.14) !important;
+  color: #043f49 !important;
+}
+
+.template-default .nav button:hover,
+.template-default aside button:hover {
+  background: rgba(4, 63, 73, 0.14) !important;
+}
+
+/* Re-label Payload's default wrapper as Adventure Hub and make it feel static. */
+.template-default .nav-group__label,
+.template-default .collapsible__toggle,
+.template-default .nav-group__toggle {
+  color: transparent !important;
+  pointer-events: none !important;
+  position: relative !important;
+}
+
+.template-default .nav-group__label::before,
+.template-default .collapsible__toggle::before,
+.template-default .nav-group__toggle::before {
+  color: rgba(4, 63, 73, 0.55) !important;
+  content: 'Adventure Hub';
+  display: inline-block;
+  font-size: 0.76rem;
+  font-weight: 950;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.template-default .nav-group__label svg,
+.template-default .collapsible__toggle svg,
+.template-default .nav-group__toggle svg {
+  display: none !important;
+}
+
+/* Keep only our custom logout button visible. Hide Payload's native logout entry if it appears. */
+.template-default a[href='/admin/logout']:not(.bp-admin-nav-extra__link),
+.template-default a[href='/admin/logout/']:not(.bp-admin-nav-extra__link),
+.template-default button[aria-label='Logout'],
+.template-default button[aria-label='Log out'] {
+  display: none !important;
+}
+
+/* Keep the custom logout fixed at the real bottom-left. */
+.bp-admin-nav-extra--bottom {
+  bottom: 0.85rem !important;
+  left: 0.75rem !important;
+  position: fixed !important;
+  width: 13.9rem !important;
+  z-index: 100 !important;
+}
+
+.bp-admin-nav-extra__link--logout span {
+  font-size: 1.15rem;
+  transform: translateY(-1px);
+}
+
+/* Checkbox cleanup: remove the black-box feeling and make selections match the teal theme. */
+.template-default input[type='checkbox'] {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  align-items: center !important;
+  background: #fbfffc !important;
+  border: 1.5px solid rgba(6, 87, 102, 0.34) !important;
+  border-radius: 0.35rem !important;
+  box-shadow: 0 1px 3px rgba(4, 63, 73, 0.08) !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  height: 1.18rem !important;
+  justify-content: center !important;
+  min-height: 1.18rem !important;
+  min-width: 1.18rem !important;
+  padding: 0 !important;
+  position: relative !important;
+  width: 1.18rem !important;
+}
+
+.template-default input[type='checkbox']::after {
+  color: #ffffff;
+  content: '✓';
+  font-size: 0.78rem;
+  font-weight: 950;
+  line-height: 1;
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+.template-default input[type='checkbox']:checked {
+  background: #065766 !important;
+  border-color: #065766 !important;
+}
+
+.template-default input[type='checkbox']:checked::after {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.template-default input[type='checkbox']:focus-visible {
+  box-shadow: 0 0 0 3px rgba(6, 87, 102, 0.16) !important;
+  outline: none !important;
+}
