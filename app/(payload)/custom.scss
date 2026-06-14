@@ -112,8 +112,19 @@ body {
   font-size: 1rem;
   font-weight: 950;
   gap: 0.6rem;
-  padding: 0.72rem 0.82rem;
+  margin: 0.12rem 0 !important;
+  padding: 0.72rem 0.82rem !important;
   text-decoration: none !important;
+}
+
+.bp-admin-nav-extra__heading {
+  color: rgba(4, 63, 73, 0.58) !important;
+  font-size: 0.76rem !important;
+  font-weight: 950 !important;
+  letter-spacing: 0.16em !important;
+  margin: 0.7rem 0 0.22rem !important;
+  padding: 0.25rem 0.78rem !important;
+  text-transform: uppercase !important;
 }
 
 .bp-admin-nav-extra__link:hover,
@@ -170,14 +181,19 @@ body {
   text-transform: uppercase !important;
 }
 
-/* Keep the visual sidebar focused on the core workflow. Direct routes still work. */
-.template-default a[href='/admin/collections/customer-addresses'],
-.template-default a[href='/admin/collections/contact-submissions'],
-.template-default a[href='/admin/collections/order-items'],
-.template-default a[href='/admin/collections/downloads'],
-.template-default a[href='/admin/collections/support-messages'],
-.template-default a[href='/admin/collections/access-grants'],
-.template-default a[href='/admin/collections/audit-logs'] {
+/* Use the custom sidebar links above as the visible admin navigation. */
+.template-default a:not(.bp-admin-nav-extra__link)[href='/admin/collections/books'],
+.template-default a:not(.bp-admin-nav-extra__link)[href='/admin/collections/orders'],
+.template-default a:not(.bp-admin-nav-extra__link)[href='/admin/collections/order-items'],
+.template-default a:not(.bp-admin-nav-extra__link)[href='/admin/collections/customer-addresses'],
+.template-default a:not(.bp-admin-nav-extra__link)[href='/admin/collections/subscribers'],
+.template-default a:not(.bp-admin-nav-extra__link)[href='/admin/collections/support-tickets'],
+.template-default a:not(.bp-admin-nav-extra__link)[href='/admin/collections/users'],
+.template-default a:not(.bp-admin-nav-extra__link)[href='/admin/collections/contact-submissions'],
+.template-default a:not(.bp-admin-nav-extra__link)[href='/admin/collections/downloads'],
+.template-default a:not(.bp-admin-nav-extra__link)[href='/admin/collections/support-messages'],
+.template-default a:not(.bp-admin-nav-extra__link)[href='/admin/collections/access-grants'],
+.template-default a:not(.bp-admin-nav-extra__link)[href='/admin/collections/audit-logs'] {
   display: none !important;
 }
 
