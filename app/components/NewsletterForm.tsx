@@ -1,8 +1,11 @@
 "use client";
 
+import Link from "next/link";
 import { FormEvent, useState } from "react";
 
 type SubmitState = "idle" | "submitting" | "error";
+
+const emailConsentText = "I agree to receive occasional email updates from Benny & Penny's Adventures. I can unsubscribe at any time.";
 
 export default function NewsletterForm({ compact = false, source = "website" }: { compact?: boolean; source?: string }) {
   const [email, setEmail] = useState("");
@@ -14,11 +17,19 @@ export default function NewsletterForm({ compact = false, source = "website" }: 
     setSubmitState("submitting");
     setMessage("");
 
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+
     try {
       const response = await fetch("/api/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, source })
+        body: JSON.stringify({
+          email,
+          source,
+          emailOptIn: formData.get("emailOptIn") === "on",
+          emailConsentText
+        })
       });
       const data = await response.json().catch(() => null);
 
@@ -50,6 +61,12 @@ export default function NewsletterForm({ compact = false, source = "website" }: 
           {submitState === "submitting" ? "Saving..." : "Sign Me Up ♥"}
         </button>
       </div>
+      <label className="mt-3 flex gap-2 text-xs font-bold leading-relaxed text-[#5f6f72]">
+        <input className="mt-0.5 h-4 w-4 shrink-0" name="emailOptIn" required type="checkbox" />
+        <span>
+          {emailConsentText} See our <Link className="font-extrabold text-coral" href="/privacy">Privacy Policy</Link>.
+        </span>
+      </label>
       {message ? <p className="mt-2 text-sm font-bold text-coral">{message}</p> : null}
     </form>
   );
