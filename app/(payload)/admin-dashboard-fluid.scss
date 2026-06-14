@@ -1,0 +1,32 @@
+/* Dashboard fluid-width behavior.
+   The dashboard should use the extra viewport space when the Payload sidebar collapses. */
+
+.bp-dashboard {
+  max-width: none !important;
+  width: 100% !important;
+}
+
+.template-default main:has(.bp-dashboard),
+.template-default main:has(.bp-dashboard) > *,
+.template-default .gutter--left:has(.bp-dashboard),
+.template-default .gutter--right:has(.bp-dashboard),
+.template-default [class*='gutter']:has(.bp-dashboard),
+.template-default [class*='Gutter']:has(.bp-dashboard),
+.template-default [class*='dashboard']:has(.bp-dashboard),
+.template-default [class*='Dashboard']:has(.bp-dashboard) {
+  max-width: none !important;
+  width: 100% !important;
+}
+
+.template-default main:has(.bp-dashboard) {
+  min-width: 0 !important;
+}
+
+/* Let rows and cards stretch naturally instead of staying locked to the old 1280px dashboard width. */
+.bp-dashboard__topbar,
+.bp-dashboard__stats,
+.bp-dashboard__mockGrid,
+.bp-dashboard__row {
+  max-width: none !important;
+  width: 100% !important;
+}
