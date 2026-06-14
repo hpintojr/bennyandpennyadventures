@@ -8,6 +8,7 @@ export function AdminBeforeNavLinks() {
         <span aria-hidden="true">⌂</span>
         Dashboard
       </Link>
+      <div className="bp-admin-nav-extra__heading">Adventure Hub</div>
     </div>
   );
 }
