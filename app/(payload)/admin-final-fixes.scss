@@ -41,9 +41,9 @@
   box-shadow: none !important;
 }
 
-/* Dashboard graph section: Book Sales chart around 300px and region card matched to that card height. */
+/* Dashboard graph section: keep sales chart at 300px, but do not let the region panel stretch taller than the chart area. */
 .bp-dashboard__mainGrid {
-  align-items: stretch !important;
+  align-items: start !important;
 }
 
 .bp-dashboard__chart {
@@ -56,22 +56,40 @@
 }
 
 .bp-dashboard__card--region {
-  align-self: stretch !important;
-  height: 100% !important;
+  align-self: start !important;
+  display: flex !important;
+  height: 300px !important;
   justify-content: center !important;
-  min-height: 0 !important;
-  padding: 1rem !important;
+  max-height: 300px !important;
+  min-height: 300px !important;
+  overflow: hidden !important;
+  padding: 0.85rem !important;
+}
+
+.bp-dashboard__card--region h2 {
+  font-size: 1rem !important;
+  line-height: 1.05 !important;
+}
+
+.bp-dashboard__card--region p {
+  font-size: 0.78rem !important;
+  line-height: 1.2 !important;
+  margin-top: 0.35rem !important;
 }
 
 .bp-dashboard__donut {
-  height: 158px !important;
-  margin: 0.85rem auto !important;
-  width: 158px !important;
+  height: 128px !important;
+  margin: 0.6rem auto !important;
+  width: 128px !important;
 }
 
 .bp-dashboard__donut::after {
-  height: 68px !important;
-  width: 68px !important;
+  height: 56px !important;
+  width: 56px !important;
+}
+
+.bp-dashboard__legend {
+  margin-top: 0.15rem !important;
 }
 
 /* Breadcrumb/admin heart: stop clipping and give the badge breathing room. */
