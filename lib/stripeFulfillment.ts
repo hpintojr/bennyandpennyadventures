@@ -27,6 +27,15 @@ type FulfillmentLineItem = {
   stripePriceId: string | null;
 };
 
+type CheckoutSessionWithShipping = Stripe.Checkout.Session & {
+  shipping_details?: {
+    name?: string | null;
+    address?: Stripe.Address | null;
+  } | null;
+};
+
+type AddressType = "billing" | "shipping";
+
 export type FulfillmentSummary = {
   orderId: string | number;
   orderNumber: string;
@@ -76,7 +85,11 @@ function splitName(fullName: string | null | undefined) {
 }
 
 function buildInternalOrderNote() {
-  return "Stripe Checkout fulfilled. Customer identity, address, and purchased items are stored in structured related collections.";
+  return "Stripe Checkout fulfilled. Customer identity, addresses, and purchased items are stored in structured related collections.";
+}
+
+function getShippingDetails(session: Stripe.Checkout.Session) {
+  return (session as CheckoutSessionWithShipping).shipping_details;
 }
 
 function lineItemToFulfillmentItem(lineItem: Stripe.LineItem): FulfillmentLineItem {
@@ -147,13 +160,14 @@ async function findOrCreateCustomer(payload: PayloadClient, session: Stripe.Chec
   })) as PayloadDoc;
 }
 
-async function findExistingAddress(payload: PayloadClient, customerId: string | number, address: Stripe.Address) {
+async function findExistingAddress(payload: PayloadClient, customerId: string | number, address: Stripe.Address, addressType: AddressType) {
   const result = (await payload.find({
     collection: "customer-addresses",
     limit: 1,
     where: {
       and: [
         { customer: { equals: customerId } },
+        { addressType: { equals: addressType } },
         { street1: { equals: address.line1 } },
         { postalCode: { equals: address.postal_code } },
         { country: { equals: address.country } }
@@ -164,28 +178,59 @@ async function findExistingAddress(payload: PayloadClient, customerId: string | 
   return result.docs?.[0] || null;
 }
 
-async function createBillingAddress(payload: PayloadClient, customer: PayloadDoc | null, session: Stripe.Checkout.Session) {
-  const address = session.customer_details?.address;
+async function createCustomerAddress(
+  payload: PayloadClient,
+  customer: PayloadDoc | null,
+  addressType: AddressType,
+  fullName: string | null | undefined,
+  phone: string | null | undefined,
+  address: Stripe.Address | null | undefined
+) {
   if (!customer?.id || !address?.line1 || !address.city || !address.state || !address.postal_code || !address.country) return;
 
-  const existingAddress = await findExistingAddress(payload, customer.id, address);
+  const existingAddress = await findExistingAddress(payload, customer.id, address, addressType);
   if (existingAddress) return;
 
   await payload.create({
     collection: "customer-addresses",
     data: {
+      addressType,
       customer: customer.id,
-      fullName: session.customer_details?.name || getCustomerEmail(session) || "Stripe Customer",
+      fullName: fullName || getString(customer.email) || "Stripe Customer",
       street1: address.line1,
       street2: address.line2 || undefined,
       city: address.city,
       state: address.state,
       postalCode: address.postal_code,
       country: address.country,
-      phone: session.customer_details?.phone || undefined,
-      isDefaultShipping: false
+      phone: phone || undefined,
+      isDefaultShipping: addressType === "shipping"
     }
   });
+}
+
+async function createCheckoutAddresses(payload: PayloadClient, customer: PayloadDoc | null, session: Stripe.Checkout.Session) {
+  await createCustomerAddress(
+    payload,
+    customer,
+    "billing",
+    session.customer_details?.name,
+    session.customer_details?.phone,
+    session.customer_details?.address
+  );
+
+  const shipping = getShippingDetails(session);
+
+  if (shipping?.address) {
+    await createCustomerAddress(
+      payload,
+      customer,
+      "shipping",
+      shipping.name,
+      session.customer_details?.phone,
+      shipping.address
+    );
+  }
 }
 
 async function findBookBySlug(payload: PayloadClient, slug: string | null): Promise<PayloadDoc | null> {
@@ -273,9 +318,9 @@ export async function fulfillCheckoutSession(session: Stripe.Checkout.Session): 
   })) as PayloadDoc;
 
   try {
-    await createBillingAddress(payload, customer, session);
+    await createCheckoutAddresses(payload, customer, session);
   } catch (error) {
-    console.error("Stripe fulfillment billing address table write failed; order was still created", error);
+    console.error("Stripe fulfillment address table write failed; order was still created", error);
   }
 
   let orderItemsCreated = 0;
