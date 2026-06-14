@@ -4,9 +4,9 @@
 :root {
   --bp-cream: #f6fbf7;
   --bp-panel: #fbfffc;
-  --bp-sidebar: #d8eee7;
-  --bp-sidebar-deep: #a9d4c5;
-  --bp-mint: #cfeae0;
+  --bp-sidebar: #c9eff3;
+  --bp-sidebar-deep: #91c8d2;
+  --bp-mint: #c4edf1;
   --bp-teal: #065766;
   --bp-teal-deep: #043f49;
   --bp-coral: #eb6373;
@@ -34,14 +34,14 @@ body,
 }
 
 body {
-  background: radial-gradient(circle at top right, rgba(169, 212, 197, 0.45), transparent 30%), linear-gradient(180deg, #f7fcfa 0%, #eef8f4 100%) !important;
+  background: radial-gradient(circle at top right, rgba(88, 186, 202, 0.32), transparent 30%), linear-gradient(180deg, #f7fcfa 0%, #eef9fb 100%) !important;
 }
 
 /* Admin navigation */
 .template-default .nav,
 .template-default aside {
-  background: radial-gradient(circle at top left, rgba(251, 255, 252, 0.72), transparent 26%), linear-gradient(180deg, #d5f5f0 0%, #c2efec 48%, #a9d4c5 100%) !important;
-  border-right: 2px solid rgba(20, 36, 42, 0.1) !important;
+  background: radial-gradient(circle at top left, rgba(251, 255, 252, 0.74), transparent 28%), radial-gradient(circle at 80% 36%, rgba(64, 185, 205, 0.24), transparent 42%), linear-gradient(180deg, #d9f6f8 0%, #c4edf1 48%, #91c8d2 100%) !important;
+  border-right: 2px solid rgba(6, 87, 102, 0.14) !important;
   box-shadow: 14px 0 34px rgba(20, 36, 42, 0.1) !important;
   color: var(--bp-teal-deep) !important;
   min-height: 100vh !important;
@@ -60,7 +60,7 @@ body {
   font-size: 1.1rem;
   font-weight: 800;
   line-height: 1.08;
-  border-bottom: 2px solid rgba(6, 87, 102, 0.13);
+  border-bottom: 2px solid rgba(6, 87, 102, 0.16);
 }
 
 .template-default .nav::after,
@@ -97,10 +97,10 @@ body {
 
 .bp-admin-nav-extra__link {
   align-items: center;
-  background: rgba(251, 255, 252, 0.8) !important;
-  border: 1px solid rgba(20, 36, 42, 0.1) !important;
+  background: rgba(247, 253, 254, 0.88) !important;
+  border: 1px solid rgba(6, 87, 102, 0.12) !important;
   border-radius: 0.85rem;
-  box-shadow: 0 14px 28px rgba(20, 36, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.66) !important;
+  box-shadow: 0 14px 28px rgba(20, 36, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.7) !important;
   color: var(--bp-teal-deep) !important;
   display: flex;
   font-size: 1rem;
@@ -114,7 +114,7 @@ body {
 }
 
 .bp-admin-nav-extra__heading {
-  color: rgba(4, 63, 73, 0.62) !important;
+  color: rgba(4, 63, 73, 0.66) !important;
   font-size: 0.72rem !important;
   font-weight: 950 !important;
   letter-spacing: 0.15em !important;
@@ -126,15 +126,15 @@ body {
 .bp-admin-nav-extra__link:hover,
 .bp-admin-nav-extra__link--active,
 .bp-admin-nav-extra__link--logout:hover {
-  background: linear-gradient(135deg, rgba(194, 239, 236, 0.96), rgba(213, 245, 240, 0.96)) !important;
-  border-color: rgba(6, 87, 102, 0.18) !important;
-  box-shadow: 0 16px 30px rgba(20, 36, 42, 0.13), inset 4px 0 0 var(--bp-teal), inset 0 1px 0 rgba(255, 255, 255, 0.62) !important;
+  background: linear-gradient(135deg, rgba(178, 232, 239, 0.96), rgba(213, 247, 249, 0.96)) !important;
+  border-color: rgba(6, 87, 102, 0.22) !important;
+  box-shadow: 0 16px 30px rgba(20, 36, 42, 0.13), inset 4px 0 0 var(--bp-teal), inset 0 1px 0 rgba(255, 255, 255, 0.66) !important;
   color: var(--bp-teal-deep) !important;
   transform: translateY(-1px);
 }
 
 .bp-admin-nav-extra__link--logout {
-  background: rgba(251, 255, 252, 0.82) !important;
+  background: rgba(247, 253, 254, 0.9) !important;
 }
 
 .template-default .nav a,
@@ -160,7 +160,7 @@ body {
 .template-default aside a[aria-current='page'],
 .template-default .nav a:hover,
 .template-default aside a:hover {
-  background: linear-gradient(135deg, rgba(194, 239, 236, 0.96), rgba(251, 255, 252, 0.88)) !important;
+  background: linear-gradient(135deg, rgba(178, 232, 239, 0.96), rgba(247, 253, 254, 0.92)) !important;
   color: var(--bp-teal-deep) !important;
   box-shadow: inset 4px 0 0 var(--bp-teal), 0 14px 28px rgba(20, 36, 42, 0.1) !important;
 }
