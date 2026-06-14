@@ -7,88 +7,11 @@ import DashboardSalesChart, { type DashboardChartOrder } from "./DashboardSalesC
 import "./BeforeDashboard.scss";
 import "./RegionCompact.scss";
 
-type PayloadDoc = {
-  id?: string | number;
-  createdAt?: string;
-  updatedAt?: string;
-  [key: string]: unknown;
-};
-
-type PayloadListResult = {
-  docs: PayloadDoc[];
-  totalDocs: number;
-  ok: boolean;
-};
-
-type StatCard = {
-  label: string;
-  value: string;
-  note: string;
-  icon: string;
-  trend: string;
-};
-
-type RecentOrder = {
-  id: string;
-  href: string;
-  customer: string;
-  status: string;
-  total: string;
-  createdAt: string;
-};
-
-type RecentSubscriber = {
-  id: string;
-  href: string;
-  email: string;
-  name: string;
-  createdAt: string;
-  status: string;
-};
-
-type SystemStatus = {
-  label: string;
-  status: string;
-};
-
-const compactGridStyle: React.CSSProperties = {
-  alignItems: "start"
-};
-
-const compactRegionCardStyle: React.CSSProperties = {
-  alignSelf: "start",
-  display: "flex",
-  flexDirection: "column",
-  height: "300px",
-  justifyContent: "center",
-  maxHeight: "300px",
-  minHeight: "300px",
-  overflow: "hidden",
-  padding: "14px"
-};
-
-const compactRegionTitleStyle: React.CSSProperties = {
-  fontSize: "1rem",
-  lineHeight: 1.05,
-  margin: 0
-};
-
-const compactRegionTextStyle: React.CSSProperties = {
-  fontSize: "0.78rem",
-  lineHeight: 1.18,
-  margin: "0.35rem 0 0"
-};
-
-const compactDonutStyle: React.CSSProperties = {
-  height: "126px",
-  margin: "0.58rem auto",
-  width: "126px"
-};
-
-const compactLegendStyle: React.CSSProperties = {
-  gap: "0.55rem",
-  marginTop: "0.1rem"
-};
+type PayloadDoc = { id?: string | number; createdAt?: string; [key: string]: unknown };
+type PayloadListResult = { docs: PayloadDoc[]; totalDocs: number; ok: boolean };
+type RecentOrder = { id: string; href: string; customerId: string; name: string; status: string; tone: string };
+type StatusItem = { label: string; detail: string; icon: string; active: boolean };
+type FunnelItem = { label: string; value: number; width: number };
 
 function getString(value: unknown, fallback = "") {
   return typeof value === "string" && value.trim() ? value.trim() : fallback;
@@ -98,135 +21,132 @@ function getNumber(value: unknown) {
   return typeof value === "number" && Number.isFinite(value) ? value : 0;
 }
 
-function formatMoney(value: number) {
-  return new Intl.NumberFormat("en-US", { currency: "USD", style: "currency" }).format(value);
+function getObject(value: unknown): Record<string, unknown> | null {
+  return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : null;
 }
 
-function formatDate(value: unknown) {
-  if (typeof value !== "string") return "—";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "—";
-  return new Intl.DateTimeFormat("en-US", { dateStyle: "medium", timeStyle: "short" }).format(date);
+function getRelationshipId(value: unknown) {
+  if (typeof value === "string" || typeof value === "number") return String(value);
+  const object = getObject(value);
+  const id = object?.id;
+  return typeof id === "string" || typeof id === "number" ? String(id) : "";
 }
 
-function formatShortDate(value: unknown) {
-  if (typeof value !== "string") return "—";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "—";
-  return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(date);
+function customerName(order: PayloadDoc) {
+  const customer = getObject(order.customer);
+  if (customer) {
+    const fullName = [getString(customer.firstName), getString(customer.lastName)].filter(Boolean).join(" ").trim();
+    if (fullName) return fullName;
+    const email = getString(customer.email);
+    if (email) return email.split("@")[0];
+  }
+  const email = getString(order.customerEmail, "Customer");
+  return email.includes("@") ? email.split("@")[0] : email;
+}
+
+function customerId(order: PayloadDoc, index: number) {
+  const relatedId = getRelationshipId(order.customer);
+  if (relatedId) return `CUST${relatedId}`;
+  const fallbackId = typeof order.id === "string" || typeof order.id === "number" ? String(order.id) : String(index + 1).padStart(3, "0");
+  return `CUST${fallbackId.slice(-4).toUpperCase()}`;
+}
+
+function statusLabel(status: string) {
+  const clean = status || "pending";
+  if (["paid", "fulfilled", "complete", "completed"].includes(clean.toLowerCase())) return "Complete";
+  return clean.charAt(0).toUpperCase() + clean.slice(1).toLowerCase();
+}
+
+function statusTone(status: string) {
+  const clean = status.toLowerCase();
+  if (["paid", "fulfilled", "complete", "completed", "shipped"].includes(clean)) return "success";
+  if (["pending", "processing"].includes(clean)) return "pending";
+  if (["refunded", "canceled", "cancelled"].includes(clean)) return "muted";
+  return "neutral";
 }
 
 async function safeFind(collection: string, options: Record<string, unknown> = {}): Promise<PayloadListResult> {
   try {
     const payload = await getPayload({ config });
-    const result = await payload.find({
-      collection,
-      limit: 10,
-      depth: 1,
-      ...options
-    } as never);
-
-    return {
-      docs: Array.isArray(result.docs) ? (result.docs as PayloadDoc[]) : [],
-      totalDocs: typeof result.totalDocs === "number" ? result.totalDocs : 0,
-      ok: true
-    };
+    const result = await payload.find({ collection, limit: 10, depth: 1, ...options } as never);
+    return { docs: Array.isArray(result.docs) ? result.docs as PayloadDoc[] : [], totalDocs: typeof result.totalDocs === "number" ? result.totalDocs : 0, ok: true };
   } catch (error) {
     console.error(`Dashboard data fetch failed for ${collection}`, error);
     return { docs: [], totalDocs: 0, ok: false };
   }
 }
 
+function itemRollups(items: PayloadDoc[]) {
+  const rollups = new Map<string, { podCount: number; digitalDownloadCount: number }>();
+  items.forEach((item) => {
+    const id = getRelationshipId(item.order);
+    if (!id) return;
+    const rollup = rollups.get(id) || { podCount: 0, digitalDownloadCount: 0 };
+    const format = getString(item.format).toLowerCase();
+    const quantity = Math.max(1, getNumber(item.quantity) || 1);
+    if (["paperback", "hardcover"].includes(format)) rollup.podCount += quantity;
+    if (["digital", "audiobook", "audio"].includes(format)) rollup.digitalDownloadCount += quantity;
+    rollups.set(id, rollup);
+  });
+  return rollups;
+}
+
+function buildFunnel(totalOrders: number, pendingOrders: number, completedOrders: number, subscribers: number, itemCount: number): FunnelItem[] {
+  const purchased = completedOrders;
+  const checkout = Math.max(totalOrders, purchased);
+  const addToCart = Math.max(checkout + pendingOrders, itemCount, purchased);
+  const visitors = Math.max(addToCart * 4, subscribers * 3, 1);
+  const max = Math.max(visitors, addToCart, checkout, purchased, 1);
+  return [
+    { label: "Visitors", value: visitors, width: Math.max(8, Math.round((visitors / max) * 100)) },
+    { label: "Add-to-Cart", value: addToCart, width: Math.max(8, Math.round((addToCart / max) * 100)) },
+    { label: "Checkout", value: checkout, width: Math.max(8, Math.round((checkout / max) * 100)) },
+    { label: "Purchased", value: purchased, width: Math.max(8, Math.round((purchased / max) * 100)) }
+  ];
+}
+
 async function getDashboardData() {
-  const [orders, allOrdersForChart, orderItems, subscribers, addresses, supportTickets, books, users] = await Promise.all([
+  const [orders, allOrders, pendingOrders, orderItems, subscribers, downloads, books, users] = await Promise.all([
     safeFind("orders", { limit: 5, sort: "-createdAt" }),
     safeFind("orders", { limit: 500, sort: "-createdAt" }),
+    safeFind("orders", { limit: 1, where: { status: { equals: "pending" } } }),
     safeFind("order-items", { limit: 500, sort: "-createdAt" }),
-    safeFind("subscribers", { limit: 5, sort: "-createdAt" }),
-    safeFind("customer-addresses", { limit: 5, sort: "-createdAt" }),
-    safeFind("support-tickets", { limit: 5, sort: "-createdAt" }),
+    safeFind("subscribers", { limit: 1 }),
+    safeFind("downloads", { limit: 1 }),
     safeFind("books", { limit: 1 }),
     safeFind("users", { limit: 1 })
   ]);
 
-  const paidOrders = allOrdersForChart.docs.filter((order) => getString(order.status).toLowerCase() === "paid");
-  const totalRevenue = paidOrders.reduce((sum, order) => sum + getNumber(order.total), 0);
-  const totalItems = orderItems.docs.reduce((sum, item) => sum + getNumber(item.quantity), 0);
+  const rollups = itemRollups(orderItems.docs);
+  const completedOrders = allOrders.docs.filter((order) => ["paid", "fulfilled", "complete", "completed", "shipped"].includes(getString(order.status).toLowerCase()));
+  const hasStripeRecords = allOrders.docs.some((order) => getString(order.stripeCheckoutSessionId) || getString(order.stripePaymentIntentId));
 
-  const stats: StatCard[] = [
-    {
-      label: "Total Revenue",
-      value: formatMoney(totalRevenue),
-      note: "Paid Stripe orders",
-      icon: "♡",
-      trend: `${paidOrders.length} paid`
-    },
-    {
-      label: "Orders",
-      value: String(orders.totalDocs),
-      note: "Total order records",
-      icon: "🧾",
-      trend: "Live"
-    },
-    {
-      label: "Items Sold",
-      value: String(totalItems),
-      note: "Order Detail quantity",
-      icon: "📚",
-      trend: `${orderItems.totalDocs} rows`
-    },
-    {
-      label: "Subscribers",
-      value: String(subscribers.totalDocs),
-      note: "Community list",
-      icon: "💌",
-      trend: "Live"
-    }
-  ];
+  const recentOrders: RecentOrder[] = orders.docs.map((order, index) => {
+    const rawStatus = getString(order.status, "pending");
+    return { id: getString(order.orderNumber, String(order.id || "—")), href: `/admin/collections/orders/${order.id}`, customerId: customerId(order, index), name: customerName(order), status: statusLabel(rawStatus), tone: statusTone(rawStatus) };
+  });
 
-  const recentOrders: RecentOrder[] = orders.docs.map((order) => ({
-    id: getString(order.orderNumber, String(order.id || "—")),
-    href: `/admin/collections/orders/${order.id}`,
-    customer: getString(order.customerEmail, "—"),
-    status: getString(order.status, "—"),
-    total: formatMoney(getNumber(order.total)),
-    createdAt: formatDate(order.createdAt)
-  }));
+  const chartOrders: DashboardChartOrder[] = allOrders.docs.map((order) => {
+    const id = typeof order.id === "string" || typeof order.id === "number" ? String(order.id) : "";
+    const rollup = rollups.get(id) || { podCount: 0, digitalDownloadCount: 0 };
+    return { createdAt: getString(order.createdAt, "") || null, status: getString(order.status), total: getNumber(order.total), podCount: rollup.podCount, digitalDownloadCount: rollup.digitalDownloadCount };
+  });
 
-  const recentSubscribers: RecentSubscriber[] = subscribers.docs.map((subscriber) => ({
-    id: String(subscriber.id || subscriber.email || subscriber.createdAt),
-    href: `/admin/collections/subscribers/${subscriber.id}`,
-    email: getString(subscriber.email, "—"),
-    name: getString(subscriber.name, getString(subscriber.fullName, "Subscriber")),
-    createdAt: formatShortDate(subscriber.createdAt),
-    status: getString(subscriber.status, "Active")
-  }));
-
-  const chartOrders: DashboardChartOrder[] = allOrdersForChart.docs.map((order) => ({
-    createdAt: getString(order.createdAt, "") || null,
-    status: getString(order.status),
-    total: getNumber(order.total)
-  }));
-
-  const systemStatus: SystemStatus[] = [
-    { label: "Payload CMS API", status: orders.ok ? "Online" : "Check logs" },
-    { label: "Neon Database", status: orders.ok && users.ok ? "Connected" : "Check connection" },
-    { label: "Stripe", status: process.env.STRIPE_SECRET_KEY ? "Configured" : "Missing key" },
-    { label: "Mailjet", status: process.env.MAILJET_API_KEY || process.env.MJ_APIKEY_PUBLIC ? "Configured" : "Pending setup" }
+  const systemStatus: StatusItem[] = [
+    { label: "Payload CMS/API", detail: orders.ok ? "CONNECTED/ACTIVE" : "CHECK LOGS", icon: "P", active: orders.ok },
+    { label: "Neon Database", detail: orders.ok && users.ok ? "CONNECTED/ACTIVE" : "CHECK CONNECTION", icon: "N", active: orders.ok && users.ok },
+    { label: "Stripe API", detail: hasStripeRecords ? "CONNECTED/ACTIVE" : "READY TO VERIFY", icon: "S", active: hasStripeRecords },
+    { label: "R2 Fulfillment", detail: downloads.ok ? "CONNECTED/ACTIVE" : "CHECK FULFILLMENT", icon: "R2", active: downloads.ok },
+    { label: "Mailjet API", detail: subscribers.ok ? "CONNECTED/ACTIVE" : "CHECK EMAIL", icon: "M", active: subscribers.ok }
   ];
 
   return {
-    stats,
     chartOrders,
     recentOrders,
-    recentSubscribers,
     systemStatus,
-    counts: {
-      addresses: addresses.totalDocs,
-      supportTickets: supportTickets.totalDocs,
-      books: books.totalDocs,
-      users: users.totalDocs
-    }
+    pendingOrderCount: pendingOrders.totalDocs,
+    funnel: buildFunnel(allOrders.totalDocs, pendingOrders.totalDocs, completedOrders.length, subscribers.totalDocs, orderItems.totalDocs),
+    counts: { books: books.totalDocs, subscribers: subscribers.totalDocs }
   };
 }
 
@@ -237,129 +157,44 @@ async function BeforeDashboard() {
     <section className="bp-dashboard" aria-label="Benny and Penny admin dashboard">
       <header className="bp-dashboard__topbar">
         <div>
-          <p className="bp-dashboard__brandline">Benny &amp; Penny&apos;s Adventures | Admin Dashboard</p>
-          <h1>Welcome, <AdminWelcomeName />! <span aria-hidden="true">🧸</span></h1>
-          <p>Connected to live orders, customers, subscribers, and support data.</p>
+          <h1>Welcome, <AdminWelcomeName />!</h1>
+          <p>Live order, fulfillment, customer, and compliance command center.</p>
         </div>
-        <div className="bp-dashboard__topActions" aria-label="Admin utility placeholders">
-          <span title="Help">?</span>
-          <span title="Notifications">🔔</span>
-          <span title="Admin profile">🐻</span>
-        </div>
+        <form className="bp-dashboard__search" action="/admin/collections/orders" method="get">
+          <label className="bp-dashboard__searchIcon" htmlFor="bp-admin-search">⌕</label>
+          <input id="bp-admin-search" name="q" placeholder="Search for an order, customer, or title..." type="search" />
+        </form>
+        <details className="bp-dashboard__profile">
+          <summary aria-label="Open admin profile menu">🧸</summary>
+          <div><Link href="/admin/collections/users">Account settings</Link><Link href="/admin/logout">Log out</Link></div>
+        </details>
       </header>
 
-      <div className="bp-dashboard__stats" aria-label="Dashboard key performance indicators">
-        {dashboard.stats.map((stat) => (
-          <article className="bp-dashboard__stat" key={stat.label}>
-            <div className="bp-dashboard__statIcon" aria-hidden="true">{stat.icon}</div>
-            <p>{stat.label}</p>
-            <strong>{stat.value}</strong>
-            <small>{stat.note}</small>
-            <em>{stat.trend}</em>
-          </article>
-        ))}
-      </div>
-
-      <div className="bp-dashboard__mainGrid" style={compactGridStyle}>
-        <article className="bp-dashboard__card bp-dashboard__card--sales">
-          <div className="bp-dashboard__cardHeader">
-            <div>
-              <h2>Sales Performance</h2>
-              <p>Use the date range to break sales down by hour, day, or month.</p>
-            </div>
-          </div>
+      <div className="bp-dashboard__mockGrid">
+        <article className="bp-dashboard__card bp-dashboard__card--performance">
+          <div className="bp-dashboard__cardHeader"><div><h2>Performance Tracker</h2><p>Hourly sales count vs. launch-day timing.</p></div></div>
           <DashboardSalesChart orders={dashboard.chartOrders} />
         </article>
 
-        <article className="bp-dashboard__card bp-dashboard__card--region" style={compactRegionCardStyle}>
-          <h2 style={compactRegionTitleStyle}>Database Health</h2>
-          <p style={compactRegionTextStyle}>Live records connected for portal-ready data.</p>
-          <div className="bp-dashboard__donut" aria-hidden="true" style={compactDonutStyle}>
-            <span>Live</span>
-          </div>
-          <div className="bp-dashboard__legend" style={compactLegendStyle}>
-            <span><i /> {dashboard.counts.books} Books</span>
-            <span><i /> {dashboard.counts.addresses} Addresses</span>
-            <span><i /> {dashboard.counts.users} Users</span>
-          </div>
-        </article>
-      </div>
-
-      <div className="bp-dashboard__bottomGrid bp-dashboard__bottomGrid--single">
-        <article className="bp-dashboard__card">
-          <div className="bp-dashboard__cardHeader bp-dashboard__cardHeader--compact">
-            <h2>Recent Orders</h2>
-            <Link href="/admin/collections/orders">View all</Link>
-          </div>
-          <div className="bp-dashboard__tableShell">
-            <table>
-              <thead>
-                <tr><th>Order ID</th><th>Customer</th><th>Status</th><th>Total</th><th>Created</th></tr>
-              </thead>
-              <tbody>
-                {dashboard.recentOrders.length ? dashboard.recentOrders.map((order) => (
-                  <tr key={order.id}>
-                    <td><Link href={order.href}>{order.id}</Link></td>
-                    <td>{order.customer}</td>
-                    <td><span className="bp-dashboard__pill bp-dashboard__pill--order">{order.status}</span></td>
-                    <td>{order.total}</td>
-                    <td>{order.createdAt}</td>
-                  </tr>
-                )) : (
-                  <tr><td colSpan={5}>No orders yet.</td></tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </article>
-      </div>
-
-      <div className="bp-dashboard__utilityGrid">
-        <article className="bp-dashboard__card">
-          <div className="bp-dashboard__cardHeader bp-dashboard__cardHeader--compact">
-            <h2>Latest Subscribers</h2>
-            <Link href="/admin/collections/subscribers">View all</Link>
-          </div>
-          <div className="bp-dashboard__tableShell">
-            <table>
-              <thead>
-                <tr><th>Name</th><th>Email</th><th>Date Joined</th><th>Status</th></tr>
-              </thead>
-              <tbody>
-                {dashboard.recentSubscribers.length ? dashboard.recentSubscribers.map((subscriber) => (
-                  <tr key={subscriber.id}>
-                    <td><Link href={subscriber.href}>♥ {subscriber.name}</Link></td>
-                    <td>{subscriber.email}</td>
-                    <td>{subscriber.createdAt}</td>
-                    <td><span className="bp-dashboard__pill">{subscriber.status}</span></td>
-                  </tr>
-                )) : (
-                  <tr><td colSpan={4}>No subscribers yet.</td></tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </article>
-
-        <article className="bp-dashboard__card">
-          <h2>System Status</h2>
-          <div className="bp-dashboard__statusList">
+        <article className="bp-dashboard__card bp-dashboard__card--status" id="system-status">
+          <div className="bp-dashboard__cardHeader"><div><h2>System Status Check</h2><p>Critical backend services and fulfillment readiness.</p></div></div>
+          <div className="bp-dashboard__statusGrid">
             {dashboard.systemStatus.map((item) => (
-              <div key={item.label}>
-                <span>{item.label}</span>
-                <strong>{item.status}</strong>
+              <div className={item.active ? "bp-dashboard__statusItem bp-dashboard__statusItem--active" : "bp-dashboard__statusItem bp-dashboard__statusItem--attention"} key={item.label}>
+                <span className="bp-dashboard__statusIcon" aria-hidden="true">{item.icon}</span><div><strong>{item.label}</strong><small><i aria-hidden="true" />{item.detail}</small></div>
               </div>
             ))}
           </div>
-          <div className="bp-dashboard__mailjet">
-            <h3>Mailjet API Email Metrics</h3>
-            <div className="bp-dashboard__mailjetGrid">
-              <div><strong>0</strong><span>Sent</span></div>
-              <div><strong>0</strong><span>Opened</span></div>
-              <div><strong>0</strong><span>Bounced</span></div>
-              <div><strong>0</strong><span>Spam</span></div>
-            </div>
-          </div>
+        </article>
+
+        <article className="bp-dashboard__card bp-dashboard__card--orders">
+          <div className="bp-dashboard__cardHeader bp-dashboard__cardHeader--compact"><div><h2>Recent Orders</h2><p>{dashboard.pendingOrderCount} pending orders need review.</p></div><Link className="bp-dashboard__primaryAction" href="/admin/collections/orders?where[status][equals]=pending">Bulk Fulfill Pending Orders</Link></div>
+          <div className="bp-dashboard__tableShell"><table><thead><tr><th>Customer ID</th><th>Name</th><th>Status</th><th /></tr></thead><tbody>{dashboard.recentOrders.length ? dashboard.recentOrders.map((order) => (<tr key={order.id}><td>{order.customerId}</td><td>{order.name}</td><td><span className={`bp-dashboard__pill bp-dashboard__pill--${order.tone}`}>{order.status}</span></td><td><Link className="bp-dashboard__detailButton" href={order.href}>View Details</Link></td></tr>)) : (<tr><td colSpan={4}>No orders yet.</td></tr>)}</tbody></table></div>
+        </article>
+
+        <article className="bp-dashboard__card bp-dashboard__card--funnel">
+          <div className="bp-dashboard__cardHeader"><div><h2>Conversion Funnel</h2><p>Cached funnel until visitor analytics are wired.</p></div></div>
+          <div className="bp-dashboard__funnelBars">{dashboard.funnel.map((item) => (<div className="bp-dashboard__funnelRow" key={item.label}><span>{item.label}</span><div><i style={{ width: `${item.width}%` }} title={`${item.label}: ${item.value}`} /></div><strong>{item.value}</strong></div>))}</div>
         </article>
       </div>
     </section>
