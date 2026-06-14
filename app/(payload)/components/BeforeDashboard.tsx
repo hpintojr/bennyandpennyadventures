@@ -97,6 +97,45 @@ const mailjetMetrics = [
   { label: "Spam", value: "0" }
 ];
 
+const compactGridStyle: React.CSSProperties = {
+  alignItems: "start"
+};
+
+const compactRegionCardStyle: React.CSSProperties = {
+  alignSelf: "start",
+  display: "flex",
+  flexDirection: "column",
+  height: "300px",
+  justifyContent: "center",
+  maxHeight: "300px",
+  minHeight: "300px",
+  overflow: "hidden",
+  padding: "14px"
+};
+
+const compactRegionTitleStyle: React.CSSProperties = {
+  fontSize: "1rem",
+  lineHeight: 1.05,
+  margin: 0
+};
+
+const compactRegionTextStyle: React.CSSProperties = {
+  fontSize: "0.78rem",
+  lineHeight: 1.18,
+  margin: "0.35rem 0 0"
+};
+
+const compactDonutStyle: React.CSSProperties = {
+  height: "126px",
+  margin: "0.58rem auto",
+  width: "126px"
+};
+
+const compactLegendStyle: React.CSSProperties = {
+  gap: "0.55rem",
+  marginTop: "0.1rem"
+};
+
 function BeforeDashboard() {
   return (
     <section className="bp-dashboard" aria-label="Benny and Penny admin dashboard">
@@ -125,7 +164,7 @@ function BeforeDashboard() {
         ))}
       </div>
 
-      <div className="bp-dashboard__mainGrid">
+      <div className="bp-dashboard__mainGrid" style={compactGridStyle}>
         <article className="bp-dashboard__card bp-dashboard__card--sales">
           <div className="bp-dashboard__cardHeader">
             <div>
@@ -153,13 +192,13 @@ function BeforeDashboard() {
           </div>
         </article>
 
-        <aside className="bp-dashboard__card bp-dashboard__card--region">
-          <h2>Sales by Region</h2>
-          <p>Preview only until Stripe order data is live.</p>
-          <div className="bp-dashboard__donut" aria-hidden="true">
+        <aside className="bp-dashboard__card bp-dashboard__card--region" style={compactRegionCardStyle}>
+          <h2 style={compactRegionTitleStyle}>Sales by Region</h2>
+          <p style={compactRegionTextStyle}>Preview only until Stripe order data is live.</p>
+          <div className="bp-dashboard__donut" aria-hidden="true" style={compactDonutStyle}>
             <span>US</span>
           </div>
-          <div className="bp-dashboard__legend">
+          <div className="bp-dashboard__legend" style={compactLegendStyle}>
             <span><i /> US</span>
             <span><i /> CA</span>
             <span><i /> UK</span>
