@@ -2,10 +2,14 @@ import type { CollectionConfig } from "payload";
 
 export const SupportTickets: CollectionConfig = {
   slug: "support-tickets",
+  labels: {
+    singular: "Support Ticket",
+    plural: "Support"
+  },
   admin: {
-    hidden: true,
     useAsTitle: "subject",
-    defaultColumns: ["subject", "customer", "relatedOrder", "status", "priority"]
+    description: "Review customer support, download help, order questions, and school or hospital inquiries.",
+    defaultColumns: ["subject", "customerEmail", "relatedOrder", "status", "priority"]
   },
   fields: [
     { name: "customer", type: "relationship", relationTo: "users" },
@@ -19,11 +23,11 @@ export const SupportTickets: CollectionConfig = {
       defaultValue: "general",
       options: [
         { label: "Order Issue", value: "order" },
-        { label: "Download Issue", value: "download" },
-        { label: "Audiobook Issue", value: "audiobook" },
-        { label: "Print / Shipping Issue", value: "print-shipping" },
+        { label: "Download Help", value: "download" },
+        { label: "Audiobook Help", value: "audiobook" },
+        { label: "Print or Shipping", value: "print-shipping" },
         { label: "Bulk Order", value: "bulk-order" },
-        { label: "School / Hospital Inquiry", value: "institutional" },
+        { label: "School or Hospital Inquiry", value: "institutional" },
         { label: "General", value: "general" }
       ]
     },
