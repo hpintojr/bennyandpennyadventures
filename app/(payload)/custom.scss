@@ -1,17 +1,19 @@
-/* Benny & Penny Payload Admin theme. Higher contrast, cleaner alignment, and site-matching fonts. */
+/* Benny & Penny Payload Admin theme. Warm, branded, high-contrast admin shell. */
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap');
 
 :root {
   --bp-cream: #fff8ed;
-  --bp-panel: #fffdf8;
-  --bp-sidebar: #fff0d8;
+  --bp-panel: #fffefa;
+  --bp-sidebar: #fbeccb;
+  --bp-sidebar-deep: #f7dcae;
+  --bp-mint: #cfeae0;
   --bp-teal: #065766;
   --bp-teal-deep: #043f49;
   --bp-coral: #eb6373;
   --bp-coral-deep: #d94d5f;
   --bp-gold: #d8b98d;
   --theme-text: var(--bp-teal-deep);
-  --theme-elevation-0: #fffdf8;
+  --theme-elevation-0: #fffefa;
   --theme-elevation-50: #fff7e9;
   --theme-elevation-100: #f8ead5;
   --theme-elevation-150: #efd9bd;
@@ -31,27 +33,50 @@ body,
 }
 
 body {
-  background: var(--bp-cream) !important;
+  background: radial-gradient(circle at top right, rgba(196, 224, 212, 0.35), transparent 30%), var(--bp-cream) !important;
 }
 
 /* Admin navigation */
 .template-default .nav,
 .template-default aside {
-  background: linear-gradient(180deg, var(--bp-sidebar) 0%, #f9dfb9 100%) !important;
+  background: linear-gradient(180deg, var(--bp-sidebar) 0%, var(--bp-sidebar-deep) 100%) !important;
   border-right: 2px solid rgba(216, 185, 141, 0.75) !important;
   color: var(--bp-teal-deep) !important;
 }
 
 .template-default .nav::before,
 .template-default aside::before {
-  content: '♥ Benny & Penny Admin';
+  content: 'Benny & Penny\A Admin Panel';
+  white-space: pre-line;
   display: block;
-  padding: 1.05rem 1.15rem 1rem;
+  padding: 1.35rem 1.15rem 1.1rem;
   color: var(--bp-teal-deep);
-  font-size: 1.05rem;
-  font-weight: 950;
-  line-height: 1.1;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.2rem;
+  font-weight: 800;
+  line-height: 1.08;
   border-bottom: 2px solid rgba(216, 185, 141, 0.55);
+}
+
+.template-default .nav::after,
+.template-default aside::after {
+  content: '🧸';
+  align-items: center;
+  background: rgba(255, 253, 248, 0.72) url('/admin/bear-sidebar-placeholder.png') center / contain no-repeat;
+  border: 1px dashed rgba(4, 63, 73, 0.24);
+  border-radius: 18px;
+  bottom: 4.25rem;
+  box-shadow: 0 12px 28px rgba(4, 63, 73, 0.1);
+  color: rgba(4, 63, 73, 0.42);
+  display: flex;
+  font-size: 3.5rem;
+  height: 118px;
+  justify-content: center;
+  left: 1.15rem;
+  pointer-events: none;
+  position: sticky;
+  right: 1.15rem;
+  width: calc(100% - 2.3rem);
 }
 
 .template-default .nav a,
@@ -62,29 +87,39 @@ body {
 .template-default .nav-group__toggle {
   color: var(--bp-teal-deep) !important;
   font-size: 1rem !important;
-  font-weight: 850 !important;
+  font-weight: 900 !important;
   line-height: 1.25 !important;
 }
 
 .template-default .nav a,
 .template-default aside a {
-  padding-top: 0.38rem !important;
-  padding-bottom: 0.38rem !important;
+  border-radius: 0.65rem !important;
+  margin: 0.12rem 0.7rem !important;
+  padding: 0.55rem 0.72rem !important;
 }
 
 .template-default .nav a[aria-current='page'],
 .template-default aside a[aria-current='page'],
 .template-default .nav a:hover,
 .template-default aside a:hover {
-  background: rgba(235, 99, 115, 0.18) !important;
+  background: var(--bp-mint) !important;
   color: var(--bp-teal-deep) !important;
-  border-radius: 0.55rem !important;
+  box-shadow: inset 4px 0 0 var(--bp-coral) !important;
+}
+
+.template-default .nav-group__label,
+.template-default .collapsible__toggle,
+.template-default .nav-group__toggle {
+  background: rgba(235, 99, 115, 0.1) !important;
+  border-radius: 0.65rem !important;
+  margin: 0.5rem 0.7rem 0.2rem !important;
+  padding: 0.55rem 0.72rem !important;
 }
 
 .template-default main,
 .template-default .gutter--left,
 .template-default .gutter--right {
-  background: var(--bp-panel) !important;
+  background: transparent !important;
 }
 
 .template-default h1,
@@ -124,7 +159,7 @@ body {
   font-weight: 950;
 }
 
-/* Content contrast */
+/* Product catalog and collection list cleanup */
 .template-default .collection-list,
 .template-default .render-fields,
 .template-default .document-fields,
@@ -132,6 +167,14 @@ body {
 .template-default table {
   background: #fffaf1 !important;
   border-color: rgba(216, 185, 141, 0.5) !important;
+}
+
+.template-default .collection-list,
+.template-default .list-controls,
+.template-default .table,
+.template-default .doc-header,
+.template-default .form-submit {
+  border-radius: 14px !important;
 }
 
 .template-default table tr:nth-child(even),
@@ -144,6 +187,12 @@ body {
   background: #fffdf8 !important;
 }
 
+.template-default table th,
+.template-default .table th {
+  color: var(--bp-teal-deep) !important;
+  font-weight: 950 !important;
+}
+
 /* Strong global admin form controls. This applies to Payload login and collection edit forms. */
 input,
 textarea,
@@ -152,13 +201,21 @@ select {
   color: var(--bp-teal-deep) !important;
   -webkit-text-fill-color: var(--bp-teal-deep) !important;
   border: 2px solid rgba(216, 185, 141, 0.95) !important;
-  border-radius: 0.55rem !important;
+  border-radius: 0.65rem !important;
   font-family: 'Nunito', ui-sans-serif, system-ui, sans-serif !important;
   font-size: 1.08rem !important;
   font-weight: 800 !important;
   min-height: 3.1rem !important;
   opacity: 1 !important;
   box-shadow: none !important;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--bp-coral) !important;
+  box-shadow: 0 0 0 3px rgba(235, 99, 115, 0.18) !important;
+  outline: none !important;
 }
 
 input::placeholder,
@@ -191,7 +248,7 @@ button,
 .btn--style-primary {
   background: var(--bp-coral) !important;
   border: 2px solid var(--bp-coral) !important;
-  border-radius: 0.65rem !important;
+  border-radius: 0.72rem !important;
   color: #ffffff !important;
   font-family: 'Nunito', ui-sans-serif, system-ui, sans-serif !important;
   font-size: 1.05rem !important;
@@ -230,6 +287,15 @@ button:disabled,
 .template-login,
 .template-create-first-user {
   background: linear-gradient(135deg, #fff4e4 0%, #fffaf1 55%, #eef5ea 100%) !important;
+}
+
+.template-login form,
+.template-create-first-user form {
+  background: rgba(255, 253, 248, 0.92) !important;
+  border: 1px solid rgba(216, 185, 141, 0.68) !important;
+  border-radius: 18px !important;
+  box-shadow: 0 20px 48px rgba(4, 63, 73, 0.12) !important;
+  padding: 1.25rem !important;
 }
 
 .template-login a,
