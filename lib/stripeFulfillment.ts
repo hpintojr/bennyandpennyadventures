@@ -44,12 +44,23 @@ function formatFromStripeLabel(value: string | null | undefined): FulfillmentLin
   return "digital";
 }
 
+function formatForDisplay(format: FulfillmentLineItem["format"]) {
+  if (format === "digital") return "PDF / EPUB";
+  if (format === "audiobook") return "Audiobook";
+  if (format === "paperback") return "Paperback";
+  return "Hardcover";
+}
+
 function getString(value: unknown): string | null {
   return typeof value === "string" && value.trim() ? value.trim() : null;
 }
 
 function centsToDollars(value: number | null | undefined) {
   return Number(((value || 0) / 100).toFixed(2));
+}
+
+function money(value: number) {
+  return `$${value.toFixed(2)}`;
 }
 
 function getPaymentIntentId(session: Stripe.Checkout.Session): string | null {
@@ -67,13 +78,28 @@ function getOrderNumber(session: Stripe.Checkout.Session) {
   return `BP-${session.created}-${suffix}`;
 }
 
-function buildOrderNotes(session: Stripe.Checkout.Session) {
+function buildPurchasedItemsSummary(items: FulfillmentLineItem[]) {
+  if (!items.length) return "Purchased Items:\n- Could not retrieve Stripe line items.";
+
   return [
-    "Created automatically from Stripe checkout.",
+    "Purchased Items:",
+    ...items.map((item) => {
+      const lineTotal = item.unitPrice * item.quantity;
+      return `- ${item.quantity} x ${item.title} — ${formatForDisplay(item.format)} @ ${money(item.unitPrice)} = ${money(lineTotal)}`;
+    })
+  ].join("\n");
+}
+
+function buildOrderNotes(session: Stripe.Checkout.Session, items: FulfillmentLineItem[]) {
+  return [
+    buildPurchasedItemsSummary(items),
+    "",
+    "Stripe Details:",
     `Stripe session: ${session.id}`,
-    `Subtotal: ${centsToDollars(session.amount_subtotal)}`,
-    `Tax: ${centsToDollars(session.total_details?.amount_tax)}`,
-    `Shipping: ${centsToDollars(session.total_details?.amount_shipping)}`
+    `Payment intent: ${getPaymentIntentId(session) || "not provided"}`,
+    `Subtotal: ${money(centsToDollars(session.amount_subtotal))}`,
+    `Tax: ${money(centsToDollars(session.total_details?.amount_tax))}`,
+    `Shipping: ${money(centsToDollars(session.total_details?.amount_shipping))}`
   ].join("\n");
 }
 
@@ -181,6 +207,7 @@ export async function fulfillCheckoutSession(session: Stripe.Checkout.Session): 
     throw new Error(`Stripe session ${session.id} does not include a customer email.`);
   }
 
+  const items = await getFulfillmentItems(session.id);
   const order = (await payload.create({
     collection: "orders",
     data: {
@@ -191,11 +218,10 @@ export async function fulfillCheckoutSession(session: Stripe.Checkout.Session): 
       stripePaymentIntentId: getPaymentIntentId(session),
       total: centsToDollars(session.amount_total),
       currency: session.currency || "usd",
-      notes: buildOrderNotes(session)
+      notes: buildOrderNotes(session, items)
     }
   })) as PayloadDoc;
 
-  const items = await getFulfillmentItems(session.id);
   let orderItemsCreated = 0;
 
   for (const item of items) {
