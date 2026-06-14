@@ -25,12 +25,12 @@ const subscribers = [
   { name: "Benjamin B.", email: "benjamin@email.com", status: "Active" }
 ];
 
-export function BeforeDashboard() {
+function BeforeDashboard() {
   return (
     <section className="bp-dashboard">
       <div className="bp-dashboard__hero">
         <div>
-          <p className="bp-dashboard__eyebrow">Benny & Penny's Adventures</p>
+          <p className="bp-dashboard__eyebrow">Benny & Penny&apos;s Adventures</p>
           <h1>Welcome, Nurse Ivy! 🧸</h1>
           <p>Benny and Penny are ready to manage book sales, subscribers, downloads, and your growing community.</p>
         </div>
@@ -112,3 +112,6 @@ export function BeforeDashboard() {
     </section>
   );
 }
+
+export { BeforeDashboard };
+export default BeforeDashboard;
