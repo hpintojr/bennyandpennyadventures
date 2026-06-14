@@ -2,9 +2,14 @@ import type { CollectionConfig } from "payload";
 
 export const Orders: CollectionConfig = {
   slug: "orders",
+  labels: {
+    singular: "Order",
+    plural: "Orders"
+  },
   admin: {
     useAsTitle: "orderNumber",
-    defaultColumns: ["orderNumber", "customer", "status", "total", "createdAt"]
+    description: "Review Stripe checkout orders, customer details, payment status, and fulfillment progress.",
+    defaultColumns: ["orderNumber", "customerEmail", "status", "total", "createdAt"]
   },
   fields: [
     { name: "orderNumber", type: "text", required: true, unique: true },
