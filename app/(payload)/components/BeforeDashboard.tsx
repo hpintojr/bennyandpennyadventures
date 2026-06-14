@@ -246,36 +246,42 @@ async function BeforeDashboard() {
       </div>
 
       <div className="bp-dashboard__mockGrid">
-        <article className="bp-dashboard__card bp-dashboard__card--performance">
-          <div className="bp-dashboard__cardHeader"><div><h2>Performance Tracker</h2><p>Hourly sales count vs. launch-day timing.</p></div></div>
-          <DashboardSalesChart orders={dashboard.chartOrders} />
-        </article>
+        <div className="bp-dashboard__row bp-dashboard__row--half">
+          <article className="bp-dashboard__card bp-dashboard__card--performance">
+            <div className="bp-dashboard__cardHeader"><div><h2>Performance Tracker</h2><p>Hourly sales count vs. launch-day timing.</p></div></div>
+            <DashboardSalesChart orders={dashboard.chartOrders} />
+          </article>
 
-        <article className="bp-dashboard__card bp-dashboard__card--status" id="system-status">
-          <div className="bp-dashboard__cardHeader"><div><h2>System Status Check</h2><p>Critical backend services and fulfillment readiness.</p></div></div>
-          <div className="bp-dashboard__statusGrid">
-            {dashboard.systemStatus.map((item) => (
-              <div className={item.active ? "bp-dashboard__statusItem bp-dashboard__statusItem--active" : "bp-dashboard__statusItem bp-dashboard__statusItem--attention"} key={item.label}>
-                <span className="bp-dashboard__statusIcon" aria-hidden="true"><img src={item.logoUrl} alt="" /></span><div><strong>{item.label}</strong><small><i aria-hidden="true" />{item.detail}</small></div>
-              </div>
-            ))}
-          </div>
-        </article>
+          <article className="bp-dashboard__card bp-dashboard__card--status" id="system-status">
+            <div className="bp-dashboard__cardHeader"><div><h2>System Status Check</h2><p>Critical backend services and fulfillment readiness.</p></div></div>
+            <div className="bp-dashboard__statusGrid">
+              {dashboard.systemStatus.map((item) => (
+                <div className={item.active ? "bp-dashboard__statusItem bp-dashboard__statusItem--active" : "bp-dashboard__statusItem bp-dashboard__statusItem--attention"} key={item.label}>
+                  <span className="bp-dashboard__statusIcon" aria-hidden="true"><img src={item.logoUrl} alt="" /></span><div><strong>{item.label}</strong><small><i aria-hidden="true" />{item.detail}</small></div>
+                </div>
+              ))}
+            </div>
+          </article>
+        </div>
 
-        <article className="bp-dashboard__card bp-dashboard__card--orders">
-          <div className="bp-dashboard__cardHeader bp-dashboard__cardHeader--compact"><div><h2>Recent Orders</h2><p>{dashboard.pendingOrderCount} pending orders need review.</p></div><Link className="bp-dashboard__primaryAction" href="/admin/collections/orders">Bulk Fulfill Pending Orders</Link></div>
-          <div className="bp-dashboard__tableShell"><table><thead><tr><th>Order ID</th><th>Customer Name</th><th>Status</th><th>Total</th><th>Created</th><th>View Details</th></tr></thead><tbody>{dashboard.recentOrders.length ? dashboard.recentOrders.map((order) => (<tr key={order.id}><td>{order.orderId}</td><td>{order.customerName}</td><td><span className={`bp-dashboard__pill bp-dashboard__pill--${order.tone}`}>{order.status}</span></td><td>{order.total}</td><td>{order.created}</td><td><Link className="bp-dashboard__detailButton" href={order.href}>View Details</Link></td></tr>)) : (<tr><td colSpan={6}>No orders yet.</td></tr>)}</tbody></table></div>
-        </article>
+        <div className="bp-dashboard__row bp-dashboard__row--full">
+          <article className="bp-dashboard__card bp-dashboard__card--orders">
+            <div className="bp-dashboard__cardHeader bp-dashboard__cardHeader--compact"><div><h2>Recent Orders</h2><p>{dashboard.pendingOrderCount} pending orders need review.</p></div><Link className="bp-dashboard__primaryAction" href="/admin/collections/orders">Bulk Fulfill Pending Orders</Link></div>
+            <div className="bp-dashboard__tableShell"><table><thead><tr><th>Order ID</th><th>Customer Name</th><th>Status</th><th>Total</th><th>Created</th><th>View Details</th></tr></thead><tbody>{dashboard.recentOrders.length ? dashboard.recentOrders.map((order) => (<tr key={order.id}><td>{order.orderId}</td><td>{order.customerName}</td><td><span className={`bp-dashboard__pill bp-dashboard__pill--${order.tone}`}>{order.status}</span></td><td>{order.total}</td><td>{order.created}</td><td><Link className="bp-dashboard__detailButton" href={order.href}>View Details</Link></td></tr>)) : (<tr><td colSpan={6}>No orders yet.</td></tr>)}</tbody></table></div>
+          </article>
+        </div>
 
-        <article className="bp-dashboard__card bp-dashboard__card--subscribers">
-          <div className="bp-dashboard__cardHeader bp-dashboard__cardHeader--compact"><div><h2>Latest Subscribers</h2><p>Newest newsletter and resource-library signups.</p></div><Link className="bp-dashboard__detailButton" href="/admin/collections/subscribers">View All</Link></div>
-          <div className="bp-dashboard__tableShell"><table><thead><tr><th>Name</th><th>Email</th><th>Date Joined</th><th>Status</th></tr></thead><tbody>{dashboard.latestSubscribers.length ? dashboard.latestSubscribers.map((subscriber) => (<tr key={subscriber.id}><td><Link href={subscriber.href}>♥ {subscriber.name}</Link></td><td>{subscriber.email}</td><td>{subscriber.dateJoined}</td><td><span className="bp-dashboard__pill bp-dashboard__pill--success">{subscriber.status}</span></td></tr>)) : (<tr><td colSpan={4}>No subscribers yet.</td></tr>)}</tbody></table></div>
-        </article>
+        <div className="bp-dashboard__row bp-dashboard__row--subscribers">
+          <article className="bp-dashboard__card bp-dashboard__card--subscribers">
+            <div className="bp-dashboard__cardHeader bp-dashboard__cardHeader--compact"><div><h2>Latest Subscribers</h2><p>Newest newsletter and resource-library signups.</p></div><Link className="bp-dashboard__detailButton" href="/admin/collections/subscribers">View All</Link></div>
+            <div className="bp-dashboard__tableShell"><table><thead><tr><th>Name</th><th>Email</th><th>Date Joined</th><th>Status</th></tr></thead><tbody>{dashboard.latestSubscribers.length ? dashboard.latestSubscribers.map((subscriber) => (<tr key={subscriber.id}><td><Link href={subscriber.href}>♥ {subscriber.name}</Link></td><td>{subscriber.email}</td><td>{subscriber.dateJoined}</td><td><span className="bp-dashboard__pill bp-dashboard__pill--success">{subscriber.status}</span></td></tr>)) : (<tr><td colSpan={4}>No subscribers yet.</td></tr>)}</tbody></table></div>
+          </article>
 
-        <article className="bp-dashboard__card bp-dashboard__card--funnel">
-          <div className="bp-dashboard__cardHeader"><div><h2>Conversion Funnel</h2><p>Cached funnel until visitor analytics are wired.</p></div></div>
-          <div className="bp-dashboard__funnelBars">{dashboard.funnel.map((item) => (<div className="bp-dashboard__funnelRow" key={item.label}><span>{item.label}</span><div><i style={{ width: `${item.width}%` }} title={`${item.label}: ${item.value}`} /></div><strong>{item.value}</strong></div>))}</div>
-        </article>
+          <article className="bp-dashboard__card bp-dashboard__card--funnel">
+            <div className="bp-dashboard__cardHeader"><div><h2>Conversion Funnel</h2><p>Cached funnel until visitor analytics are wired.</p></div></div>
+            <div className="bp-dashboard__funnelBars">{dashboard.funnel.map((item) => (<div className="bp-dashboard__funnelRow" key={item.label}><span>{item.label}</span><div><i style={{ width: `${item.width}%` }} title={`${item.label}: ${item.value}`} /></div><strong>{item.value}</strong></div>))}</div>
+          </article>
+        </div>
       </div>
     </section>
   );
