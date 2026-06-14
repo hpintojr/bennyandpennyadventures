@@ -10,6 +10,7 @@ import "./custom.scss";
 import "./admin-polish-overrides.scss";
 import "./admin-final-fixes.scss";
 import "./login-brand.scss";
+import "./admin-toggler-cleanup.scss";
 
 type Args = {
   children: React.ReactNode;
