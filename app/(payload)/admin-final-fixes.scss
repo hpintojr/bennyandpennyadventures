@@ -41,6 +41,39 @@
   box-shadow: none !important;
 }
 
+/* Dashboard graph section: Book Sales chart around 300px and region card matched to that card height. */
+.bp-dashboard__mainGrid {
+  align-items: stretch !important;
+}
+
+.bp-dashboard__chart {
+  height: 300px !important;
+  padding-top: 0.9rem !important;
+}
+
+.bp-dashboard__card--sales {
+  min-height: 0 !important;
+}
+
+.bp-dashboard__card--region {
+  align-self: stretch !important;
+  height: 100% !important;
+  justify-content: center !important;
+  min-height: 0 !important;
+  padding: 1rem !important;
+}
+
+.bp-dashboard__donut {
+  height: 158px !important;
+  margin: 0.85rem auto !important;
+  width: 158px !important;
+}
+
+.bp-dashboard__donut::after {
+  height: 68px !important;
+  width: 68px !important;
+}
+
 /* Breadcrumb/admin heart: stop clipping and give the badge breathing room. */
 .template-default .breadcrumbs,
 .template-default .app-header,
