@@ -33,7 +33,6 @@
 .template-default button[title*='Open']:hover,
 .template-default button[title*='open']:hover,
 .template-default button[title*='Collapse']:hover,
-.template-default button[title*='collapse']:hover,
 .template-default [class*='nav'] > button:hover,
 .template-default [class*='Nav'] > button:hover {
   background: rgba(4, 63, 73, 0.08) !important;
@@ -107,42 +106,22 @@
   display: none !important;
 }
 
-/* Breadcrumb/admin heart: stop clipping and give the badge breathing room. */
+/* Hide Payload breadcrumbs globally, including the heart icon + page trail row. */
 .template-default .breadcrumbs,
+.template-default nav[aria-label='Breadcrumb'],
+.template-default nav[aria-label='Breadcrumbs'],
+.template-default [class*='breadcrumb'],
+.template-default [class*='Breadcrumb'] {
+  display: none !important;
+}
+
+/* Keep app/header containers from clipping custom content elsewhere. */
 .template-default .app-header,
 .template-default header,
-.template-default .breadcrumbs > *,
 .template-default .app-header > *,
 .template-default header > *,
-.template-default .breadcrumbs *,
 .template-default .app-header * {
   overflow: visible !important;
-}
-
-.template-default .breadcrumbs {
-  align-items: center !important;
-  display: inline-flex !important;
-  gap: 0.42rem !important;
-  line-height: 1 !important;
-  min-height: 2.35rem !important;
-}
-
-.template-default [aria-label='Benny & Penny Admin'] {
-  align-items: center !important;
-  border-radius: 999px !important;
-  display: inline-flex !important;
-  flex: 0 0 1.85rem !important;
-  height: 1.85rem !important;
-  justify-content: center !important;
-  line-height: 1 !important;
-  margin: 0 0.45rem 0 0 !important;
-  min-height: 1.85rem !important;
-  min-width: 1.85rem !important;
-  overflow: visible !important;
-  padding: 0 !important;
-  position: relative !important;
-  transform: none !important;
-  width: 1.85rem !important;
 }
 
 /* Payload checkbox cleanup: Payload renders a real input plus a visual icon span.
