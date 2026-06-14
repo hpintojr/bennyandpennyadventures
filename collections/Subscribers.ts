@@ -7,7 +7,6 @@ export const Subscribers: CollectionConfig = {
     plural: "Subscribers"
   },
   admin: {
-    group: "Marketing",
     useAsTitle: "email",
     description: "Newsletter and resource-library email signups.",
     defaultColumns: ["email", "marketingOptIn", "source", "createdAt"]
