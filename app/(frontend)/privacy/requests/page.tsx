@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import PrivacyRequestForm from "../../../components/PrivacyRequestForm";
 import SiteShell from "../../../components/SiteShell";
 
 export const metadata: Metadata = {
@@ -9,18 +10,6 @@ export const metadata: Metadata = {
 const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "hello@bennyandpenny.com";
 
 export default function PrivacyRequestsPage() {
-  const subject = encodeURIComponent("Privacy Request / Do Not Sell or Share Request");
-  const body = encodeURIComponent([
-    "Privacy request type:",
-    "State of residence:",
-    "Name:",
-    "Email used on the site:",
-    "Phone number, if relevant:",
-    "Details:",
-    "",
-    "Please do not include sensitive medical, financial, or government ID information in this email."
-  ].join("\n"));
-
   return (
     <SiteShell>
       <article className="page-wrap max-w-3xl pb-16 pt-6">
@@ -38,6 +27,8 @@ export default function PrivacyRequestsPage() {
           </p>
         </div>
 
+        <PrivacyRequestForm />
+
         <h2 className="mt-8 font-serif text-2xl text-teal">Request Types</h2>
         <ul className="mt-3 list-disc space-y-2 pl-6 text-ink">
           <li>Access / know what personal information we maintain.</li>
@@ -48,9 +39,9 @@ export default function PrivacyRequestsPage() {
           <li>Opt out of marketing email or SMS messages.</li>
         </ul>
 
-        <h2 className="mt-8 font-serif text-2xl text-teal">How to Submit</h2>
+        <h2 className="mt-8 font-serif text-2xl text-teal">Email Option</h2>
         <p className="mt-2 text-ink">
-          Email your request to <a className="font-extrabold text-coral" href={`mailto:${contactEmail}?subject=${subject}&body=${body}`}>{contactEmail}</a>. Include your state of residence, the email address or phone number you used with us, and the request type.
+          You may also email privacy requests to <a className="font-extrabold text-coral" href={`mailto:${contactEmail}`}>{contactEmail}</a>. Include your state of residence, the email address or phone number you used with us, and the request type.
         </p>
         <p className="mt-3 text-ink">
           We may ask for information needed to verify your identity. Verification information is used only to process your request. Please do not send sensitive medical, financial, or government ID information unless we specifically request it through a secure process.
