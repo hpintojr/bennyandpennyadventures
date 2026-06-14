@@ -1,5 +1,6 @@
 import Link from "next/link";
 import React from "react";
+import "./AdminSidebarCompliance.scss";
 
 const adminLinks = [
   { label: "Orders", href: "/admin/collections/orders", icon: "♡" },
