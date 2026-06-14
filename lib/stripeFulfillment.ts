@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import config from "@payload-config";
 import { getPayload } from "payload";
 import type Stripe from "stripe";
@@ -83,6 +84,13 @@ function getCustomerEmail(session: Stripe.Checkout.Session): string | null {
 function getOrderNumber(session: Stripe.Checkout.Session) {
   const suffix = session.id.slice(-8).toUpperCase();
   return `BP-${session.created}-${suffix}`;
+}
+
+function splitName(fullName: string | null | undefined) {
+  const parts = (fullName || "").trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return { firstName: undefined, lastName: undefined };
+  if (parts.length === 1) return { firstName: parts[0], lastName: undefined };
+  return { firstName: parts.slice(0, -1).join(" "), lastName: parts.at(-1) };
 }
 
 function formatAddress(address: Stripe.Address | null | undefined) {
@@ -184,6 +192,58 @@ async function findExistingOrder(payload: PayloadClient, sessionId: string): Pro
   return result.docs?.[0] || null;
 }
 
+async function findOrCreateCustomer(payload: PayloadClient, session: Stripe.Checkout.Session): Promise<PayloadDoc | null> {
+  const email = getCustomerEmail(session);
+  if (!email) return null;
+
+  const existing = (await payload.find({
+    collection: "users",
+    limit: 1,
+    where: {
+      email: {
+        equals: email
+      }
+    }
+  })) as PayloadFindResult;
+
+  if (existing.docs?.[0]) return existing.docs[0];
+
+  const { firstName, lastName } = splitName(session.customer_details?.name);
+
+  return (await payload.create({
+    collection: "users",
+    data: {
+      email,
+      firstName,
+      lastName,
+      phone: session.customer_details?.phone || undefined,
+      password: crypto.randomBytes(24).toString("base64url"),
+      role: "customer"
+    }
+  })) as PayloadDoc;
+}
+
+async function createBillingAddress(payload: PayloadClient, customer: PayloadDoc | null, session: Stripe.Checkout.Session) {
+  const address = session.customer_details?.address;
+  if (!customer?.id || !address?.line1 || !address.city || !address.state || !address.postal_code || !address.country) return;
+
+  await payload.create({
+    collection: "customer-addresses",
+    data: {
+      customer: customer.id,
+      fullName: session.customer_details?.name || getCustomerEmail(session) || "Stripe Customer",
+      street1: address.line1,
+      street2: address.line2 || undefined,
+      city: address.city,
+      state: address.state,
+      postalCode: address.postal_code,
+      country: address.country,
+      phone: session.customer_details?.phone || undefined,
+      isDefaultShipping: false
+    }
+  });
+}
+
 async function findBookBySlug(payload: PayloadClient, slug: string | null): Promise<PayloadDoc | null> {
   if (!slug) return null;
 
@@ -252,10 +312,12 @@ export async function fulfillCheckoutSession(session: Stripe.Checkout.Session): 
   }
 
   const items = await getFulfillmentItems(session.id);
+  const customer = await findOrCreateCustomer(payload, session);
   const order = (await payload.create({
     collection: "orders",
     data: {
       orderNumber,
+      customer: customer?.id,
       customerEmail,
       status: "paid",
       stripeCheckoutSessionId: session.id,
@@ -265,6 +327,12 @@ export async function fulfillCheckoutSession(session: Stripe.Checkout.Session): 
       notes: buildOrderNotes(session, items)
     }
   })) as PayloadDoc;
+
+  try {
+    await createBillingAddress(payload, customer, session);
+  } catch (error) {
+    console.error("Stripe fulfillment billing address table write failed; order was still created", error);
+  }
 
   let orderItemsCreated = 0;
 
