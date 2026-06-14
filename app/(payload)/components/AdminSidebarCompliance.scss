@@ -37,7 +37,7 @@
 }
 
 .bp-admin-nav-extra__heading {
-  color: rgba(4, 63, 73, 0.62);
+  color: rgba(4, 63, 73, 0.66);
   font-size: 0.72rem;
   font-weight: 950;
   letter-spacing: 0.15em;
@@ -47,10 +47,10 @@
 
 .bp-admin-nav-extra__link {
   align-items: center;
-  background: rgba(251, 255, 252, 0.8);
-  border: 1px solid rgba(20, 36, 42, 0.1);
+  background: rgba(247, 253, 254, 0.88);
+  border: 1px solid rgba(6, 87, 102, 0.12);
   border-radius: 0.85rem;
-  box-shadow: 0 14px 28px rgba(20, 36, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.66);
+  box-shadow: 0 14px 28px rgba(20, 36, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.7);
   color: #043f49 !important;
   display: grid;
   font-size: 0.94rem;
@@ -65,9 +65,9 @@
 
 .bp-admin-nav-extra__link:hover,
 .bp-admin-nav-extra__link--active {
-  background: linear-gradient(135deg, rgba(194, 239, 236, 0.96), rgba(213, 245, 240, 0.96));
-  border-color: rgba(6, 87, 102, 0.18);
-  box-shadow: 0 16px 30px rgba(20, 36, 42, 0.13), inset 4px 0 0 #065766, inset 0 1px 0 rgba(255, 255, 255, 0.62);
+  background: linear-gradient(135deg, rgba(178, 232, 239, 0.96), rgba(213, 247, 249, 0.96));
+  border-color: rgba(6, 87, 102, 0.22);
+  box-shadow: 0 16px 30px rgba(20, 36, 42, 0.13), inset 4px 0 0 #065766, inset 0 1px 0 rgba(255, 255, 255, 0.66);
   transform: translateY(-1px);
 }
 
