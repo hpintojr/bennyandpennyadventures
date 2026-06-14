@@ -7,6 +7,7 @@ import React from "react";
 
 import { importMap } from "./admin/importMap";
 import "./custom.scss";
+import "./login-brand.scss";
 
 type Args = {
   children: React.ReactNode;
