@@ -89,6 +89,12 @@ export async function AdminBeforeNavLinks() {
 
   return (
     <div className="bp-admin-nav-extra bp-admin-nav-extra--top">
+      <div className="bp-admin-sidebar-brand" aria-label="Benny and Penny admin panel">
+        <div className="bp-admin-sidebar-brand__heart" aria-hidden="true">♥</div>
+        <div className="bp-admin-sidebar-brand__title">Benny &amp; Penny&apos;s</div>
+        <div className="bp-admin-sidebar-brand__subtitle">Admin Panel</div>
+      </div>
+
       <div className="bp-admin-nav-extra__hubLabel">Adventure Hub</div>
 
       <Link className="bp-admin-nav-extra__link bp-admin-nav-extra__link--active" href="/admin">
