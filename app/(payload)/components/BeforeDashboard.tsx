@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getPayload } from "payload";
 import React from "react";
 import AdminWelcomeName from "./AdminWelcomeName";
+import DashboardSalesChart, { type DashboardChartOrder } from "./DashboardSalesChart";
 import "./BeforeDashboard.scss";
 import "./RegionCompact.scss";
 
@@ -16,6 +17,7 @@ type PayloadDoc = {
 type PayloadListResult = {
   docs: PayloadDoc[];
   totalDocs: number;
+  ok: boolean;
 };
 
 type StatCard = {
@@ -35,16 +37,6 @@ type RecentOrder = {
   createdAt: string;
 };
 
-type RecentOrderItem = {
-  id: string;
-  href: string;
-  order: string;
-  title: string;
-  format: string;
-  quantity: string;
-  unitPrice: string;
-};
-
 type RecentSubscriber = {
   id: string;
   href: string;
@@ -54,33 +46,10 @@ type RecentSubscriber = {
   status: string;
 };
 
-type SalesBar = {
+type SystemStatus = {
   label: string;
-  value: number;
-  total: string;
-  orders: number;
+  status: string;
 };
-
-const salesRanges = [
-  "Today",
-  "Last 3 days",
-  "Last 7 days",
-  "Last 14 days",
-  "Last 30 days",
-  "Last 45 days",
-  "Last 60 days",
-  "Last 90 days",
-  "Last 120 days",
-  "Last Year"
-];
-
-const quickLinks = [
-  { label: "Review Orders", href: "/admin/collections/orders" },
-  { label: "Order Details", href: "/admin/collections/order-items" },
-  { label: "Customer Addresses", href: "/admin/collections/customer-addresses" },
-  { label: "View Subscribers", href: "/admin/collections/subscribers" },
-  { label: "Support Tickets", href: "/admin/collections/support-tickets" }
-];
 
 const compactGridStyle: React.CSSProperties = {
   alignItems: "start"
@@ -147,25 +116,6 @@ function formatShortDate(value: unknown) {
   return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(date);
 }
 
-function formatFormat(value: unknown) {
-  const format = getString(value, "unknown");
-  if (format === "digital") return "PDF / EPUB";
-  if (format === "audiobook") return "Audiobook";
-  if (format === "paperback") return "Paperback";
-  if (format === "hardcover") return "Hardcover";
-  return format;
-}
-
-function getRelationshipTitle(value: unknown, fallback = "—") {
-  if (typeof value === "object" && value !== null) {
-    const doc = value as PayloadDoc;
-    return getString(doc.orderNumber, getString(doc.title, getString(doc.email, fallback)));
-  }
-
-  if (typeof value === "string" || typeof value === "number") return String(value);
-  return fallback;
-}
-
 async function safeFind(collection: string, options: Record<string, unknown> = {}): Promise<PayloadListResult> {
   try {
     const payload = await getPayload({ config });
@@ -178,54 +128,20 @@ async function safeFind(collection: string, options: Record<string, unknown> = {
 
     return {
       docs: Array.isArray(result.docs) ? (result.docs as PayloadDoc[]) : [],
-      totalDocs: typeof result.totalDocs === "number" ? result.totalDocs : 0
+      totalDocs: typeof result.totalDocs === "number" ? result.totalDocs : 0,
+      ok: true
     };
   } catch (error) {
     console.error(`Dashboard data fetch failed for ${collection}`, error);
-    return { docs: [], totalDocs: 0 };
+    return { docs: [], totalDocs: 0, ok: false };
   }
-}
-
-function buildSalesBars(orders: PayloadDoc[]): SalesBar[] {
-  const now = new Date();
-  const months = Array.from({ length: 6 }, (_, index) => {
-    const date = new Date(now.getFullYear(), now.getMonth() - (5 - index), 1);
-    return {
-      key: `${date.getFullYear()}-${date.getMonth()}`,
-      label: new Intl.DateTimeFormat("en-US", { month: "short" }).format(date),
-      orders: 0,
-      revenue: 0
-    };
-  });
-
-  const byKey = new Map(months.map((month) => [month.key, month]));
-
-  for (const order of orders) {
-    if (!order.createdAt) continue;
-    const date = new Date(order.createdAt);
-    if (Number.isNaN(date.getTime())) continue;
-    const key = `${date.getFullYear()}-${date.getMonth()}`;
-    const bucket = byKey.get(key);
-    if (!bucket) continue;
-    bucket.orders += 1;
-    bucket.revenue += getNumber(order.total);
-  }
-
-  const maxRevenue = Math.max(...months.map((month) => month.revenue), 1);
-
-  return months.map((month) => ({
-    label: month.label,
-    value: Math.max(8, Math.round((month.revenue / maxRevenue) * 100)),
-    total: formatMoney(month.revenue),
-    orders: month.orders
-  }));
 }
 
 async function getDashboardData() {
   const [orders, allOrdersForChart, orderItems, subscribers, addresses, supportTickets, books, users] = await Promise.all([
     safeFind("orders", { limit: 5, sort: "-createdAt" }),
-    safeFind("orders", { limit: 200, sort: "-createdAt" }),
-    safeFind("order-items", { limit: 5, sort: "-createdAt" }),
+    safeFind("orders", { limit: 500, sort: "-createdAt" }),
+    safeFind("order-items", { limit: 500, sort: "-createdAt" }),
     safeFind("subscribers", { limit: 5, sort: "-createdAt" }),
     safeFind("customer-addresses", { limit: 5, sort: "-createdAt" }),
     safeFind("support-tickets", { limit: 5, sort: "-createdAt" }),
@@ -255,9 +171,9 @@ async function getDashboardData() {
     {
       label: "Items Sold",
       value: String(totalItems),
-      note: "Order Details rows",
+      note: "Order Detail quantity",
       icon: "📚",
-      trend: `${orderItems.totalDocs} lines`
+      trend: `${orderItems.totalDocs} rows`
     },
     {
       label: "Subscribers",
@@ -269,22 +185,12 @@ async function getDashboardData() {
   ];
 
   const recentOrders: RecentOrder[] = orders.docs.map((order) => ({
-    id: getString(order.orderNumber, String(order.id || "—")),
+    id: String(order.id || "—"),
     href: `/admin/collections/orders/${order.id}`,
     customer: getString(order.customerEmail, "—"),
     status: getString(order.status, "—"),
     total: formatMoney(getNumber(order.total)),
     createdAt: formatDate(order.createdAt)
-  }));
-
-  const recentOrderItems: RecentOrderItem[] = orderItems.docs.map((item) => ({
-    id: String(item.id || `${item.title}-${item.createdAt}`),
-    href: `/admin/collections/order-items/${item.id}`,
-    order: getRelationshipTitle(item.order),
-    title: getString(item.title, "—"),
-    format: formatFormat(item.format),
-    quantity: String(getNumber(item.quantity) || 1),
-    unitPrice: formatMoney(getNumber(item.unitPrice))
   }));
 
   const recentSubscribers: RecentSubscriber[] = subscribers.docs.map((subscriber) => ({
@@ -296,12 +202,25 @@ async function getDashboardData() {
     status: getString(subscriber.status, "Active")
   }));
 
+  const chartOrders: DashboardChartOrder[] = allOrdersForChart.docs.map((order) => ({
+    createdAt: getString(order.createdAt, "") || null,
+    status: getString(order.status),
+    total: getNumber(order.total)
+  }));
+
+  const systemStatus: SystemStatus[] = [
+    { label: "Payload CMS API", status: orders.ok ? "Online" : "Check logs" },
+    { label: "Neon Database", status: orders.ok && users.ok ? "Connected" : "Check connection" },
+    { label: "Stripe", status: process.env.STRIPE_SECRET_KEY ? "Configured" : "Missing key" },
+    { label: "Mailjet", status: process.env.MAILJET_API_KEY || process.env.MJ_APIKEY_PUBLIC ? "Configured" : "Pending setup" }
+  ];
+
   return {
     stats,
-    salesBars: buildSalesBars(allOrdersForChart.docs),
+    chartOrders,
     recentOrders,
-    recentOrderItems,
     recentSubscribers,
+    systemStatus,
     counts: {
       addresses: addresses.totalDocs,
       supportTickets: supportTickets.totalDocs,
@@ -346,27 +265,10 @@ async function BeforeDashboard() {
           <div className="bp-dashboard__cardHeader">
             <div>
               <h2>Sales Performance</h2>
-              <p>Revenue and order counts from live Payload order records.</p>
+              <p>Use the date range to break sales down by hour, day, or month.</p>
             </div>
-            <select aria-label="Sales period" defaultValue="Last 30 days">
-              {salesRanges.map((range) => <option value={range} key={range}>{range}</option>)}
-            </select>
           </div>
-
-          <div className="bp-dashboard__chart" aria-label="Book sales performance with revenue totals">
-            {dashboard.salesBars.map((bar) => (
-              <div
-                className="bp-dashboard__barWrap"
-                data-tooltip={`${bar.label}: ${bar.total} · ${bar.orders} orders`}
-                key={bar.label}
-                tabIndex={0}
-                title={`${bar.label}: ${bar.total} · ${bar.orders} orders`}
-              >
-                <span style={{ height: `${bar.value}%` }} />
-                <small>{bar.label}</small>
-              </div>
-            ))}
-          </div>
+          <DashboardSalesChart orders={dashboard.chartOrders} />
         </article>
 
         <article className="bp-dashboard__card bp-dashboard__card--region" style={compactRegionCardStyle}>
@@ -383,7 +285,7 @@ async function BeforeDashboard() {
         </article>
       </div>
 
-      <div className="bp-dashboard__bottomGrid">
+      <div className="bp-dashboard__bottomGrid bp-dashboard__bottomGrid--single">
         <article className="bp-dashboard__card">
           <div className="bp-dashboard__cardHeader bp-dashboard__cardHeader--compact">
             <h2>Recent Orders</h2>
@@ -392,46 +294,19 @@ async function BeforeDashboard() {
           <div className="bp-dashboard__tableShell">
             <table>
               <thead>
-                <tr><th>Order</th><th>Customer</th><th>Total</th><th>Status</th><th>Created</th></tr>
+                <tr><th>Order ID</th><th>Customer</th><th>Status</th><th>Total</th><th>Created</th></tr>
               </thead>
               <tbody>
                 {dashboard.recentOrders.length ? dashboard.recentOrders.map((order) => (
                   <tr key={order.id}>
                     <td><Link href={order.href}>{order.id}</Link></td>
                     <td>{order.customer}</td>
-                    <td>{order.total}</td>
                     <td><span className="bp-dashboard__pill bp-dashboard__pill--order">{order.status}</span></td>
+                    <td>{order.total}</td>
                     <td>{order.createdAt}</td>
                   </tr>
                 )) : (
                   <tr><td colSpan={5}>No orders yet.</td></tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </article>
-
-        <article className="bp-dashboard__card">
-          <div className="bp-dashboard__cardHeader bp-dashboard__cardHeader--compact">
-            <h2>Recent Order Details</h2>
-            <Link href="/admin/collections/order-items">View all</Link>
-          </div>
-          <div className="bp-dashboard__tableShell">
-            <table>
-              <thead>
-                <tr><th>Order</th><th>Book / Item</th><th>Format</th><th>Qty</th><th>Unit</th></tr>
-              </thead>
-              <tbody>
-                {dashboard.recentOrderItems.length ? dashboard.recentOrderItems.map((item) => (
-                  <tr key={item.id}>
-                    <td>{item.order}</td>
-                    <td><Link href={item.href}>{item.title}</Link></td>
-                    <td>{item.format}</td>
-                    <td>{item.quantity}</td>
-                    <td>{item.unitPrice}</td>
-                  </tr>
-                )) : (
-                  <tr><td colSpan={5}>No order details yet.</td></tr>
                 )}
               </tbody>
             </table>
@@ -467,14 +342,23 @@ async function BeforeDashboard() {
         </article>
 
         <article className="bp-dashboard__card">
-          <h2>Quick Links</h2>
-          <nav className="bp-dashboard__quickLinks" aria-label="Admin quick links">
-            {quickLinks.map((link) => <Link href={link.href} key={link.href}>{link.label}</Link>)}
-          </nav>
+          <h2>System Status</h2>
           <div className="bp-dashboard__statusList">
-            <div><span>Support Tickets</span><strong>{dashboard.counts.supportTickets}</strong></div>
-            <div><span>Customer Addresses</span><strong>{dashboard.counts.addresses}</strong></div>
-            <div><span>Customer Users</span><strong>{dashboard.counts.users}</strong></div>
+            {dashboard.systemStatus.map((item) => (
+              <div key={item.label}>
+                <span>{item.label}</span>
+                <strong>{item.status}</strong>
+              </div>
+            ))}
+          </div>
+          <div className="bp-dashboard__mailjet">
+            <h3>Mailjet API Email Metrics</h3>
+            <div className="bp-dashboard__mailjetGrid">
+              <div><strong>0</strong><span>Sent</span></div>
+              <div><strong>0</strong><span>Opened</span></div>
+              <div><strong>0</strong><span>Bounced</span></div>
+              <div><strong>0</strong><span>Spam</span></div>
+            </div>
           </div>
         </article>
       </div>
