@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import type Stripe from "stripe";
+import { fulfillCheckoutSession } from "@/lib/stripeFulfillment";
 import { getStripe } from "@/lib/stripe";
 
 export const runtime = "nodejs";
@@ -24,8 +26,13 @@ export async function POST(request: Request) {
 
     switch (event.type) {
       case "checkout.session.completed": {
-        // Next step: create Payload Orders, OrderItems, Downloads, and AccessGrants here.
-        console.log("Stripe checkout completed", event.id);
+        const session = event.data.object as Stripe.Checkout.Session;
+        const summary = await fulfillCheckoutSession(session);
+        console.log("Stripe checkout fulfillment completed", {
+          eventId: event.id,
+          sessionId: session.id,
+          ...summary
+        });
         break;
       }
       case "payment_intent.payment_failed": {
@@ -39,7 +46,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ received: true });
   } catch (error) {
-    console.error("Stripe webhook signature verification failed", error);
-    return NextResponse.json({ error: "Webhook signature verification failed." }, { status: 400 });
+    console.error("Stripe webhook processing failed", error);
+    return NextResponse.json({ error: "Webhook processing failed." }, { status: 400 });
   }
 }
