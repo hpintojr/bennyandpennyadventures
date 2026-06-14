@@ -3,11 +3,11 @@ import type { CollectionConfig } from "payload";
 export const Books: CollectionConfig = {
   slug: "books",
   labels: {
-    singular: "Book",
-    plural: "Books & Products"
+    singular: "Product",
+    plural: "Product Catalog"
   },
   admin: {
-    group: "Catalog",
+    group: "Product Catalog",
     useAsTitle: "title",
     description: "Manage Benny & Penny books, product page content, formats, pricing, Stripe IDs, and private R2 file keys.",
     defaultColumns: ["number", "title", "status", "priceDigital", "priceAudiobook", "pricePaperback", "priceHardcover"]
