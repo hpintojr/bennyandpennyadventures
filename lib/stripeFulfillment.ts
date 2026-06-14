@@ -26,6 +26,13 @@ type FulfillmentLineItem = {
   stripePriceId: string | null;
 };
 
+type CheckoutSessionWithShipping = Stripe.Checkout.Session & {
+  shipping_details?: {
+    name?: string | null;
+    address?: Stripe.Address | null;
+  } | null;
+};
+
 export type FulfillmentSummary = {
   orderId: string | number;
   orderNumber: string;
@@ -78,6 +85,41 @@ function getOrderNumber(session: Stripe.Checkout.Session) {
   return `BP-${session.created}-${suffix}`;
 }
 
+function formatAddress(address: Stripe.Address | null | undefined) {
+  if (!address) return "Not provided";
+
+  const lines = [
+    address.line1,
+    address.line2,
+    [address.city, address.state, address.postal_code].filter(Boolean).join(", "),
+    address.country
+  ].filter(Boolean);
+
+  return lines.length ? lines.join("\n") : "Not provided";
+}
+
+function getShippingDetails(session: Stripe.Checkout.Session) {
+  return (session as CheckoutSessionWithShipping).shipping_details;
+}
+
+function buildCustomerSummary(session: Stripe.Checkout.Session) {
+  const customer = session.customer_details;
+  const shipping = getShippingDetails(session);
+
+  return [
+    "Customer Details:",
+    `Name: ${customer?.name || "not provided"}`,
+    `Email: ${getCustomerEmail(session) || "not provided"}`,
+    `Phone: ${customer?.phone || "not provided"}`,
+    "",
+    "Billing Address:",
+    formatAddress(customer?.address),
+    "",
+    "Shipping Address:",
+    shipping?.address ? [`Name: ${shipping.name || "not provided"}`, formatAddress(shipping.address)].join("\n") : "Not collected / not required"
+  ].join("\n");
+}
+
 function buildPurchasedItemsSummary(items: FulfillmentLineItem[]) {
   if (!items.length) return "Purchased Items:\n- Could not retrieve Stripe line items.";
 
@@ -92,6 +134,8 @@ function buildPurchasedItemsSummary(items: FulfillmentLineItem[]) {
 
 function buildOrderNotes(session: Stripe.Checkout.Session, items: FulfillmentLineItem[]) {
   return [
+    buildCustomerSummary(session),
+    "",
     buildPurchasedItemsSummary(items),
     "",
     "Stripe Details:",
