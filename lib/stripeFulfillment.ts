@@ -35,7 +35,7 @@ type FulfillmentLineItem = {
   stripePriceId: string | null;
 };
 
-type FulfillmentSummary = {
+export type FulfillmentSummary = {
   orderId: string | number;
   orderNumber: string;
   created: boolean;
@@ -371,4 +371,15 @@ export async function fulfillCheckoutSession(session: Stripe.Checkout.Session): 
     downloadsCreated,
     accessGrantsCreated
   };
+}
+
+export async function fulfillCheckoutSessionById(sessionId: string): Promise<FulfillmentSummary> {
+  const stripe = getStripe();
+  const session = await stripe.checkout.sessions.retrieve(sessionId);
+
+  if (session.payment_status !== "paid") {
+    throw new Error(`Stripe session ${sessionId} is not paid yet.`);
+  }
+
+  return fulfillCheckoutSession(session);
 }
