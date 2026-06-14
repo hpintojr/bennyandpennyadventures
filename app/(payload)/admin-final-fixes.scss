@@ -1,0 +1,168 @@
+/* Loads last. Targeted fixes for Payload admin polish. */
+
+/* Sidebar branding spacing and size. */
+.template-default .nav::before,
+.template-default aside::before {
+  font-size: 1.5rem !important;
+  min-height: 5.35rem !important;
+  padding: 1.25rem 1.15rem 1.1rem 5rem !important;
+}
+
+/* Sidebar open/collapse control: remove white button background in all states. */
+.template-default button[aria-label*='Open'],
+.template-default button[aria-label*='open'],
+.template-default button[aria-label*='Collapse'],
+.template-default button[aria-label*='collapse'],
+.template-default button[title*='Open'],
+.template-default button[title*='open'],
+.template-default button[title*='Collapse'],
+.template-default button[title*='collapse'],
+.template-default [class*='nav'] > button,
+.template-default [class*='Nav'] > button {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: #043f49 !important;
+}
+
+.template-default button[aria-label*='Open']:hover,
+.template-default button[aria-label*='open']:hover,
+.template-default button[aria-label*='Collapse']:hover,
+.template-default button[aria-label*='collapse']:hover,
+.template-default button[title*='Open']:hover,
+.template-default button[title*='open']:hover,
+.template-default button[title*='Collapse']:hover,
+.template-default button[title*='collapse']:hover,
+.template-default [class*='nav'] > button:hover,
+.template-default [class*='Nav'] > button:hover {
+  background: rgba(4, 63, 73, 0.08) !important;
+  border-radius: 0.55rem !important;
+  box-shadow: none !important;
+}
+
+/* Breadcrumb/admin heart: stop clipping and give the badge breathing room. */
+.template-default .breadcrumbs,
+.template-default .app-header,
+.template-default header,
+.template-default .breadcrumbs > *,
+.template-default .app-header > *,
+.template-default header > * {
+  overflow: visible !important;
+}
+
+.template-default [aria-label='Benny & Penny Admin'] {
+  height: 1.65rem !important;
+  margin-left: 0.15rem !important;
+  margin-right: 0.45rem !important;
+  overflow: visible !important;
+  width: 1.65rem !important;
+}
+
+/* Checkbox: single visible box, stronger checked state. */
+.template-default input[type='checkbox'] {
+  accent-color: #065766 !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  background: #fbfffc !important;
+  border: 1.5px solid rgba(6, 87, 102, 0.34) !important;
+  border-radius: 0.32rem !important;
+  box-shadow: 0 1px 3px rgba(4, 63, 73, 0.08) !important;
+  cursor: pointer !important;
+  display: inline-grid !important;
+  height: 1.12rem !important;
+  min-height: 1.12rem !important;
+  min-width: 1.12rem !important;
+  opacity: 1 !important;
+  padding: 0 !important;
+  place-items: center !important;
+  position: relative !important;
+  transform: none !important;
+  width: 1.12rem !important;
+  z-index: 2 !important;
+}
+
+.template-default input[type='checkbox']::after {
+  color: #ffffff !important;
+  content: '✓' !important;
+  display: block !important;
+  font-size: 0.78rem !important;
+  font-weight: 950 !important;
+  line-height: 1 !important;
+  opacity: 0 !important;
+  transform: translateY(-0.02rem) scale(0.8) !important;
+}
+
+.template-default input[type='checkbox']:checked {
+  background: #065766 !important;
+  border-color: #043f49 !important;
+  box-shadow: 0 0 0 3px rgba(6, 87, 102, 0.14), 0 2px 6px rgba(4, 63, 73, 0.18) !important;
+}
+
+.template-default input[type='checkbox']:checked::after {
+  opacity: 1 !important;
+  transform: translateY(-0.02rem) scale(1) !important;
+}
+
+.template-default input[type='checkbox'] + span,
+.template-default input[type='checkbox'] ~ span,
+.template-default .checkbox-input__icon,
+.template-default .checkbox__icon {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Sort buttons: smaller and less pill-like. */
+.template-default .sort-column button,
+.template-default button[aria-label*='Sort'],
+.template-default button[aria-label*='sort'] {
+  align-items: center !important;
+  background: #e7f6f1 !important;
+  border: 1px solid rgba(6, 87, 102, 0.16) !important;
+  border-radius: 0.45rem !important;
+  box-shadow: none !important;
+  color: #043f49 !important;
+  display: inline-flex !important;
+  height: 1.55rem !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+  min-height: 1.55rem !important;
+  min-width: 1.55rem !important;
+  padding: 0 !important;
+  width: 1.55rem !important;
+}
+
+/* Selection action buttons: stronger borders and vertical centering. */
+.template-default .list-selection button,
+.template-default .selection button,
+.template-default button[aria-label*='Edit'],
+.template-default button[aria-label*='Delete'] {
+  align-items: center !important;
+  background: #e7f6f1 !important;
+  border: 1.5px solid rgba(6, 87, 102, 0.28) !important;
+  border-radius: 0.65rem !important;
+  box-shadow: 0 1px 4px rgba(4, 63, 73, 0.06) !important;
+  color: #043f49 !important;
+  display: inline-flex !important;
+  font-weight: 950 !important;
+  justify-content: center !important;
+  line-height: 1.1 !important;
+  min-height: 2.35rem !important;
+  padding: 0.42rem 0.78rem !important;
+}
+
+/* Per page dropdown: text vertically centered. */
+.template-default select[name='limit'],
+.template-default select[aria-label*='Per Page'],
+.template-default select[aria-label*='per page'] {
+  background-position: right 0.65rem center !important;
+  box-sizing: border-box !important;
+  height: 2.5rem !important;
+  line-height: 1.15 !important;
+  min-height: 2.5rem !important;
+  padding: 0.5rem 2rem 0.5rem 0.75rem !important;
+  text-align: center !important;
+  text-align-last: center !important;
+  vertical-align: middle !important;
+}
