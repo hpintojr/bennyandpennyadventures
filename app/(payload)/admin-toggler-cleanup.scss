@@ -173,31 +173,95 @@
   width: 2rem !important;
 }
 
-/* Collection/list/detail pages need breathing room after hiding Payload breadcrumbs. */
-.template-default main:not(:has(.bp-dashboard)),
-.template-default main:not(:has(.bp-dashboard)) > .gutter,
-.template-default main:not(:has(.bp-dashboard)) > [class*='gutter'],
-.template-default main:not(:has(.bp-dashboard)) > [class*='Gutter'] {
-  padding-top: 1.35rem !important;
+/* Global teal admin palette overrides. Remove the green cast from Payload controls. */
+:root,
+.template-default {
+  --bp-soft-row: #e2f7fa;
+  --theme-bg: #fbfffc;
+  --theme-text: #043f49;
+  --theme-elevation-0: #fbfffc;
+  --theme-elevation-50: #f1fbfc;
+  --theme-elevation-100: #e2f7fa;
+  --theme-elevation-150: #c3e9ee;
+  --theme-elevation-200: #a9dce5;
+  --theme-success-50: #e2f7fa;
+  --theme-success-100: #c9f0f5;
+  --theme-success-150: #b3e6ee;
+  --theme-success-200: #99dce7;
+  --theme-success-500: #0f6170;
+  --theme-success-600: #065766;
+  --theme-success-700: #043f49;
+}
+
+/* Orders/collection pages: force actual top gap below hidden breadcrumbs. */
+.template-default .collection-list,
+.template-default [class*='collection-list'],
+.template-default [class*='CollectionList'],
+.template-default [class*='list-header'],
+.template-default [class*='ListHeader'] {
+  margin-top: 1.9rem !important;
+}
+
+.template-default main:not(:has(.bp-dashboard)) h1,
+.template-default main:not(:has(.bp-dashboard)) .doc-header,
+.template-default main:not(:has(.bp-dashboard)) [class*='doc-header'],
+.template-default main:not(:has(.bp-dashboard)) [class*='DocHeader'] {
+  margin-top: 1.9rem !important;
+}
+
+/* Keep the controls close to the title after pushing the page down. */
+.template-default .collection-list__wrap,
+.template-default [class*='collection-list__wrap'],
+.template-default [class*='ListControls'] {
+  margin-top: 0 !important;
 }
 
 /* Make Payload table striping more teal and less green across collection pages. */
-:root {
-  --bp-soft-row: #e5f7f8;
-  --theme-elevation-50: #f2fbfb;
-  --theme-elevation-100: #e5f7f8;
-}
-
 .template-default table tr:nth-child(even),
 .template-default .table tbody tr:nth-child(even),
 .template-default .collection-list table tbody tr:nth-child(even),
 .template-default .collection-list .table tbody tr:nth-child(even) {
-  background: #e5f7f8 !important;
+  background: #e2f7fa !important;
 }
 
 .template-default table tr:nth-child(even) td,
 .template-default .table tbody tr:nth-child(even) td,
 .template-default .collection-list table tbody tr:nth-child(even) td,
 .template-default .collection-list .table tbody tr:nth-child(even) td {
-  background: #e5f7f8 !important;
+  background: #e2f7fa !important;
+}
+
+/* Teal all collection-page controls, especially Per Page dropdown. */
+.template-default select,
+.template-default .select,
+.template-default [class*='select'],
+.template-default [class*='Select'],
+.template-default .list-controls button,
+.template-default [class*='list-controls'] button,
+.template-default [class*='ListControls'] button,
+.template-default button[aria-label*='Columns'],
+.template-default button[aria-label*='Filters'],
+.template-default button[aria-label*='Per Page'],
+.template-default select[name='limit'],
+.template-default select[aria-label*='Per Page'],
+.template-default select[aria-label*='per page'] {
+  background-color: #e2f7fa !important;
+  background-image: none !important;
+  border-color: rgba(6, 87, 102, 0.26) !important;
+  box-shadow: none !important;
+  color: #043f49 !important;
+}
+
+.template-default select:hover,
+.template-default .select:hover,
+.template-default [class*='select']:hover,
+.template-default [class*='Select']:hover,
+.template-default .list-controls button:hover,
+.template-default [class*='list-controls'] button:hover,
+.template-default [class*='ListControls'] button:hover,
+.template-default button[aria-label*='Columns']:hover,
+.template-default button[aria-label*='Filters']:hover {
+  background-color: #c9f0f5 !important;
+  border-color: rgba(6, 87, 102, 0.34) !important;
+  color: #043f49 !important;
 }
