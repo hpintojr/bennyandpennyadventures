@@ -1,3 +1,9 @@
+.template-default .nav::before,
+.template-default aside::before {
+  content: none !important;
+  display: none !important;
+}
+
 .template-default a:not(.bp-admin-nav-extra__link)[href='/admin/collections/orders'],
 .template-default a:not(.bp-admin-nav-extra__link)[href='/admin/collections/order-items'],
 .template-default a:not(.bp-admin-nav-extra__link)[href='/admin/collections/customer-addresses'],
