@@ -112,8 +112,8 @@ function getBillingAddress(session: Stripe.Checkout.Session) {
   return stripeAddressToPayloadAddress(session.customer_details?.name, session.customer_details?.address);
 }
 
-function getShippingAddress(session: Stripe.Checkout.Session) {
-  return stripeAddressToPayloadAddress(session.shipping_details?.name, session.shipping_details?.address);
+function getShippingAddress(_session: Stripe.Checkout.Session) {
+  return undefined;
 }
 
 function lineItemToFulfillmentItem(lineItem: Stripe.LineItem): FulfillmentLineItem {
