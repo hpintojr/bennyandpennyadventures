@@ -92,22 +92,57 @@
   margin-top: 0.15rem !important;
 }
 
+/* Dashboard top area cleanup: remove redundant custom bear dropdown and use two columns only. */
+.bp-dashboard__topbar {
+  grid-template-columns: minmax(260px, 1fr) minmax(340px, 0.82fr) !important;
+}
+
+.bp-dashboard__profile {
+  display: none !important;
+}
+
+/* Hide Payload's broken /admin/account avatar link until the account route is repaired. */
+.template-default a[href='/admin/account'],
+.template-default a[href$='/admin/account'] {
+  display: none !important;
+}
+
 /* Breadcrumb/admin heart: stop clipping and give the badge breathing room. */
 .template-default .breadcrumbs,
 .template-default .app-header,
 .template-default header,
 .template-default .breadcrumbs > *,
 .template-default .app-header > *,
-.template-default header > * {
+.template-default header > *,
+.template-default .breadcrumbs *,
+.template-default .app-header * {
   overflow: visible !important;
 }
 
+.template-default .breadcrumbs {
+  align-items: center !important;
+  display: inline-flex !important;
+  gap: 0.42rem !important;
+  line-height: 1 !important;
+  min-height: 2.35rem !important;
+}
+
 .template-default [aria-label='Benny & Penny Admin'] {
-  height: 1.65rem !important;
-  margin-left: 0.15rem !important;
-  margin-right: 0.45rem !important;
+  align-items: center !important;
+  border-radius: 999px !important;
+  display: inline-flex !important;
+  flex: 0 0 1.85rem !important;
+  height: 1.85rem !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+  margin: 0 0.45rem 0 0 !important;
+  min-height: 1.85rem !important;
+  min-width: 1.85rem !important;
   overflow: visible !important;
-  width: 1.65rem !important;
+  padding: 0 !important;
+  position: relative !important;
+  transform: none !important;
+  width: 1.85rem !important;
 }
 
 /* Payload checkbox cleanup: Payload renders a real input plus a visual icon span.
