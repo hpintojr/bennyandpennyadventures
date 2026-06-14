@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 import "./BeforeDashboard.scss";
 
@@ -34,7 +35,7 @@ function BeforeDashboard() {
           <h1>Welcome, Nurse Ivy! 🧸</h1>
           <p>Benny and Penny are ready to manage book sales, subscribers, downloads, and your growing community.</p>
         </div>
-        <a className="bp-dashboard__heroButton" href="/admin/collections/books/create">Add New Book</a>
+        <Link className="bp-dashboard__heroButton" href="/admin/collections/books/create">Add New Book</Link>
       </div>
 
       <div className="bp-dashboard__stats">
@@ -75,7 +76,7 @@ function BeforeDashboard() {
         <aside className="bp-dashboard__card">
           <h2>Quick Links</h2>
           <nav className="bp-dashboard__quickLinks" aria-label="Admin quick links">
-            {quickLinks.map((link) => <a href={link.href} key={link.href}>{link.label}</a>)}
+            {quickLinks.map((link) => <Link href={link.href} key={link.href}>{link.label}</Link>)}
           </nav>
           <div className="bp-dashboard__system">
             <strong>System Status</strong>
