@@ -1,5 +1,6 @@
 import Link from "next/link";
 import React from "react";
+import AdminWelcomeName from "./AdminWelcomeName";
 import "./BeforeDashboard.scss";
 
 const stats = [
@@ -80,7 +81,7 @@ function BeforeDashboard() {
       <header className="bp-dashboard__topbar">
         <div>
           <p className="bp-dashboard__brandline">Benny &amp; Penny&apos;s Adventures | Admin Dashboard</p>
-          <h1>Welcome, Nurse Ivy! <span aria-hidden="true">🧸</span></h1>
+          <h1>Welcome, <AdminWelcomeName />! <span aria-hidden="true">🧸</span></h1>
           <p>Benny and Penny are ready to manage your book sales and community.</p>
         </div>
         <div className="bp-dashboard__topActions" aria-label="Admin utility placeholders">
