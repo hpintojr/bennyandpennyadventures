@@ -6,18 +6,19 @@ export function Icon() {
       aria-label="Benny & Penny Admin"
       style={{
         alignItems: "center",
-        background: "#EB6373",
+        background: "#DFF4EE",
+        border: "1px solid rgba(6, 87, 102, 0.18)",
         borderRadius: "999px",
-        boxShadow: "0 8px 18px rgba(235, 99, 115, 0.22)",
-        color: "#FFFFFF",
+        boxShadow: "0 8px 18px rgba(4, 63, 73, 0.08)",
+        color: "#065766",
         display: "inline-flex",
         fontFamily: "Nunito, ui-sans-serif, system-ui, sans-serif",
-        fontSize: "1rem",
+        fontSize: "0.9rem",
         fontWeight: 950,
-        height: "2rem",
+        height: "1.75rem",
         justifyContent: "center",
         lineHeight: 1,
-        width: "2rem"
+        width: "1.75rem"
       }}
     >
       ♥
