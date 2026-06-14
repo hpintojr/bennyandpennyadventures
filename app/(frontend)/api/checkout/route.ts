@@ -11,6 +11,10 @@ type CheckoutRequestBody = {
 
 const shippingCountries: Stripe.Checkout.SessionCreateParams.ShippingAddressCollection.AllowedCountry[] = ["US"];
 
+function automaticTaxEnabled() {
+  return process.env.STRIPE_AUTOMATIC_TAX_ENABLED === "true";
+}
+
 export async function POST(request: Request) {
   let body: CheckoutRequestBody;
 
@@ -34,12 +38,13 @@ export async function POST(request: Request) {
     const stripe = getStripe();
     const siteUrl = getSiteUrl();
     const requiresShipping = cartRequiresShipping(items);
+    const useAutomaticTax = automaticTaxEnabled();
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       allow_promotion_codes: true,
       automatic_tax: {
-        enabled: true
+        enabled: useAutomaticTax
       },
       billing_address_collection: "required",
       customer_creation: "always",
@@ -47,7 +52,7 @@ export async function POST(request: Request) {
         quantity: item.quantity,
         price_data: {
           currency: "usd",
-          tax_behavior: "exclusive",
+          tax_behavior: useAutomaticTax ? "exclusive" : "unspecified",
           unit_amount: item.unitAmount,
           product_data: {
             name: item.title,
