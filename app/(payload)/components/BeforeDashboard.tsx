@@ -2,6 +2,7 @@ import Link from "next/link";
 import React from "react";
 import AdminWelcomeName from "./AdminWelcomeName";
 import "./BeforeDashboard.scss";
+import "./RegionCompact.scss";
 
 const stats = [
   {
