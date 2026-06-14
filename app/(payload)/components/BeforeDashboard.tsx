@@ -230,10 +230,6 @@ async function BeforeDashboard() {
           <label className="bp-dashboard__searchIcon" htmlFor="bp-admin-search">⌕</label>
           <input id="bp-admin-search" name="q" placeholder="Search for an order, customer, or title..." type="search" />
         </form>
-        <details className="bp-dashboard__profile">
-          <summary aria-label="Open admin profile menu">🧸</summary>
-          <div><Link href="/admin/collections/users">Account settings</Link><Link href="/admin/logout">Log out</Link></div>
-        </details>
       </header>
 
       <div className="bp-dashboard__stats" aria-label="Dashboard key performance indicators">
