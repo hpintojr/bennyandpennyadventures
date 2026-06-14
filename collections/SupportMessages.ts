@@ -3,6 +3,7 @@ import type { CollectionConfig } from "payload";
 export const SupportMessages: CollectionConfig = {
   slug: "support-messages",
   admin: {
+    hidden: true,
     useAsTitle: "messagePreview",
     defaultColumns: ["ticket", "senderType", "createdAt"]
   },
