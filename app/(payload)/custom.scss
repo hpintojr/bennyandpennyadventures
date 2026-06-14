@@ -144,28 +144,77 @@ body {
   background: #fffdf8 !important;
 }
 
-.template-default input,
-.template-default textarea,
-.template-default select {
-  background: #ffffff !important;
+/* Strong global admin form controls. This applies to Payload login and collection edit forms. */
+input,
+textarea,
+select {
+  background-color: #ffffff !important;
   color: var(--bp-teal-deep) !important;
-  border: 2px solid rgba(216, 185, 141, 0.85) !important;
-  font-size: 1rem !important;
-  font-weight: 700 !important;
+  -webkit-text-fill-color: var(--bp-teal-deep) !important;
+  border: 2px solid rgba(216, 185, 141, 0.95) !important;
+  border-radius: 0.55rem !important;
+  font-family: 'Nunito', ui-sans-serif, system-ui, sans-serif !important;
+  font-size: 1.08rem !important;
+  font-weight: 800 !important;
+  min-height: 3.1rem !important;
+  opacity: 1 !important;
+  box-shadow: none !important;
 }
 
-.template-default .btn--style-primary,
-.template-default button[type='submit'] {
+input::placeholder,
+textarea::placeholder {
+  color: rgba(4, 63, 73, 0.58) !important;
+  -webkit-text-fill-color: rgba(4, 63, 73, 0.58) !important;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--bp-teal-deep) !important;
+  box-shadow: 0 0 0 1000px #ffffff inset !important;
+  border: 2px solid rgba(216, 185, 141, 0.95) !important;
+}
+
+label,
+.field-label,
+.description {
+  color: var(--bp-teal-deep) !important;
+  font-family: 'Nunito', ui-sans-serif, system-ui, sans-serif !important;
+  font-size: 1rem !important;
+  font-weight: 900 !important;
+  opacity: 1 !important;
+}
+
+button,
+[type='submit'],
+.btn,
+.btn--style-primary {
+  background: var(--bp-coral) !important;
+  border: 2px solid var(--bp-coral) !important;
+  border-radius: 0.65rem !important;
+  color: #ffffff !important;
+  font-family: 'Nunito', ui-sans-serif, system-ui, sans-serif !important;
+  font-size: 1.05rem !important;
+  font-weight: 950 !important;
+  min-height: 3rem !important;
+  opacity: 1 !important;
+}
+
+button:hover,
+[type='submit']:hover,
+.btn:hover,
+.btn--style-primary:hover {
+  background: var(--bp-coral-deep) !important;
+  border-color: var(--bp-coral-deep) !important;
+}
+
+button:disabled,
+[disabled],
+.btn--disabled {
   background: var(--bp-coral) !important;
   border-color: var(--bp-coral) !important;
   color: #ffffff !important;
-  font-weight: 900 !important;
-}
-
-.template-default .btn--style-primary:hover,
-.template-default button[type='submit']:hover {
-  background: var(--bp-coral-deep) !important;
-  border-color: var(--bp-coral-deep) !important;
+  opacity: 0.88 !important;
 }
 
 .template-default .btn--style-secondary,
@@ -177,44 +226,10 @@ body {
   font-weight: 850 !important;
 }
 
-/* Login screen contrast fallback until Payload graphics config is applied. */
+/* Login screen */
 .template-login,
 .template-create-first-user {
   background: linear-gradient(135deg, #fff4e4 0%, #fffaf1 55%, #eef5ea 100%) !important;
-}
-
-.template-login label,
-.template-create-first-user label,
-.template-login .field-label,
-.template-create-first-user .field-label {
-  color: var(--bp-teal-deep) !important;
-  font-size: 1.05rem !important;
-  font-weight: 950 !important;
-  opacity: 1 !important;
-}
-
-.template-login input,
-.template-create-first-user input {
-  background: #ffffff !important;
-  color: var(--bp-teal-deep) !important;
-  -webkit-text-fill-color: var(--bp-teal-deep) !important;
-  border: 2px solid var(--bp-gold) !important;
-  min-height: 3.15rem !important;
-  font-size: 1.08rem !important;
-  font-weight: 800 !important;
-}
-
-.template-login button,
-.template-create-first-user button,
-.template-login [type='submit'],
-.template-create-first-user [type='submit'] {
-  background: var(--bp-coral) !important;
-  border-color: var(--bp-coral) !important;
-  color: #ffffff !important;
-  min-height: 3.15rem !important;
-  font-size: 1.08rem !important;
-  font-weight: 950 !important;
-  opacity: 1 !important;
 }
 
 .template-login a,
