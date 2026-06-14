@@ -9,7 +9,7 @@ export const Orders: CollectionConfig = {
   admin: {
     useAsTitle: "orderNumber",
     description: "Review Stripe checkout orders, customer details, payment status, and fulfillment progress.",
-    defaultColumns: ["orderNumber", "customerEmail", "status", "total", "createdAt"]
+    defaultColumns: ["orderNumber", "customerEmail", "status", "total", "notes", "createdAt"]
   },
   fields: [
     { name: "orderNumber", type: "text", required: true, unique: true },
