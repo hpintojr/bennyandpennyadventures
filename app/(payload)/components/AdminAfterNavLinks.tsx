@@ -5,7 +5,7 @@ export function AdminAfterNavLinks() {
   return (
     <div className="bp-admin-nav-extra bp-admin-nav-extra--bottom">
       <Link className="bp-admin-nav-extra__link bp-admin-nav-extra__link--logout" href="/admin/logout">
-        <span aria-hidden="true">↳</span>
+        <span aria-hidden="true">arrow-left-from-bracket</span>
         Log out
       </Link>
     </div>
