@@ -67,10 +67,37 @@ function getRangeDays(range: SalesRange) {
   return Number(range.match(/\d+/)?.[0] || 30);
 }
 
+function shouldGroupByWeek(range: SalesRange) {
+  const days = getRangeDays(range);
+  return Boolean(days && days >= 14 && days <= 60);
+}
+
 function shouldGroupByMonth(range: SalesRange) {
   if (range === "This Past Year") return true;
   const days = getRangeDays(range);
-  return Boolean(days && days > 31);
+  return Boolean(days && days > 60);
+}
+
+function buildWeeklyBucketsForRange(range: SalesRange): SalesBucket[] {
+  const now = new Date();
+  const days = getRangeDays(range) || 30;
+  const start = addDays(startOfDay(now), -(days - 1));
+  const buckets: SalesBucket[] = [];
+
+  for (let weekIndex = 0, cursor = new Date(start); cursor <= now; weekIndex += 1, cursor = addDays(start, weekIndex * 7)) {
+    const weekStart = new Date(cursor);
+    const weekEnd = addDays(weekStart, 6);
+    const displayEnd = weekEnd > now ? now : weekEnd;
+
+    buckets.push({
+      key: dateKey(weekStart),
+      label: `${new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(weekStart)}-${new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(displayEnd)}`,
+      revenue: 0,
+      orders: 0
+    });
+  }
+
+  return buckets;
 }
 
 function buildMonthlyBucketsForRange(range: SalesRange): SalesBucket[] {
@@ -112,6 +139,10 @@ function buildEmptyBuckets(range: SalesRange): SalesBucket[] {
     });
   }
 
+  if (shouldGroupByWeek(range)) {
+    return buildWeeklyBucketsForRange(range);
+  }
+
   if (shouldGroupByMonth(range)) {
     return buildMonthlyBucketsForRange(range);
   }
@@ -130,8 +161,17 @@ function buildEmptyBuckets(range: SalesRange): SalesBucket[] {
   });
 }
 
+function getWeekBucketKey(date: Date, range: SalesRange) {
+  const days = getRangeDays(range) || 30;
+  const start = addDays(startOfDay(new Date()), -(days - 1));
+  const dayDifference = Math.floor((startOfDay(date).getTime() - start.getTime()) / 86400000);
+  const weekStart = addDays(start, Math.floor(Math.max(0, dayDifference) / 7) * 7);
+  return dateKey(weekStart);
+}
+
 function orderKeyForRange(date: Date, range: SalesRange) {
   if (range === "Today") return String(date.getHours());
+  if (shouldGroupByWeek(range)) return getWeekBucketKey(date, range);
   if (shouldGroupByMonth(range)) return monthKey(date);
   return dateKey(date);
 }
@@ -191,7 +231,7 @@ export default function DashboardSalesChart({ orders }: { orders: DashboardChart
       <div
         className="bp-dashboard__chart"
         aria-label={`Sales performance for ${range}`}
-        style={{ gridTemplateColumns: `repeat(${buckets.length}, minmax(44px, 1fr))` }}
+        style={{ gridTemplateColumns: `repeat(${buckets.length}, minmax(64px, 1fr))` }}
       >
         {buckets.map((bar) => (
           <div
