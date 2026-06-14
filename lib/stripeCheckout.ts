@@ -36,27 +36,29 @@ function normalizeQuantity(qty: unknown) {
 }
 
 export function validateCheckoutItems(items: CheckoutCartItemInput[]): ValidatedCheckoutItem[] {
-  const validated = items.map((item) => {
-    if (typeof item.slug !== "string") return null;
+  const validatedItems: ValidatedCheckoutItem[] = [];
+
+  for (const item of items) {
+    if (typeof item.slug !== "string") continue;
 
     const book = books.find((entry) => entry.slug === item.slug);
-    if (!book) return null;
+    if (!book) continue;
 
     const formatLabel = normalizeFormat(item.format);
     const format = bookFormats.find((entry) => entry.label === formatLabel || entry.shortLabel === formatLabel);
-    if (!format) return null;
+    if (!format) continue;
 
-    return {
+    validatedItems.push({
       slug: book.slug,
       title: book.title,
       formatLabel: format.label,
       shortLabel: format.shortLabel,
       unitAmount: Math.round(format.price * 100),
       quantity: normalizeQuantity(item.qty)
-    };
-  });
+    });
+  }
 
-  return validated.filter((item): item is ValidatedCheckoutItem => Boolean(item));
+  return validatedItems;
 }
 
 export function buildOrderMetadata(items: ValidatedCheckoutItem[]) {
