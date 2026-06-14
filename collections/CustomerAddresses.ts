@@ -9,9 +9,19 @@ export const CustomerAddresses: CollectionConfig = {
   admin: {
     useAsTitle: "fullName",
     description: "Structured customer addresses collected through checkout and customer account workflows.",
-    defaultColumns: ["fullName", "customer", "street1", "city", "state", "postalCode", "country", "phone"]
+    defaultColumns: ["addressType", "fullName", "customer", "street1", "city", "state", "postalCode", "country", "phone"]
   },
   fields: [
+    {
+      name: "addressType",
+      type: "select",
+      required: true,
+      defaultValue: "billing",
+      options: [
+        { label: "Billing", value: "billing" },
+        { label: "Shipping", value: "shipping" }
+      ]
+    },
     { name: "customer", type: "relationship", relationTo: "users", required: true },
     { name: "fullName", type: "text", required: true },
     { name: "company", type: "text" },
