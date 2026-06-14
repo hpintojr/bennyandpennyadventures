@@ -39,7 +39,7 @@ export async function POST(request: Request) {
       mode: "payment",
       allow_promotion_codes: true,
       automatic_tax: {
-        enabled: true
+        enabled: false
       },
       billing_address_collection: "required",
       customer_creation: "always",
@@ -47,7 +47,6 @@ export async function POST(request: Request) {
         quantity: item.quantity,
         price_data: {
           currency: "usd",
-          tax_behavior: "exclusive",
           unit_amount: item.unitAmount,
           product_data: {
             name: item.title,
