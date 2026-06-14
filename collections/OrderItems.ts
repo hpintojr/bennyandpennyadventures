@@ -2,10 +2,13 @@ import type { CollectionConfig } from "payload";
 
 export const OrderItems: CollectionConfig = {
   slug: "order-items",
+  labels: {
+    singular: "Order Detail",
+    plural: "Order Details"
+  },
   admin: {
-    hidden: true,
     useAsTitle: "title",
-    defaultColumns: ["title", "order", "format", "quantity", "unitPrice"]
+    defaultColumns: ["order", "title", "book", "format", "quantity", "unitPrice", "stripePriceId"]
   },
   fields: [
     { name: "order", type: "relationship", relationTo: "orders", required: true },
