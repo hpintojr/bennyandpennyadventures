@@ -158,3 +158,17 @@
   max-width: none !important;
   width: 100% !important;
 }
+
+/* Final dashboard search icon override. */
+.bp-dashboard .bp-dashboard__searchIcon,
+.template-default .bp-dashboard .bp-dashboard__searchIcon,
+.template-default label.bp-dashboard__searchIcon {
+  align-items: center !important;
+  display: inline-flex !important;
+  flex: 0 0 auto !important;
+  font-size: 2rem !important;
+  height: 2rem !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+  width: 2rem !important;
+}
