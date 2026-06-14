@@ -3,6 +3,7 @@ import type { CollectionConfig } from "payload";
 export const AccessGrants: CollectionConfig = {
   slug: "access-grants",
   admin: {
+    hidden: true,
     useAsTitle: "reason",
     defaultColumns: ["customer", "book", "format", "reason", "expiresAt"]
   },
