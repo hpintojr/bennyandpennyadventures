@@ -101,7 +101,7 @@ function lineItemToFulfillmentItem(lineItem: Stripe.LineItem): FulfillmentLineIt
 }
 
 async function getPayloadClient(): Promise<PayloadClient> {
-  return (await getPayload({ config })) as PayloadClient;
+  return (await getPayload({ config })) as unknown as PayloadClient;
 }
 
 async function findExistingOrder(payload: PayloadClient, sessionId: string): Promise<PayloadDoc | null> {
