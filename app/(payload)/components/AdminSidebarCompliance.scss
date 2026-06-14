@@ -1,4 +1,94 @@
+.template-default a:not(.bp-admin-nav-extra__link)[href='/admin/collections/orders'],
+.template-default a:not(.bp-admin-nav-extra__link)[href='/admin/collections/order-items'],
+.template-default a:not(.bp-admin-nav-extra__link)[href='/admin/collections/customer-addresses'],
+.template-default a:not(.bp-admin-nav-extra__link)[href='/admin/collections/subscribers'],
+.template-default a:not(.bp-admin-nav-extra__link)[href='/admin/collections/support-tickets'],
 .template-default a:not(.bp-admin-nav-extra__link)[href='/admin/collections/privacy-requests'],
-.template-default a:not(.bp-admin-nav-extra__link)[href='/admin/collections/consent-logs'] {
+.template-default a:not(.bp-admin-nav-extra__link)[href='/admin/collections/consent-logs'],
+.template-default a:not(.bp-admin-nav-extra__link)[href='/admin/collections/users'],
+.template-default a:not(.bp-admin-nav-extra__link)[href='/admin/collections/books'],
+.template-default a:not(.bp-admin-nav-extra__link)[href='/admin/collections/downloads'] {
   display: none !important;
+}
+
+.bp-admin-nav-extra {
+  color: #172227;
+  display: grid;
+  font-family: 'Nunito', ui-sans-serif, system-ui, sans-serif;
+  gap: 0.35rem;
+  margin: 0.5rem 0 1rem;
+}
+
+.bp-admin-nav-extra__section {
+  display: grid;
+  gap: 0.25rem;
+  margin-top: 0.85rem;
+}
+
+.bp-admin-nav-extra__heading {
+  color: #5f6f76;
+  font-size: 0.76rem;
+  font-weight: 950;
+  letter-spacing: 0.06em;
+  padding: 0.35rem 0.8rem;
+  text-transform: uppercase;
+}
+
+.bp-admin-nav-extra__link {
+  align-items: center;
+  border-radius: 9px;
+  color: #172227 !important;
+  display: grid;
+  font-size: 0.92rem;
+  font-weight: 900;
+  gap: 0.58rem;
+  grid-template-columns: 1.35rem 1fr auto;
+  min-height: 2.55rem;
+  padding: 0.5rem 0.75rem;
+  text-decoration: none !important;
+}
+
+.bp-admin-nav-extra__link:hover,
+.bp-admin-nav-extra__link--active {
+  background: rgba(181, 227, 224, 0.92);
+}
+
+.bp-admin-nav-extra__link span:first-child {
+  color: #172227;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.bp-admin-nav-extra__link em {
+  font-style: normal;
+}
+
+.bp-admin-nav-extra__link strong {
+  align-items: center;
+  background: #d9273f;
+  border-radius: 999px;
+  color: #ffffff;
+  display: inline-flex;
+  font-size: 0.72rem;
+  font-weight: 950;
+  height: 1.45rem;
+  justify-content: center;
+  min-width: 1.45rem;
+  padding: 0 0.38rem;
+}
+
+.bp-admin-nav-extra__link small {
+  color: #7c8a8f;
+  font-size: 0.68rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.bp-admin-nav-extra__link--disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+}
+
+.bp-admin-nav-extra__link--logout {
+  color: #8a2430 !important;
 }
