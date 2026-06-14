@@ -172,3 +172,32 @@
   line-height: 1 !important;
   width: 2rem !important;
 }
+
+/* Collection/list/detail pages need breathing room after hiding Payload breadcrumbs. */
+.template-default main:not(:has(.bp-dashboard)),
+.template-default main:not(:has(.bp-dashboard)) > .gutter,
+.template-default main:not(:has(.bp-dashboard)) > [class*='gutter'],
+.template-default main:not(:has(.bp-dashboard)) > [class*='Gutter'] {
+  padding-top: 1.35rem !important;
+}
+
+/* Make Payload table striping more teal and less green across collection pages. */
+:root {
+  --bp-soft-row: #e5f7f8;
+  --theme-elevation-50: #f2fbfb;
+  --theme-elevation-100: #e5f7f8;
+}
+
+.template-default table tr:nth-child(even),
+.template-default .table tbody tr:nth-child(even),
+.template-default .collection-list table tbody tr:nth-child(even),
+.template-default .collection-list .table tbody tr:nth-child(even) {
+  background: #e5f7f8 !important;
+}
+
+.template-default table tr:nth-child(even) td,
+.template-default .table tbody tr:nth-child(even) td,
+.template-default .collection-list table tbody tr:nth-child(even) td,
+.template-default .collection-list .table tbody tr:nth-child(even) td {
+  background: #e5f7f8 !important;
+}
