@@ -3,6 +3,7 @@ import type { CollectionConfig } from "payload";
 export const Downloads: CollectionConfig = {
   slug: "downloads",
   admin: {
+    hidden: true,
     useAsTitle: "fileLabel",
     defaultColumns: ["fileLabel", "customer", "format", "downloadsUsed", "maxDownloads", "accessExpiresAt"]
   },
