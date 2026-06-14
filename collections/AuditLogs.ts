@@ -3,6 +3,7 @@ import type { CollectionConfig } from "payload";
 export const AuditLogs: CollectionConfig = {
   slug: "audit-logs",
   admin: {
+    hidden: true,
     useAsTitle: "action",
     defaultColumns: ["action", "collectionName", "recordId", "adminUser", "createdAt"]
   },
