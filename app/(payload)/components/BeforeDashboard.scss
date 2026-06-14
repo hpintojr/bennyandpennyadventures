@@ -25,16 +25,8 @@
   margin: 0;
 }
 
-.bp-dashboard h1 {
-  font-size: clamp(2rem, 4vw, 3rem);
-  line-height: 1;
-}
-
-.bp-dashboard h2 {
-  font-size: clamp(1.2rem, 2vw, 1.65rem);
-  line-height: 1.1;
-  text-transform: uppercase;
-}
+.bp-dashboard h1 { font-size: clamp(2rem, 4vw, 3rem); line-height: 1; }
+.bp-dashboard h2 { font-size: clamp(1.2rem, 2vw, 1.65rem); line-height: 1.1; text-transform: uppercase; }
 
 .bp-dashboard p {
   color: #4c6268;
@@ -55,11 +47,7 @@
   padding: 0 0.95rem;
 }
 
-.bp-dashboard__searchIcon {
-  color: #61757b;
-  font-size: 1.15rem;
-  font-weight: 950;
-}
+.bp-dashboard__searchIcon { color: #61757b; font-size: 1.15rem; font-weight: 950; }
 
 .bp-dashboard__search input {
   background: transparent;
@@ -116,6 +104,82 @@
 
 .bp-dashboard__profile a:hover { background: #e8f7f4; }
 
+.bp-dashboard__stats {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-bottom: 1.25rem;
+}
+
+.bp-dashboard__stat {
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(23, 34, 39, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 14px 28px rgba(20, 36, 42, 0.08);
+  min-height: 132px;
+  overflow: hidden;
+  padding: 1.05rem 1.15rem;
+  position: relative;
+}
+
+.bp-dashboard__stat::after {
+  background: linear-gradient(90deg, rgba(194, 239, 236, 0.1), rgba(194, 239, 236, 0.62));
+  border-radius: 999px 0 0 0;
+  bottom: 0;
+  content: '';
+  height: 3.7rem;
+  position: absolute;
+  right: 0;
+  width: 8.6rem;
+}
+
+.bp-dashboard__statIcon {
+  align-items: center;
+  background: #d9f3ec;
+  border-radius: 999px;
+  color: #0f6170;
+  display: inline-flex;
+  font-size: 1rem;
+  font-weight: 950;
+  height: 2.1rem;
+  justify-content: center;
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  width: 2.1rem;
+}
+
+.bp-dashboard__stat p {
+  color: #084d58;
+  font-size: 0.95rem;
+  font-weight: 950;
+  margin: 0 2.2rem 0.55rem 0;
+}
+
+.bp-dashboard__stat strong {
+  color: #050607;
+  display: block;
+  font-size: clamp(2rem, 3.4vw, 2.9rem);
+  font-weight: 950;
+  letter-spacing: -0.06em;
+  line-height: 1;
+  position: relative;
+  z-index: 1;
+}
+
+.bp-dashboard__stat small,
+.bp-dashboard__stat em {
+  color: #084d58;
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 950;
+  margin-top: 0.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.bp-dashboard__stat em { color: #609077; font-style: normal; }
+
 .bp-dashboard__mockGrid {
   background: linear-gradient(135deg, #c2efec 0%, #d5f5f0 48%, #bce8e7 100%);
   border: 1px solid rgba(23, 34, 39, 0.1);
@@ -165,11 +229,7 @@
   white-space: nowrap;
 }
 
-.bp-dashboard__detailButton {
-  background: #ffffff;
-  border-color: rgba(23, 34, 39, 0.16);
-  color: #172227 !important;
-}
+.bp-dashboard__detailButton { background: #ffffff; border-color: rgba(23, 34, 39, 0.16); color: #172227 !important; }
 
 .bp-performance-tracker__toolbar {
   align-items: center;
@@ -179,12 +239,7 @@
   margin-bottom: 0.5rem;
 }
 
-.bp-performance-tracker__legend {
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-}
+.bp-performance-tracker__legend { align-items: center; display: flex; flex-wrap: wrap; gap: 0.75rem; }
 
 .bp-performance-tracker__legendItem {
   align-items: center;
@@ -196,13 +251,7 @@
   text-transform: uppercase;
 }
 
-.bp-performance-tracker__legendItem i {
-  border-radius: 99px;
-  display: inline-block;
-  height: 0.24rem;
-  width: 1.5rem;
-}
-
+.bp-performance-tracker__legendItem i { border-radius: 99px; display: inline-block; height: 0.24rem; width: 1.5rem; }
 .bp-performance-tracker__legendItem--sales i { background: #14242a; }
 .bp-performance-tracker__legendItem--pod i { background: #647b8a; }
 .bp-performance-tracker__legendItem--digital i { background: #91a7af; }
@@ -237,11 +286,7 @@
 .bp-performance-chart__dot--digital { fill: #91a7af; }
 .bp-performance-chart__axis text { fill: #526870; font-size: 0.68rem; font-weight: 900; }
 
-.bp-dashboard__statusGrid {
-  display: grid;
-  gap: 0.8rem 1.1rem;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
+.bp-dashboard__statusGrid { display: grid; gap: 0.8rem 1.1rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
 
 .bp-dashboard__statusItem {
   align-items: center;
@@ -257,20 +302,16 @@
   align-items: center;
   background: #ecf1f1;
   border-radius: 12px;
-  color: #183042;
   display: inline-flex;
-  font-weight: 950;
   height: 3.1rem;
   justify-content: center;
+  overflow: hidden;
+  padding: 0.48rem;
   width: 3.1rem;
 }
 
-.bp-dashboard__statusItem strong {
-  color: #172227;
-  display: block;
-  font-size: 1rem;
-  font-weight: 950;
-}
+.bp-dashboard__statusIcon img { display: block; height: 100%; object-fit: contain; width: 100%; }
+.bp-dashboard__statusItem strong { color: #172227; display: block; font-size: 1rem; font-weight: 950; }
 
 .bp-dashboard__statusItem small {
   align-items: center;
@@ -282,14 +323,7 @@
   text-transform: uppercase;
 }
 
-.bp-dashboard__statusItem small i {
-  background: #1fa44c;
-  border-radius: 99px;
-  display: inline-block;
-  height: 0.62rem;
-  width: 0.62rem;
-}
-
+.bp-dashboard__statusItem small i { background: #1fa44c; border-radius: 99px; display: inline-block; height: 0.62rem; width: 0.62rem; }
 .bp-dashboard__statusItem--attention small { color: #9d6718; }
 .bp-dashboard__statusItem--attention small i { background: #e0a02c; }
 
@@ -307,15 +341,7 @@
 }
 
 .bp-dashboard th { font-size: 0.74rem; font-weight: 950; letter-spacing: 0.06em; text-transform: uppercase; }
-
-.bp-dashboard__pill {
-  border-radius: 999px;
-  display: inline-flex;
-  font-size: 0.76rem;
-  font-weight: 950;
-  padding: 0.28rem 0.68rem;
-}
-
+.bp-dashboard__pill { border-radius: 999px; display: inline-flex; font-size: 0.76rem; font-weight: 950; padding: 0.28rem 0.68rem; }
 .bp-dashboard__pill--success { background: #bfe7c8; color: #173f25; }
 .bp-dashboard__pill--pending { background: #f2d995; color: #5a410c; }
 .bp-dashboard__pill--muted { background: #e6e9ea; color: #566970; }
@@ -334,11 +360,13 @@
 @media (max-width: 1100px) {
   .bp-dashboard__topbar,
   .bp-dashboard__mockGrid { grid-template-columns: 1fr; }
+  .bp-dashboard__stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 760px) {
   .bp-dashboard__cardHeader,
   .bp-performance-tracker__toolbar { align-items: flex-start; flex-direction: column; }
-  .bp-dashboard__statusGrid { grid-template-columns: 1fr; }
+  .bp-dashboard__statusGrid,
+  .bp-dashboard__stats { grid-template-columns: 1fr; }
   .bp-dashboard__funnelRow { grid-template-columns: 92px 1fr 38px; }
 }
