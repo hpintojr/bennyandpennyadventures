@@ -1,0 +1,4 @@
+.template-default a:not(.bp-admin-nav-extra__link)[href='/admin/collections/privacy-requests'],
+.template-default a:not(.bp-admin-nav-extra__link)[href='/admin/collections/consent-logs'] {
+  display: none !important;
+}
