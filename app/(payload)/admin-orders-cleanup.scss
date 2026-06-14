@@ -1,0 +1,122 @@
+/* Final Orders / collection-list cleanup.
+   Loads last so it can correct over-broad earlier admin overrides. */
+
+/* Orders page was pushed too far down. Keep a modest gap only. */
+.template-default main:not(:has(.bp-dashboard)) h1,
+.template-default main:not(:has(.bp-dashboard)) .doc-header,
+.template-default main:not(:has(.bp-dashboard)) [class*='doc-header'],
+.template-default main:not(:has(.bp-dashboard)) [class*='DocHeader'] {
+  margin-top: 0.85rem !important;
+}
+
+.template-default .collection-list,
+.template-default [class*='collection-list'],
+.template-default [class*='CollectionList'],
+.template-default [class*='list-header'],
+.template-default [class*='ListHeader'] {
+  margin-top: 0.85rem !important;
+}
+
+/* The table row should be teal, not individual cells/values. */
+.template-default .collection-list table tbody tr:nth-child(even),
+.template-default .collection-list .table tbody tr:nth-child(even),
+.template-default table tbody tr:nth-child(even) {
+  background: #e2f7fa !important;
+}
+
+.template-default .collection-list table tbody tr:nth-child(odd),
+.template-default .collection-list .table tbody tr:nth-child(odd),
+.template-default table tbody tr:nth-child(odd) {
+  background: #fbfffc !important;
+}
+
+.template-default .collection-list table tbody td,
+.template-default .collection-list .table tbody td,
+.template-default table tbody td {
+  background: transparent !important;
+}
+
+/* Undo accidental teal blocks on text values such as Status = Paid. */
+.template-default .collection-list table tbody td > span,
+.template-default .collection-list table tbody td > a,
+.template-default .collection-list table tbody td > div,
+.template-default .collection-list .table tbody td > span,
+.template-default .collection-list .table tbody td > a,
+.template-default .collection-list .table tbody td > div {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+/* Keep real inputs/selects styled, but stop broad [class*='select'] rules from painting table content. */
+.template-default .collection-list input,
+.template-default .collection-list textarea,
+.template-default .collection-list select {
+  background-color: #ffffff !important;
+}
+
+/* Payload pagination / per-page controls: force teal, not green. */
+.template-default .paginator,
+.template-default .pagination,
+.template-default [class*='paginator'],
+.template-default [class*='Paginator'],
+.template-default [class*='pagination'],
+.template-default [class*='Pagination'] {
+  color: #043f49 !important;
+}
+
+.template-default .paginator button,
+.template-default .pagination button,
+.template-default [class*='paginator'] button,
+.template-default [class*='Paginator'] button,
+.template-default [class*='pagination'] button,
+.template-default [class*='Pagination'] button,
+.template-default .paginator select,
+.template-default .pagination select,
+.template-default [class*='paginator'] select,
+.template-default [class*='Paginator'] select,
+.template-default [class*='pagination'] select,
+.template-default [class*='Pagination'] select,
+.template-default .popup-button,
+.template-default button.popup-button,
+.template-default [class*='popup-button'],
+.template-default [class*='PopupButton'],
+.template-default [class*='per-page'],
+.template-default [class*='PerPage'],
+.template-default [class*='limit'],
+.template-default [class*='Limit'] select,
+.template-default select[name='limit'] {
+  background: #e2f7fa !important;
+  background-color: #e2f7fa !important;
+  background-image: none !important;
+  border-color: rgba(6, 87, 102, 0.34) !important;
+  box-shadow: none !important;
+  color: #043f49 !important;
+}
+
+.template-default .paginator button:hover,
+.template-default .pagination button:hover,
+.template-default [class*='paginator'] button:hover,
+.template-default [class*='Paginator'] button:hover,
+.template-default [class*='pagination'] button:hover,
+.template-default [class*='Pagination'] button:hover,
+.template-default .popup-button:hover,
+.template-default button.popup-button:hover,
+.template-default [class*='popup-button']:hover,
+.template-default [class*='PopupButton']:hover {
+  background: #c9f0f5 !important;
+  background-color: #c9f0f5 !important;
+  border-color: rgba(6, 87, 102, 0.44) !important;
+  color: #043f49 !important;
+}
+
+/* Collection action controls should also stay in the teal family. */
+.template-default .collection-list button:not(.nav-toggler):not(.template-default__nav-toggler),
+.template-default [class*='ListControls'] button,
+.template-default [class*='list-controls'] button,
+.template-default button[aria-label*='Columns'],
+.template-default button[aria-label*='Filters'] {
+  background: #e2f7fa !important;
+  background-color: #e2f7fa !important;
+  border-color: rgba(6, 87, 102, 0.28) !important;
+  color: #043f49 !important;
+}
