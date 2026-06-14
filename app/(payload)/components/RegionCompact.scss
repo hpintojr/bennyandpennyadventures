@@ -1,0 +1,53 @@
+/* Loaded after BeforeDashboard.scss so the region graph cannot stretch the page. */
+
+.bp-dashboard__mainGrid {
+  align-items: start !important;
+}
+
+.bp-dashboard__chart {
+  height: 300px !important;
+}
+
+.bp-dashboard__card--region {
+  align-self: start !important;
+  display: flex !important;
+  flex-direction: column !important;
+  height: 300px !important;
+  justify-content: center !important;
+  max-height: 300px !important;
+  min-height: 300px !important;
+  overflow: hidden !important;
+  padding: 0.85rem !important;
+}
+
+.bp-dashboard__card--region h2 {
+  font-size: 1rem !important;
+  line-height: 1.05 !important;
+  margin: 0 !important;
+}
+
+.bp-dashboard__card--region p {
+  font-size: 0.78rem !important;
+  line-height: 1.18 !important;
+  margin: 0.35rem 0 0 !important;
+}
+
+.bp-dashboard__card--region .bp-dashboard__donut {
+  height: 126px !important;
+  margin: 0.58rem auto !important;
+  width: 126px !important;
+}
+
+.bp-dashboard__card--region .bp-dashboard__donut::after {
+  height: 54px !important;
+  width: 54px !important;
+}
+
+.bp-dashboard__card--region .bp-dashboard__legend {
+  gap: 0.55rem !important;
+  margin-top: 0.1rem !important;
+}
+
+.bp-dashboard__card--region .bp-dashboard__legend span {
+  font-size: 0.72rem !important;
+}
