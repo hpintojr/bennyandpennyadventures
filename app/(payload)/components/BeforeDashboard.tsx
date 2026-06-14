@@ -185,7 +185,7 @@ async function getDashboardData() {
   ];
 
   const recentOrders: RecentOrder[] = orders.docs.map((order) => ({
-    id: String(order.id || "—"),
+    id: getString(order.orderNumber, String(order.id || "—")),
     href: `/admin/collections/orders/${order.id}`,
     customer: getString(order.customerEmail, "—"),
     status: getString(order.status, "—"),
