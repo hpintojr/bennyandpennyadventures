@@ -110,58 +110,85 @@
   width: 1.65rem !important;
 }
 
-/* Checkbox: single visible box, stronger checked state. */
+/* Payload checkbox cleanup: Payload renders a real input plus a visual icon span.
+   Keep the real input clickable but invisible, and style only the visual icon layer. */
+.template-default .checkbox-input__input {
+  align-items: center !important;
+  display: inline-flex !important;
+  height: 1.2rem !important;
+  justify-content: center !important;
+  position: relative !important;
+  width: 1.2rem !important;
+}
+
+.template-default .checkbox-input__input input[type='checkbox'],
 .template-default input[type='checkbox'] {
   accent-color: #065766 !important;
-  appearance: none !important;
-  -webkit-appearance: none !important;
-  background: #fbfffc !important;
-  border: 1.5px solid rgba(6, 87, 102, 0.34) !important;
-  border-radius: 0.32rem !important;
-  box-shadow: 0 1px 3px rgba(4, 63, 73, 0.08) !important;
+  appearance: auto !important;
+  -webkit-appearance: checkbox !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
   cursor: pointer !important;
-  display: inline-grid !important;
-  height: 1.12rem !important;
-  min-height: 1.12rem !important;
-  min-width: 1.12rem !important;
-  opacity: 1 !important;
+  height: 100% !important;
+  inset: 0 !important;
+  margin: 0 !important;
+  min-height: 0 !important;
+  min-width: 0 !important;
+  opacity: 0 !important;
   padding: 0 !important;
-  place-items: center !important;
-  position: relative !important;
-  transform: none !important;
-  width: 1.12rem !important;
+  position: absolute !important;
+  width: 100% !important;
   z-index: 2 !important;
 }
 
 .template-default input[type='checkbox']::after {
-  color: #ffffff !important;
-  content: '✓' !important;
-  display: block !important;
-  font-size: 0.78rem !important;
-  font-weight: 950 !important;
-  line-height: 1 !important;
-  opacity: 0 !important;
-  transform: translateY(-0.02rem) scale(0.8) !important;
+  content: none !important;
+  display: none !important;
 }
 
-.template-default input[type='checkbox']:checked {
+.template-default .checkbox-input__icon,
+.template-default .checkbox-input__icon--check,
+.template-default .checkbox__icon {
+  align-items: center !important;
+  background: #fbfffc !important;
+  border: 1.5px solid rgba(6, 87, 102, 0.34) !important;
+  border-radius: 0.32rem !important;
+  box-shadow: 0 1px 3px rgba(4, 63, 73, 0.08) !important;
+  color: transparent !important;
+  display: inline-flex !important;
+  height: 1.12rem !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+  pointer-events: none !important;
+  width: 1.12rem !important;
+  z-index: 1 !important;
+}
+
+.template-default .checkbox-input__icon svg,
+.template-default .checkbox-input__icon--check svg,
+.template-default .checkbox__icon svg {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+  opacity: 0 !important;
+  stroke: #ffffff !important;
+}
+
+.template-default .checkbox-input--checked .checkbox-input__icon,
+.template-default .checkbox-input--checked .checkbox-input__icon--check,
+.template-default .checkbox-input__input:has(input[type='checkbox']:checked) .checkbox-input__icon,
+.template-default .checkbox-input__input:has(input[type='checkbox']:checked) .checkbox-input__icon--check {
   background: #065766 !important;
   border-color: #043f49 !important;
   box-shadow: 0 0 0 3px rgba(6, 87, 102, 0.14), 0 2px 6px rgba(4, 63, 73, 0.18) !important;
+  color: #ffffff !important;
 }
 
-.template-default input[type='checkbox']:checked::after {
+.template-default .checkbox-input--checked .checkbox-input__icon svg,
+.template-default .checkbox-input--checked .checkbox-input__icon--check svg,
+.template-default .checkbox-input__input:has(input[type='checkbox']:checked) .checkbox-input__icon svg,
+.template-default .checkbox-input__input:has(input[type='checkbox']:checked) .checkbox-input__icon--check svg {
   opacity: 1 !important;
-  transform: translateY(-0.02rem) scale(1) !important;
-}
-
-.template-default input[type='checkbox'] + span,
-.template-default input[type='checkbox'] ~ span,
-.template-default .checkbox-input__icon,
-.template-default .checkbox__icon {
-  background: transparent !important;
-  border: 0 !important;
-  box-shadow: none !important;
 }
 
 /* Sort buttons: smaller and less pill-like. */
