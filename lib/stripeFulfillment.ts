@@ -27,13 +27,6 @@ type FulfillmentLineItem = {
   stripePriceId: string | null;
 };
 
-type CheckoutSessionWithShipping = Stripe.Checkout.Session & {
-  shipping_details?: {
-    name?: string | null;
-    address?: Stripe.Address | null;
-  } | null;
-};
-
 export type FulfillmentSummary = {
   orderId: string | number;
   orderNumber: string;
@@ -52,23 +45,12 @@ function formatFromStripeLabel(value: string | null | undefined): FulfillmentLin
   return "digital";
 }
 
-function formatForDisplay(format: FulfillmentLineItem["format"]) {
-  if (format === "digital") return "PDF / EPUB";
-  if (format === "audiobook") return "Audiobook";
-  if (format === "paperback") return "Paperback";
-  return "Hardcover";
-}
-
 function getString(value: unknown): string | null {
   return typeof value === "string" && value.trim() ? value.trim() : null;
 }
 
 function centsToDollars(value: number | null | undefined) {
   return Number(((value || 0) / 100).toFixed(2));
-}
-
-function money(value: number) {
-  return `$${value.toFixed(2)}`;
 }
 
 function getPaymentIntentId(session: Stripe.Checkout.Session): string | null {
@@ -93,66 +75,8 @@ function splitName(fullName: string | null | undefined) {
   return { firstName: parts.slice(0, -1).join(" "), lastName: parts.at(-1) };
 }
 
-function formatAddress(address: Stripe.Address | null | undefined) {
-  if (!address) return "Not provided";
-
-  const lines = [
-    address.line1,
-    address.line2,
-    [address.city, address.state, address.postal_code].filter(Boolean).join(", "),
-    address.country
-  ].filter(Boolean);
-
-  return lines.length ? lines.join("\n") : "Not provided";
-}
-
-function getShippingDetails(session: Stripe.Checkout.Session) {
-  return (session as CheckoutSessionWithShipping).shipping_details;
-}
-
-function buildCustomerSummary(session: Stripe.Checkout.Session) {
-  const customer = session.customer_details;
-  const shipping = getShippingDetails(session);
-
-  return [
-    "Customer Details:",
-    `Name: ${customer?.name || "not provided"}`,
-    `Email: ${getCustomerEmail(session) || "not provided"}`,
-    `Phone: ${customer?.phone || "not provided"}`,
-    "",
-    "Billing Address:",
-    formatAddress(customer?.address),
-    "",
-    "Shipping Address:",
-    shipping?.address ? [`Name: ${shipping.name || "not provided"}`, formatAddress(shipping.address)].join("\n") : "Not collected / not required"
-  ].join("\n");
-}
-
-function buildPurchasedItemsSummary(items: FulfillmentLineItem[]) {
-  if (!items.length) return "Purchased Items:\n- Could not retrieve Stripe line items.";
-
-  return [
-    "Purchased Items:",
-    ...items.map((item) => {
-      const lineTotal = item.unitPrice * item.quantity;
-      return `- ${item.quantity} x ${item.title} — ${formatForDisplay(item.format)} @ ${money(item.unitPrice)} = ${money(lineTotal)}`;
-    })
-  ].join("\n");
-}
-
-function buildOrderNotes(session: Stripe.Checkout.Session, items: FulfillmentLineItem[]) {
-  return [
-    buildCustomerSummary(session),
-    "",
-    buildPurchasedItemsSummary(items),
-    "",
-    "Stripe Details:",
-    `Stripe session: ${session.id}`,
-    `Payment intent: ${getPaymentIntentId(session) || "not provided"}`,
-    `Subtotal: ${money(centsToDollars(session.amount_subtotal))}`,
-    `Tax: ${money(centsToDollars(session.total_details?.amount_tax))}`,
-    `Shipping: ${money(centsToDollars(session.total_details?.amount_shipping))}`
-  ].join("\n");
+function buildInternalOrderNote() {
+  return "Stripe Checkout fulfilled. Customer identity, address, and purchased items are stored in structured related collections.";
 }
 
 function lineItemToFulfillmentItem(lineItem: Stripe.LineItem): FulfillmentLineItem {
@@ -223,9 +147,29 @@ async function findOrCreateCustomer(payload: PayloadClient, session: Stripe.Chec
   })) as PayloadDoc;
 }
 
+async function findExistingAddress(payload: PayloadClient, customerId: string | number, address: Stripe.Address) {
+  const result = (await payload.find({
+    collection: "customer-addresses",
+    limit: 1,
+    where: {
+      and: [
+        { customer: { equals: customerId } },
+        { street1: { equals: address.line1 } },
+        { postalCode: { equals: address.postal_code } },
+        { country: { equals: address.country } }
+      ]
+    }
+  })) as PayloadFindResult;
+
+  return result.docs?.[0] || null;
+}
+
 async function createBillingAddress(payload: PayloadClient, customer: PayloadDoc | null, session: Stripe.Checkout.Session) {
   const address = session.customer_details?.address;
   if (!customer?.id || !address?.line1 || !address.city || !address.state || !address.postal_code || !address.country) return;
+
+  const existingAddress = await findExistingAddress(payload, customer.id, address);
+  if (existingAddress) return;
 
   await payload.create({
     collection: "customer-addresses",
@@ -324,7 +268,7 @@ export async function fulfillCheckoutSession(session: Stripe.Checkout.Session): 
       stripePaymentIntentId: getPaymentIntentId(session),
       total: centsToDollars(session.amount_total),
       currency: session.currency || "usd",
-      notes: buildOrderNotes(session, items)
+      notes: buildInternalOrderNote()
     }
   })) as PayloadDoc;
 
