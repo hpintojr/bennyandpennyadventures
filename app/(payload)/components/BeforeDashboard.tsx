@@ -9,7 +9,16 @@ import "./RegionCompact.scss";
 
 type PayloadDoc = { id?: string | number; createdAt?: string; [key: string]: unknown };
 type PayloadListResult = { docs: PayloadDoc[]; totalDocs: number; ok: boolean };
-type RecentOrder = { id: string; href: string; customerId: string; name: string; status: string; tone: string };
+type RecentOrder = {
+  id: string;
+  href: string;
+  orderId: string;
+  customerName: string;
+  status: string;
+  tone: string;
+  total: string;
+  created: string;
+};
 type StatusItem = { label: string; detail: string; logoUrl: string; active: boolean };
 type FunnelItem = { label: string; value: number; width: number };
 type StatCard = { label: string; value: string; note: string; trend: string; icon: string };
@@ -34,6 +43,13 @@ function formatMoney(value: number) {
   return new Intl.NumberFormat("en-US", { currency: "USD", style: "currency" }).format(value);
 }
 
+function formatDate(value: unknown) {
+  if (typeof value !== "string") return "—";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "—";
+  return new Intl.DateTimeFormat("en-US", { dateStyle: "medium", timeStyle: "short" }).format(date);
+}
+
 function getObject(value: unknown): Record<string, unknown> | null {
   return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : null;
 }
@@ -55,13 +71,6 @@ function customerName(order: PayloadDoc) {
   }
   const email = getString(order.customerEmail, "Customer");
   return email.includes("@") ? email.split("@")[0] : email;
-}
-
-function customerId(order: PayloadDoc, index: number) {
-  const relatedId = getRelationshipId(order.customer);
-  if (relatedId) return `CUST${relatedId}`;
-  const fallbackId = typeof order.id === "string" || typeof order.id === "number" ? String(order.id) : String(index + 1).padStart(3, "0");
-  return `CUST${fallbackId.slice(-4).toUpperCase()}`;
 }
 
 function statusLabel(status: string) {
@@ -147,9 +156,19 @@ async function getDashboardData() {
     { label: "Subscribers", value: String(subscribers.totalDocs), note: "Community list", trend: "Live", icon: "💌" }
   ];
 
-  const recentOrders: RecentOrder[] = orders.docs.map((order, index) => {
+  const recentOrders: RecentOrder[] = orders.docs.map((order) => {
     const rawStatus = getString(order.status, "pending");
-    return { id: getString(order.orderNumber, String(order.id || "—")), href: `/admin/collections/orders/${order.id}`, customerId: customerId(order, index), name: customerName(order), status: statusLabel(rawStatus), tone: statusTone(rawStatus) };
+    const recordId = typeof order.id === "string" || typeof order.id === "number" ? String(order.id) : "";
+    return {
+      id: recordId || getString(order.orderNumber, "—"),
+      href: recordId ? `/admin/collections/orders/${recordId}` : "/admin/collections/orders",
+      orderId: getString(order.orderNumber, recordId || "—"),
+      customerName: customerName(order),
+      status: statusLabel(rawStatus),
+      tone: statusTone(rawStatus),
+      total: formatMoney(getNumber(order.total)),
+      created: formatDate(order.createdAt)
+    };
   });
 
   const chartOrders: DashboardChartOrder[] = allOrders.docs.map((order) => {
@@ -227,8 +246,8 @@ async function BeforeDashboard() {
         </article>
 
         <article className="bp-dashboard__card bp-dashboard__card--orders">
-          <div className="bp-dashboard__cardHeader bp-dashboard__cardHeader--compact"><div><h2>Recent Orders</h2><p>{dashboard.pendingOrderCount} pending orders need review.</p></div><Link className="bp-dashboard__primaryAction" href="/admin/collections/orders?where[status][equals]=pending">Bulk Fulfill Pending Orders</Link></div>
-          <div className="bp-dashboard__tableShell"><table><thead><tr><th>Customer ID</th><th>Name</th><th>Status</th><th /></tr></thead><tbody>{dashboard.recentOrders.length ? dashboard.recentOrders.map((order) => (<tr key={order.id}><td>{order.customerId}</td><td>{order.name}</td><td><span className={`bp-dashboard__pill bp-dashboard__pill--${order.tone}`}>{order.status}</span></td><td><Link className="bp-dashboard__detailButton" href={order.href}>View Details</Link></td></tr>)) : (<tr><td colSpan={4}>No orders yet.</td></tr>)}</tbody></table></div>
+          <div className="bp-dashboard__cardHeader bp-dashboard__cardHeader--compact"><div><h2>Recent Orders</h2><p>{dashboard.pendingOrderCount} pending orders need review.</p></div><Link className="bp-dashboard__primaryAction" href="/admin/collections/orders">Bulk Fulfill Pending Orders</Link></div>
+          <div className="bp-dashboard__tableShell"><table><thead><tr><th>Order ID</th><th>Customer Name</th><th>Status</th><th>Total</th><th>Created</th><th>View Details</th></tr></thead><tbody>{dashboard.recentOrders.length ? dashboard.recentOrders.map((order) => (<tr key={order.id}><td>{order.orderId}</td><td>{order.customerName}</td><td><span className={`bp-dashboard__pill bp-dashboard__pill--${order.tone}`}>{order.status}</span></td><td>{order.total}</td><td>{order.created}</td><td><Link className="bp-dashboard__detailButton" href={order.href}>View Details</Link></td></tr>)) : (<tr><td colSpan={6}>No orders yet.</td></tr>)}</tbody></table></div>
         </article>
 
         <article className="bp-dashboard__card bp-dashboard__card--funnel">
