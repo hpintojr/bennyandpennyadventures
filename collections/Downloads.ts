@@ -2,10 +2,14 @@ import type { CollectionConfig } from "payload";
 
 export const Downloads: CollectionConfig = {
   slug: "downloads",
+  labels: {
+    singular: "Media",
+    plural: "Media"
+  },
   admin: {
-    hidden: true,
     useAsTitle: "fileLabel",
-    defaultColumns: ["fileLabel", "customer", "format", "downloadsUsed", "maxDownloads", "accessExpiresAt"]
+    description: "Manage digital download records, audiobook files, R2 object keys, access limits, and expiration windows.",
+    defaultColumns: ["fileLabel", "customer", "format", "downloadsUsed", "maxDownloads", "accessExpiresAt", "isActive"]
   },
   fields: [
     { name: "customer", type: "relationship", relationTo: "users", required: true },
