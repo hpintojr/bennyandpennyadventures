@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { buildOrderMetadata, validateCheckoutItems } from "@/lib/stripeCheckout";
+import { buildOrderMetadata, cartRequiresShipping, validateCheckoutItems } from "@/lib/stripeCheckout";
 import { getSiteUrl, getStripe } from "@/lib/stripe";
 
 export const runtime = "nodejs";
@@ -7,6 +7,8 @@ export const runtime = "nodejs";
 type CheckoutRequestBody = {
   items?: unknown;
 };
+
+const shippingCountries = ["US"] as const;
 
 export async function POST(request: Request) {
   let body: CheckoutRequestBody;
@@ -30,16 +32,21 @@ export async function POST(request: Request) {
   try {
     const stripe = getStripe();
     const siteUrl = getSiteUrl();
+    const requiresShipping = cartRequiresShipping(items);
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       allow_promotion_codes: true,
-      billing_address_collection: "auto",
-      customer_creation: "if_required",
+      automatic_tax: {
+        enabled: true
+      },
+      billing_address_collection: "required",
+      customer_creation: "always",
       line_items: items.map((item) => ({
         quantity: item.quantity,
         price_data: {
           currency: "usd",
+          tax_behavior: "exclusive",
           unit_amount: item.unitAmount,
           product_data: {
             name: item.title,
@@ -52,6 +59,14 @@ export async function POST(request: Request) {
         }
       })),
       metadata: buildOrderMetadata(items),
+      phone_number_collection: {
+        enabled: true
+      },
+      shipping_address_collection: requiresShipping
+        ? {
+            allowed_countries: shippingCountries
+          }
+        : undefined,
       success_url: `${siteUrl}/thank-you?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${siteUrl}/cart?checkout=cancelled`
     });
