@@ -24,6 +24,7 @@ export default buildConfig({
   admin: {
     user: Users.slug,
     components: {
+      beforeDashboard: ["/app/(payload)/components/BeforeDashboard.tsx#BeforeDashboard"],
       graphics: {
         Icon: "/app/(payload)/graphics/Icon.tsx#Icon",
         Logo: "/app/(payload)/graphics/Logo.tsx#Logo"
@@ -36,10 +37,10 @@ export default buildConfig({
   collections: [
     Users,
     Books,
+    Orders,
+    Subscribers,
     CustomerAddresses,
     ContactSubmissions,
-    Subscribers,
-    Orders,
     OrderItems,
     Downloads,
     SupportTickets,
