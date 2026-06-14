@@ -7,6 +7,8 @@ const adminLinks = [
   { label: "Customer Addresses", href: "/admin/collections/customer-addresses", icon: "⌁" },
   { label: "Subscribers", href: "/admin/collections/subscribers", icon: "✉" },
   { label: "Support", href: "/admin/collections/support-tickets", icon: "?" },
+  { label: "Privacy Requests", href: "/admin/collections/privacy-requests", icon: "✓" },
+  { label: "Consent Logs", href: "/admin/collections/consent-logs", icon: "◎" },
   { label: "Settings", href: "/admin/collections/users", icon: "⚙" }
 ];
 
