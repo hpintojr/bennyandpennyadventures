@@ -110,10 +110,23 @@ body {
 .template-default .nav-group__label,
 .template-default .collapsible__toggle,
 .template-default .nav-group__toggle {
-  background: rgba(235, 99, 115, 0.1) !important;
+  background: rgba(196, 224, 212, 0.55) !important;
   border-radius: 0.65rem !important;
+  color: var(--bp-teal-deep) !important;
   margin: 0.5rem 0.7rem 0.2rem !important;
   padding: 0.55rem 0.72rem !important;
+}
+
+/* Keep the visual sidebar focused on the core workflow. Direct routes still work. */
+.template-default a[href='/admin/collections/customer-addresses'],
+.template-default a[href='/admin/collections/contact-submissions'],
+.template-default a[href='/admin/collections/order-items'],
+.template-default a[href='/admin/collections/downloads'],
+.template-default a[href='/admin/collections/support-tickets'],
+.template-default a[href='/admin/collections/support-messages'],
+.template-default a[href='/admin/collections/access-grants'],
+.template-default a[href='/admin/collections/audit-logs'] {
+  display: none !important;
 }
 
 .template-default main,
