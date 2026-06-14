@@ -61,10 +61,15 @@ export function validateCheckoutItems(items: CheckoutCartItemInput[]): Validated
   return validatedItems;
 }
 
+export function cartRequiresShipping(items: ValidatedCheckoutItem[]) {
+  return items.some((item) => item.shortLabel === "Paperback" || item.shortLabel === "Hardcover");
+}
+
 export function buildOrderMetadata(items: ValidatedCheckoutItem[]) {
   return {
     source: "benny-penny-web-cart",
     itemCount: String(items.reduce((total, item) => total + item.quantity, 0)),
+    requiresShipping: String(cartRequiresShipping(items)),
     slugs: items.map((item) => item.slug).join(","),
     formats: items.map((item) => item.shortLabel).join(",")
   };
