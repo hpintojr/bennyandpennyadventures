@@ -1,10 +1,12 @@
 /* Final Orders / collection-list cleanup.
    Loads last so it can correct over-broad earlier admin overrides. */
 
-/* Restore Payload's app/document header shell. Earlier breadcrumb cleanup hid .app-header too broadly,
+/* Restore Payload's app/document header shell. Earlier breadcrumb cleanup hid .app-header/header too broadly,
    which can leave document edit pages such as /admin/collections/orders/:id blank. */
 .template-default .app-header,
-.template-default .app-header > * {
+.template-default .app-header > *,
+.template-default header:has([aria-label='Benny & Penny Admin']),
+.template-default header:has([aria-label='Benny & Penny Admin']) > * {
   display: revert !important;
   height: auto !important;
   margin: revert !important;
@@ -13,12 +15,16 @@
   padding: revert !important;
 }
 
-/* Keep breadcrumbs hidden without hiding the whole app/document header. */
+/* Keep Payload breadcrumb/step-nav hidden without hiding the whole document header/editor shell. */
 .template-default .breadcrumbs,
 .template-default nav[aria-label='Breadcrumb'],
 .template-default nav[aria-label='Breadcrumbs'],
 .template-default [class*='breadcrumb'],
 .template-default [class*='Breadcrumb'],
+.template-default .step-nav,
+.template-default [class*='step-nav'],
+.template-default [class*='StepNav'],
+.template-default [class*='app-header__step'],
 .template-default [aria-label='Benny & Penny Admin'] {
   display: none !important;
 }
