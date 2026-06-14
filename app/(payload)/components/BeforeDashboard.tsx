@@ -34,19 +34,32 @@ const stats = [
   }
 ];
 
-const monthlySales = [
-  { month: "Jan", value: 54 },
-  { month: "Feb", value: 61 },
-  { month: "Mar", value: 74 },
-  { month: "Apr", value: 66 },
-  { month: "May", value: 92 },
-  { month: "Jun", value: 71 },
-  { month: "Jul", value: 78 },
-  { month: "Aug", value: 50 },
-  { month: "Sep", value: 88 },
-  { month: "Oct", value: 76 },
-  { month: "Nov", value: 96 },
-  { month: "Dec", value: 58 }
+const salesRanges = [
+  "Today",
+  "Last 3 days",
+  "Last 7 days",
+  "Last 14 days",
+  "Last 30 days",
+  "Last 45 days",
+  "Last 60 days",
+  "Last 90 days",
+  "Last 120 days",
+  "Last Year"
+];
+
+const salesBars = [
+  { label: "Jan", value: 54, total: "$540", orders: 34 },
+  { label: "Feb", value: 61, total: "$620", orders: 39 },
+  { label: "Mar", value: 74, total: "$750", orders: 47 },
+  { label: "Apr", value: 66, total: "$650", orders: 41 },
+  { label: "May", value: 92, total: "$1,000", orders: 63 },
+  { label: "Jun", value: 71, total: "$720", orders: 45 },
+  { label: "Jul", value: 78, total: "$800", orders: 50 },
+  { label: "Aug", value: 50, total: "$510", orders: 32 },
+  { label: "Sep", value: 88, total: "$950", orders: 59 },
+  { label: "Oct", value: 76, total: "$780", orders: 49 },
+  { label: "Nov", value: 96, total: "$1,040", orders: 65 },
+  { label: "Dec", value: 58, total: "$490", orders: 31 }
 ];
 
 const quickLinks = [
@@ -71,8 +84,16 @@ const subscribers = [
 const systemStatus = [
   { label: "Payload Admin", status: "Online" },
   { label: "Neon Database", status: "Connected" },
-  { label: "Stripe Sandbox", status: "Pending setup" },
-  { label: "R2 Fulfillment", status: "Planned" }
+  { label: "Stripe Sandbox", status: "Ready for testing" },
+  { label: "R2 Fulfillment", status: "Planned" },
+  { label: "Mailjet API", status: "Pending live sync" }
+];
+
+const mailjetMetrics = [
+  { label: "Sent", value: "0" },
+  { label: "Opened", value: "0" },
+  { label: "Bounced", value: "0" },
+  { label: "Spam", value: "0" }
 ];
 
 function BeforeDashboard() {
@@ -108,20 +129,24 @@ function BeforeDashboard() {
           <div className="bp-dashboard__cardHeader">
             <div>
               <h2>Book Sales Performance</h2>
-              <p>Mock sales data while Stripe sandbox is being prepared.</p>
+              <p>Hover each bar to preview revenue and order totals. Live Stripe data will replace this mock view.</p>
             </div>
-            <select aria-label="Sales period" defaultValue="all">
-              <option value="all">All Months</option>
-              <option value="30">Last 30 Days</option>
-              <option value="90">Last 90 Days</option>
+            <select aria-label="Sales period" defaultValue="Last 30 days">
+              {salesRanges.map((range) => <option value={range} key={range}>{range}</option>)}
             </select>
           </div>
 
-          <div className="bp-dashboard__chart" aria-label="Monthly book sales performance preview">
-            {monthlySales.map((month) => (
-              <div className="bp-dashboard__barWrap" key={month.month}>
-                <span style={{ height: `${month.value}%` }} />
-                <small>{month.month}</small>
+          <div className="bp-dashboard__chart" aria-label="Book sales performance preview with hover totals">
+            {salesBars.map((bar) => (
+              <div
+                className="bp-dashboard__barWrap"
+                data-tooltip={`${bar.label}: ${bar.total} · ${bar.orders} orders`}
+                key={bar.label}
+                tabIndex={0}
+                title={`${bar.label}: ${bar.total} · ${bar.orders} orders`}
+              >
+                <span style={{ height: `${bar.value}%` }} />
+                <small>{bar.label}</small>
               </div>
             ))}
           </div>
@@ -209,6 +234,17 @@ function BeforeDashboard() {
                 <strong>{item.status}</strong>
               </div>
             ))}
+          </div>
+          <div className="bp-dashboard__mailjet">
+            <h3>Mailjet API Email Metrics</h3>
+            <div className="bp-dashboard__mailjetGrid">
+              {mailjetMetrics.map((metric) => (
+                <div key={metric.label}>
+                  <strong>{metric.value}</strong>
+                  <span>{metric.label}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </article>
       </div>
