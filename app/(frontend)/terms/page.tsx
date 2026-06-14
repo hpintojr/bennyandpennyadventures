@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description: "Terms of Use for Benny & Penny's Adventures."
 };
 
-const contactEmail = "hello@bennyandpenny.com";
+const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "hello@bennyandpenny.com";
 
 export default function TermsPage() {
   return (
@@ -16,12 +16,12 @@ export default function TermsPage() {
         <h1 className="mt-3 font-serif text-4xl font-semibold text-teal">Terms of Use</h1>
 
         <p className="mt-4 text-ink">
-          These Terms describe use of the Benny &amp; Penny&rsquo;s Adventures website and related books, downloads, audio products, print products, forms, and resources.
+          These Terms describe use of the Benny &amp; Penny&rsquo;s Adventures website and related books, downloads, audio products, print products, forms, messages, and resources.
         </p>
 
         <h2 className="mt-8 font-serif text-2xl text-teal">Adult Website Use</h2>
         <p className="mt-2 text-ink">
-          Website forms, purchases, newsletter signups, and account activity are intended for adults, including parents, guardians, caregivers, educators, and healthcare professionals.
+          Website forms, purchases, newsletter signups, messaging opt-ins, and account activity are intended for adults, including parents, guardians, caregivers, educators, and healthcare professionals.
         </p>
 
         <h2 className="mt-8 font-serif text-2xl text-teal">Educational Content</h2>
@@ -44,10 +44,15 @@ export default function TermsPage() {
 
         <h2 className="mt-8 font-serif text-2xl text-teal">Email, Contact Forms, and SMS Messages</h2>
         <p className="mt-2 text-ink">
-          If you join our email list, you may receive updates, book announcements, printables, and related resources. You may unsubscribe from marketing emails at any time. Contact forms should be used only for genuine inquiries.
+          If you join our email list, you may receive updates, book announcements, printables, and related resources. You may unsubscribe from marketing emails at any time. Marketing emails should include a valid postal address and a clear unsubscribe method. Contact forms should be used only for genuine inquiries.
         </p>
         <p className="mt-3 text-ink">
-          If you opt in to SMS messages, you agree to receive text messages from Benny &amp; Penny&rsquo;s Adventures about your inquiry, orders, downloads, support, and related updates. Message frequency varies. Message and data rates may apply. Reply STOP to opt out and HELP for help. Consent to receive SMS messages is not a condition of purchase.
+          If you opt in to SMS messages, you agree to receive text messages from Benny &amp; Penny&rsquo;s Adventures about your inquiry, orders, downloads, support, and related updates. Message frequency varies. Message and data rates may apply. Reply STOP to opt out and HELP for help. Consent to receive SMS messages is not a condition of purchase. Full messaging terms are available at <a className="font-extrabold text-coral" href="/sms-terms">Messaging Terms</a>.
+        </p>
+
+        <h2 className="mt-8 font-serif text-2xl text-teal">Privacy and State Rights</h2>
+        <p className="mt-2 text-ink">
+          Our privacy practices are described in our <a className="font-extrabold text-coral" href="/privacy">Privacy Policy</a>, <a className="font-extrabold text-coral" href="/privacy/california">California Privacy Notice</a>, <a className="font-extrabold text-coral" href="/privacy/state-rights">State Privacy Rights</a>, and <a className="font-extrabold text-coral" href="/privacy/requests">Privacy Requests / Do Not Sell or Share</a> pages.
         </p>
 
         <h2 className="mt-8 font-serif text-2xl text-teal">Intellectual Property</h2>
@@ -57,7 +62,7 @@ export default function TermsPage() {
 
         <h2 className="mt-8 font-serif text-2xl text-teal">Third-Party Services</h2>
         <p className="mt-2 text-ink">
-          We may use providers for hosting, email delivery, payments, storage, analytics, and print fulfillment. Those providers may have their own terms and policies.
+          We may use providers for hosting, email delivery, payments, database hosting, storage, analytics, and print fulfillment. Those providers may have their own terms and policies.
         </p>
 
         <h2 className="mt-8 font-serif text-2xl text-teal">Contact</h2>
