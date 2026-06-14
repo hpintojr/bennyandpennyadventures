@@ -62,6 +62,41 @@ function startOfDay(date: Date) {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate());
 }
 
+function getRangeDays(range: SalesRange) {
+  if (range === "Today" || range === "This Past Year") return null;
+  return Number(range.match(/\d+/)?.[0] || 30);
+}
+
+function shouldGroupByMonth(range: SalesRange) {
+  if (range === "This Past Year") return true;
+  const days = getRangeDays(range);
+  return Boolean(days && days > 31);
+}
+
+function buildMonthlyBucketsForRange(range: SalesRange): SalesBucket[] {
+  const now = new Date();
+  const start = range === "This Past Year"
+    ? new Date(now.getFullYear(), now.getMonth() - 11, 1)
+    : addDays(startOfDay(now), -((getRangeDays(range) || 30) - 1));
+
+  const buckets: SalesBucket[] = [];
+  const cursor = new Date(start.getFullYear(), start.getMonth(), 1);
+  const end = new Date(now.getFullYear(), now.getMonth(), 1);
+
+  while (cursor <= end) {
+    const date = new Date(cursor);
+    buckets.push({
+      key: monthKey(date),
+      label: new Intl.DateTimeFormat("en-US", { month: "short" }).format(date),
+      revenue: 0,
+      orders: 0
+    });
+    cursor.setMonth(cursor.getMonth() + 1);
+  }
+
+  return buckets;
+}
+
 function buildEmptyBuckets(range: SalesRange): SalesBucket[] {
   const now = new Date();
 
@@ -77,19 +112,11 @@ function buildEmptyBuckets(range: SalesRange): SalesBucket[] {
     });
   }
 
-  if (range === "This Past Year") {
-    return Array.from({ length: 12 }, (_, index) => {
-      const date = new Date(now.getFullYear(), now.getMonth() - (11 - index), 1);
-      return {
-        key: monthKey(date),
-        label: new Intl.DateTimeFormat("en-US", { month: "short" }).format(date),
-        revenue: 0,
-        orders: 0
-      };
-    });
+  if (shouldGroupByMonth(range)) {
+    return buildMonthlyBucketsForRange(range);
   }
 
-  const days = Number(range.match(/\d+/)?.[0] || 30);
+  const days = getRangeDays(range) || 30;
   const start = addDays(startOfDay(now), -(days - 1));
 
   return Array.from({ length: days }, (_, index) => {
@@ -105,7 +132,7 @@ function buildEmptyBuckets(range: SalesRange): SalesBucket[] {
 
 function orderKeyForRange(date: Date, range: SalesRange) {
   if (range === "Today") return String(date.getHours());
-  if (range === "This Past Year") return monthKey(date);
+  if (shouldGroupByMonth(range)) return monthKey(date);
   return dateKey(date);
 }
 
@@ -121,7 +148,7 @@ function isWithinRange(date: Date, range: SalesRange) {
     return date >= start && date <= now;
   }
 
-  const days = Number(range.match(/\d+/)?.[0] || 30);
+  const days = getRangeDays(range) || 30;
   const start = addDays(startOfDay(now), -(days - 1));
   return date >= start && date <= now;
 }
@@ -164,7 +191,7 @@ export default function DashboardSalesChart({ orders }: { orders: DashboardChart
       <div
         className="bp-dashboard__chart"
         aria-label={`Sales performance for ${range}`}
-        style={{ gridTemplateColumns: `repeat(${buckets.length}, minmax(28px, 1fr))` }}
+        style={{ gridTemplateColumns: `repeat(${buckets.length}, minmax(44px, 1fr))` }}
       >
         {buckets.map((bar) => (
           <div
