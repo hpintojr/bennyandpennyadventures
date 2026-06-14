@@ -3,14 +3,13 @@ import type { CollectionConfig } from "payload";
 export const Users: CollectionConfig = {
   slug: "users",
   labels: {
-    singular: "Customer / Admin User",
-    plural: "Customers & Admins"
+    singular: "Setting",
+    plural: "Settings"
   },
   auth: true,
   admin: {
-    group: "Customers",
     useAsTitle: "email",
-    description: "Manage customer accounts, admin users, login access, and optional support contact details.",
+    description: "Manage backend users, customers, roles, and optional support contact details.",
     defaultColumns: ["email", "firstName", "lastName", "role"]
   },
   fields: [
