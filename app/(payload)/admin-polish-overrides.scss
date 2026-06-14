@@ -19,31 +19,20 @@
   background: rgba(4, 63, 73, 0.14) !important;
 }
 
-/* Re-label Payload's default wrapper as Adventure Hub and make it feel static. */
+/* Hide Payload's collapsible Collections control completely. Adventure Hub is now our own static heading. */
 .template-default .nav-group__label,
 .template-default .collapsible__toggle,
 .template-default .nav-group__toggle {
-  color: transparent !important;
-  pointer-events: none !important;
-  position: relative !important;
+  display: none !important;
 }
 
-.template-default .nav-group__label::before,
-.template-default .collapsible__toggle::before,
-.template-default .nav-group__toggle::before {
-  color: rgba(4, 63, 73, 0.55) !important;
-  content: 'Adventure Hub';
-  display: inline-block;
+.bp-admin-nav-extra__heading {
+  color: rgba(4, 63, 73, 0.58);
   font-size: 0.76rem;
   font-weight: 950;
   letter-spacing: 0.16em;
+  margin: 1.1rem 0.75rem 0.35rem;
   text-transform: uppercase;
-}
-
-.template-default .nav-group__label svg,
-.template-default .collapsible__toggle svg,
-.template-default .nav-group__toggle svg {
-  display: none !important;
 }
 
 /* Keep only our custom logout button visible. Hide Payload's native logout entry if it appears. */
@@ -66,6 +55,36 @@
 .bp-admin-nav-extra__link--logout span {
   font-size: 1.15rem;
   transform: translateY(-1px);
+}
+
+/* Reduce the hero analytics section so it does not dominate the dashboard. */
+.bp-dashboard__mainGrid {
+  align-items: start !important;
+}
+
+.bp-dashboard__chart {
+  height: 178px !important;
+  padding-top: 0.75rem !important;
+}
+
+.bp-dashboard__card--sales {
+  min-height: 0 !important;
+}
+
+.bp-dashboard__card--region {
+  min-height: 0 !important;
+  padding: 0.9rem !important;
+}
+
+.bp-dashboard__donut {
+  height: 132px !important;
+  margin: 0.7rem auto !important;
+  width: 132px !important;
+}
+
+.bp-dashboard__donut::after {
+  height: 58px !important;
+  width: 58px !important;
 }
 
 /* Checkbox cleanup: remove the black-box feeling and make selections match the teal theme. */
