@@ -24,12 +24,6 @@ const portalCards = [
     text: "Review billing and shipping addresses collected through checkout.",
     href: "/portal/addresses",
     cta: "View Addresses"
-  },
-  {
-    title: "Support",
-    text: "Ask for help with an order, download, audiobook, shipping address, or account issue.",
-    href: "/portal/support",
-    cta: "Get Support"
   }
 ];
 
@@ -40,7 +34,7 @@ export default function PortalPage() {
         <p className="font-serif text-2xl italic text-coral">Customer Portal ♥</p>
         <h1 className="mx-auto mt-2 max-w-3xl font-serif text-[42px] font-bold leading-tight text-teal sm:text-6xl">Your Benny &amp; Penny Adventure Library</h1>
         <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-ink">
-          This is the foundation for customer accounts: orders, purchased books, addresses, and support requests in one gentle, family-friendly place.
+          This is the foundation for customer accounts: orders, purchased books, and addresses in one gentle, family-friendly place.
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-4">
           <Link href="/portal/login" className="btn text-lg">Sign In ♥</Link>
@@ -48,7 +42,7 @@ export default function PortalPage() {
         </div>
       </section>
 
-      <section className="wrap grid gap-5 pb-20 md:grid-cols-2">
+      <section className="wrap grid gap-5 pb-20 md:grid-cols-3">
         {portalCards.map((card) => (
           <Link key={card.title} href={card.href} className="group rounded-[2rem] border border-tan bg-white/70 p-7 shadow-soft transition hover:-translate-y-1 hover:border-coral/50 hover:bg-white">
             <h2 className="font-serif text-3xl font-bold text-teal group-hover:text-coral">{card.title}</h2>
