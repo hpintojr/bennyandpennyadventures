@@ -1,65 +1,11 @@
 import config from "@payload-config";
-import {
-  Activity,
-  BookOpen,
-  Image as ImageIcon,
-  LayoutDashboard,
-  Mail,
-  Package,
-  ShieldAlert,
-  ShoppingCart,
-  Ticket,
-  UserCog,
-  Users,
-  type LucideIcon
-} from "lucide-react";
-import Link from "next/link";
+import { ShoppingCart, Ticket } from "lucide-react";
 import { getPayload } from "payload";
 import React from "react";
+import { AdminSidebarNavLink } from "./AdminSidebarNavLink";
 import "./AdminSidebarCompliance.scss";
 
-type SidebarLink = {
-  label: string;
-  href?: string;
-  Icon: LucideIcon;
-  badge?: number;
-  note?: string;
-};
-
 const customersFilterHref = "/admin/collections/users?where%5Brole%5D%5Bequals%5D=customer";
-
-const sidebarSections: { heading: string; links: SidebarLink[] }[] = [
-  {
-    heading: "Sales",
-    links: [
-      { label: "Orders", href: "/admin/collections/orders", Icon: Package },
-      { label: "Customers", href: customersFilterHref, Icon: Users },
-      { label: "Abandoned Carts", Icon: ShoppingCart, note: "Coming soon" }
-    ]
-  },
-  {
-    heading: "Catalog",
-    links: [
-      { label: "Books", href: "/admin/collections/books", Icon: BookOpen },
-      { label: "Media", href: "/admin/collections/downloads", Icon: ImageIcon }
-    ]
-  },
-  {
-    heading: "Marketing",
-    links: [
-      { label: "Promotions", Icon: Ticket, note: "Stripe Coupons" },
-      { label: "Subscribers", href: "/admin/collections/subscribers", Icon: Mail }
-    ]
-  },
-  {
-    heading: "Settings",
-    links: [
-      { label: "Users", href: "/admin/collections/users", Icon: UserCog },
-      { label: "System Status Check", href: "/admin#system-status", Icon: Activity },
-      { label: "Privacy Requests", href: "/admin/collections/privacy-requests", Icon: ShieldAlert }
-    ]
-  }
-];
 
 async function getPendingOrderCount() {
   try {
@@ -84,10 +30,6 @@ async function getPendingOrderCount() {
 
 export async function AdminBeforeNavLinks() {
   const pendingOrders = await getPendingOrderCount();
-  const sections = sidebarSections.map((section) => ({
-    ...section,
-    links: section.links.map((link) => link.label === "Orders" ? { ...link, badge: pendingOrders } : link)
-  }));
 
   return (
     <div className="bp-admin-nav-extra bp-admin-nav-extra--top">
@@ -99,29 +41,41 @@ export async function AdminBeforeNavLinks() {
 
       <div className="bp-admin-nav-extra__hubLabel">Adventure Hub</div>
 
-      <Link className="bp-admin-nav-extra__link bp-admin-nav-extra__link--active" href="/admin">
-        <LayoutDashboard className="bp-admin-nav-extra__iconSvg" size={18} strokeWidth={2.5} aria-hidden="true" />
-        Dashboard
-      </Link>
+      <AdminSidebarNavLink activeKey="dashboard" href="/admin" iconName="dashboard" label="Dashboard" />
 
-      {sections.map((section) => (
-        <div className="bp-admin-nav-extra__section" key={section.heading}>
-          <div className="bp-admin-nav-extra__heading">{section.heading}</div>
-          {section.links.map(({ Icon, ...link }) => link.href ? (
-            <Link className="bp-admin-nav-extra__link" href={link.href} key={`${section.heading}-${link.label}`}>
-              <Icon className="bp-admin-nav-extra__iconSvg" size={18} strokeWidth={2.5} aria-hidden="true" />
-              <em>{link.label}</em>
-              {typeof link.badge === "number" && link.badge > 0 ? <strong>{link.badge}</strong> : null}
-            </Link>
-          ) : (
-            <span className="bp-admin-nav-extra__link bp-admin-nav-extra__link--disabled" title={link.note} key={`${section.heading}-${link.label}`}>
-              <Icon className="bp-admin-nav-extra__iconSvg" size={18} strokeWidth={2.5} aria-hidden="true" />
-              <em>{link.label}</em>
-              {link.note ? <small>{link.note}</small> : null}
-            </span>
-          ))}
-        </div>
-      ))}
+      <div className="bp-admin-nav-extra__section">
+        <div className="bp-admin-nav-extra__heading">Sales</div>
+        <AdminSidebarNavLink activeKey="orders" badge={pendingOrders} href="/admin/collections/orders" iconName="package" label="Orders" />
+        <AdminSidebarNavLink activeKey="customers" href={customersFilterHref} iconName="users" label="Customers" />
+        <span className="bp-admin-nav-extra__link bp-admin-nav-extra__link--disabled" title="Coming soon">
+          <ShoppingCart className="bp-admin-nav-extra__iconSvg" size={18} strokeWidth={2.5} aria-hidden="true" />
+          <em>Abandoned Carts</em>
+          <small>Coming soon</small>
+        </span>
+      </div>
+
+      <div className="bp-admin-nav-extra__section">
+        <div className="bp-admin-nav-extra__heading">Catalog</div>
+        <AdminSidebarNavLink activeKey="books" href="/admin/collections/books" iconName="book" label="Books" />
+        <AdminSidebarNavLink activeKey="media" href="/admin/collections/downloads" iconName="image" label="Media" />
+      </div>
+
+      <div className="bp-admin-nav-extra__section">
+        <div className="bp-admin-nav-extra__heading">Marketing</div>
+        <span className="bp-admin-nav-extra__link bp-admin-nav-extra__link--disabled" title="Stripe Coupons">
+          <Ticket className="bp-admin-nav-extra__iconSvg" size={18} strokeWidth={2.5} aria-hidden="true" />
+          <em>Promotions</em>
+          <small>Stripe Coupons</small>
+        </span>
+        <AdminSidebarNavLink activeKey="subscribers" href="/admin/collections/subscribers" iconName="mail" label="Subscribers" />
+      </div>
+
+      <div className="bp-admin-nav-extra__section">
+        <div className="bp-admin-nav-extra__heading">Settings</div>
+        <AdminSidebarNavLink activeKey="users" href="/admin/collections/users" iconName="userCog" label="Users" />
+        <AdminSidebarNavLink activeKey="system" href="/admin#system-status" iconName="activity" label="System Status Check" />
+        <AdminSidebarNavLink activeKey="privacy" href="/admin/collections/privacy-requests" iconName="shield" label="Privacy Requests" />
+      </div>
     </div>
   );
 }
