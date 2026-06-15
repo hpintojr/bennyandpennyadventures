@@ -2,7 +2,7 @@
 
 import { Activity, BookOpen, Image as ImageIcon, LayoutDashboard, Mail, Package, ShieldAlert, UserCog, Users, type LucideIcon } from "lucide-react";
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import React from "react";
 
 export type SidebarIconName = "activity" | "book" | "dashboard" | "image" | "mail" | "package" | "shield" | "userCog" | "users";
@@ -26,15 +26,18 @@ function isBasePath(pathname: string, base: string) {
   return pathname === base || pathname.startsWith(`${base}/`);
 }
 
-function isCustomerFilter(searchParams: URLSearchParams) {
+function hasCustomerFilter() {
+  if (typeof window === "undefined") return false;
+  const searchParams = new URLSearchParams(window.location.search);
   return searchParams.get("where[role][equals]") === "customer";
 }
 
-function isLinkActive(activeKey: SidebarActiveKey, pathname: string, searchParams: URLSearchParams) {
+function isLinkActive(activeKey: SidebarActiveKey, pathname: string) {
+  const customerFilter = hasCustomerFilter();
   if (activeKey === "dashboard") return pathname === "/admin" || pathname === "/admin/";
   if (activeKey === "orders") return isBasePath(pathname, "/admin/collections/orders");
-  if (activeKey === "customers") return isBasePath(pathname, "/admin/collections/users") && isCustomerFilter(searchParams);
-  if (activeKey === "users") return isBasePath(pathname, "/admin/collections/users") && !isCustomerFilter(searchParams);
+  if (activeKey === "customers") return isBasePath(pathname, "/admin/collections/users") && customerFilter;
+  if (activeKey === "users") return isBasePath(pathname, "/admin/collections/users") && !customerFilter;
   if (activeKey === "books") return isBasePath(pathname, "/admin/collections/books");
   if (activeKey === "media") return isBasePath(pathname, "/admin/collections/downloads");
   if (activeKey === "subscribers") return isBasePath(pathname, "/admin/collections/subscribers");
@@ -44,9 +47,8 @@ function isLinkActive(activeKey: SidebarActiveKey, pathname: string, searchParam
 
 export function AdminSidebarNavLink({ activeKey, badge, href, iconName, label }: Props) {
   const pathname = usePathname() || "";
-  const searchParams = useSearchParams();
   const Icon = iconMap[iconName];
-  const active = isLinkActive(activeKey, pathname, searchParams);
+  const active = isLinkActive(activeKey, pathname);
 
   return (
     <Link aria-current={active ? "page" : undefined} className={active ? "bp-admin-nav-extra__link bp-admin-nav-extra__link--active" : "bp-admin-nav-extra__link"} href={href}>
