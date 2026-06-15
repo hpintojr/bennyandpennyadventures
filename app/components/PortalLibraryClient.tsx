@@ -3,51 +3,35 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
-type LibraryFormat = {
-  format: string;
-  label: string;
-  quantity: number;
-  orderNumbers: string[];
-  status: string;
-};
-
-type LibraryBook = {
-  title: string;
-  bookId?: string | number | null;
-  latestPurchaseAt?: string;
-  orderNumbers?: string[];
-  formats?: LibraryFormat[];
-};
-
-type PortalLibraryResponse = {
-  books?: LibraryBook[];
-  error?: string;
-};
+type LibraryFormat = { format: string; label: string; quantity: number; orderNumbers: string[]; status: string };
+type LibraryBook = { title: string; bookId?: string | number | null; latestPurchaseAt?: string; formats?: LibraryFormat[] };
+type PortalLibraryResponse = { books?: LibraryBook[]; error?: string };
 
 function formatDate(value?: string) {
   if (!value) return "—";
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric"
-  }).format(new Date(value));
+  return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(new Date(value));
 }
 
 function badgeClass(format: string) {
-  if (format === "digital" || format === "audiobook") return "bg-coral/10 text-coral";
-  return "bg-teal/10 text-teal";
+  return format === "digital" || format === "audiobook" ? "bg-coral/10 text-coral" : "bg-teal/10 text-teal";
 }
 
-function isDigitalAccess(format: string) {
+function isDigital(format: string) {
   return format === "digital" || format === "audiobook";
 }
 
-function accessButtonLabel(format: string) {
-  if (format === "digital") return "PDF / EPUB Access Coming Soon";
-  if (format === "audiobook") return "Audiobook Access Coming Soon";
-  if (format === "paperback") return "Paperback Order Recorded";
-  if (format === "hardcover") return "Hardcover Order Recorded";
-  return "Purchased";
+function buttonLabel(format: string) {
+  if (format === "digital") return "Digital file pending";
+  if (format === "audiobook") return "Audio file pending";
+  if (format === "paperback") return "Paperback recorded";
+  if (format === "hardcover") return "Hardcover recorded";
+  return "Recorded";
+}
+
+function summary(book: LibraryBook) {
+  const formats = book.formats || [];
+  if (!formats.length) return "No formats listed";
+  return formats.map((format) => `${format.label} x${format.quantity}`).join(" · ");
 }
 
 export default function PortalLibraryClient() {
@@ -57,16 +41,11 @@ export default function PortalLibraryClient() {
 
   useEffect(() => {
     let active = true;
-
     async function loadLibrary() {
       try {
         const response = await fetch("/api/portal/library", { credentials: "include" });
         const data = (await response.json()) as PortalLibraryResponse;
-
-        if (!response.ok) {
-          throw new Error(data.error || "Please sign in to view your library.");
-        }
-
+        if (!response.ok) throw new Error(data.error || "Please sign in to view your library.");
         if (active) setBooks(data.books || []);
       } catch (loadError) {
         if (active) setError(loadError instanceof Error ? loadError.message : "Could not load your library.");
@@ -74,21 +53,15 @@ export default function PortalLibraryClient() {
         if (active) setLoading(false);
       }
     }
-
     loadLibrary();
-
-    return () => {
-      active = false;
-    };
+    return () => { active = false; };
   }, []);
 
-  if (loading) {
-    return <p className="mx-auto mt-10 max-w-3xl rounded-[2rem] border border-tan bg-white/70 p-6 text-center font-bold text-teal shadow-soft">Loading your library...</p>;
-  }
+  if (loading) return <p className="mx-auto mt-8 max-w-3xl rounded-[2rem] border border-tan bg-white/70 p-6 text-center font-bold text-teal shadow-soft">Loading your library...</p>;
 
   if (error) {
     return (
-      <div className="mx-auto mt-10 max-w-3xl rounded-[2rem] border border-tan bg-white/70 p-8 text-center shadow-soft">
+      <div className="mx-auto mt-8 max-w-3xl rounded-[2rem] border border-tan bg-white/70 p-8 text-center shadow-soft">
         <h2 className="font-serif text-3xl font-bold text-teal">Sign in required</h2>
         <p className="mt-3 text-ink">{error}</p>
         <Link href="/portal/login" className="btn mt-6">Sign In</Link>
@@ -98,7 +71,7 @@ export default function PortalLibraryClient() {
 
   if (!books.length) {
     return (
-      <div className="mx-auto mt-10 max-w-3xl rounded-[2rem] border border-tan bg-white/70 p-8 text-center shadow-soft">
+      <div className="mx-auto mt-8 max-w-3xl rounded-[2rem] border border-tan bg-white/70 p-8 text-center shadow-soft">
         <h2 className="font-serif text-3xl font-bold text-teal">No purchased books found yet</h2>
         <p className="mt-3 text-ink">We did not find any purchased book formats linked to this customer account yet.</p>
         <Link href="/books" className="btn mt-6">Shop Books</Link>
@@ -107,14 +80,23 @@ export default function PortalLibraryClient() {
   }
 
   return (
-    <div className="mx-auto mt-10 grid max-w-5xl gap-6 md:grid-cols-2">
-      {books.map((book) => (
-        <article key={`${book.bookId || book.title}`} className="rounded-[2rem] border border-tan bg-white/75 p-6 shadow-soft sm:p-8">
-          <p className="text-sm font-extrabold uppercase tracking-[0.14em] text-coral">Purchased Book</p>
-          <h2 className="mt-1 font-serif text-3xl font-bold leading-tight text-teal">{book.title}</h2>
-          <p className="mt-2 text-sm text-ink/70">Latest purchase: {formatDate(book.latestPurchaseAt)}</p>
+    <div className="mx-auto mt-8 max-w-5xl space-y-3">
+      {books.map((book, index) => (
+        <details key={`${book.bookId || book.title}`} open={index === 0} className="group overflow-hidden rounded-[1.5rem] border border-tan bg-white/75 shadow-soft">
+          <summary className="flex cursor-pointer list-none flex-col gap-3 px-5 py-4 transition hover:bg-cream/60 sm:flex-row sm:items-center sm:justify-between">
+            <div className="min-w-0">
+              <p className="text-xs font-extrabold uppercase tracking-[0.14em] text-coral">Purchased Book</p>
+              <h2 className="mt-1 font-serif text-2xl font-bold leading-tight text-teal">{book.title}</h2>
+              <p className="mt-1 text-sm text-ink/70">{summary(book)}</p>
+            </div>
+            <div className="flex shrink-0 items-center gap-4">
+              <span className="text-sm text-ink/65">Latest: {formatDate(book.latestPurchaseAt)}</span>
+              <span className="text-sm font-extrabold text-coral group-open:hidden">View</span>
+              <span className="hidden text-sm font-extrabold text-coral group-open:inline">Hide</span>
+            </div>
+          </summary>
 
-          <div className="mt-5 space-y-3">
+          <div className="grid gap-3 border-t border-tan px-5 pb-5 pt-4 md:grid-cols-2">
             {(book.formats || []).map((format) => (
               <div key={format.format} className="rounded-2xl border border-tan bg-cream/60 p-4">
                 <div className="flex flex-wrap items-center justify-between gap-3">
@@ -122,20 +104,12 @@ export default function PortalLibraryClient() {
                   <span className="text-sm font-bold text-teal">Qty {format.quantity}</span>
                 </div>
                 <p className="mt-3 text-sm leading-6 text-ink">{format.status}</p>
-                <div className="mt-4">
-                  <button
-                    type="button"
-                    disabled
-                    className={`w-full rounded-full px-5 py-3 text-sm font-extrabold transition ${isDigitalAccess(format.format) ? "bg-coral/20 text-coral" : "bg-teal/10 text-teal"}`}
-                  >
-                    {accessButtonLabel(format.format)}
-                  </button>
-                </div>
+                <button type="button" disabled className={`mt-4 w-full rounded-full px-5 py-3 text-sm font-extrabold transition ${isDigital(format.format) ? "bg-coral/20 text-coral" : "bg-teal/10 text-teal"}`}>{buttonLabel(format.format)}</button>
                 <p className="mt-2 text-xs leading-5 text-ink/65">Orders: {format.orderNumbers.join(", ")}</p>
               </div>
             ))}
           </div>
-        </article>
+        </details>
       ))}
     </div>
   );
