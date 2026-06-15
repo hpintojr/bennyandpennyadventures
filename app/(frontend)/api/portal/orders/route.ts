@@ -27,6 +27,10 @@ function getRelationId(value: unknown) {
   return null;
 }
 
+function normalizeEmail(value: unknown) {
+  return typeof value === "string" ? value.trim().toLowerCase() : "";
+}
+
 export async function GET() {
   const payload = await getPayloadClient();
   const headers = await getHeaders();
@@ -37,15 +41,25 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const userEmail = normalizeEmail(user.email);
   const orders = (await payload.find({
     collection: "orders",
     depth: 1,
     limit: 50,
     sort: "-createdAt",
     where: {
-      customer: {
-        equals: user.id
-      }
+      or: [
+        {
+          customer: {
+            equals: user.id
+          }
+        },
+        {
+          customerEmail: {
+            equals: userEmail
+          }
+        }
+      ]
     }
   })) as PayloadFindResult;
 
