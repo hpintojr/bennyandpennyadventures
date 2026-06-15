@@ -197,3 +197,44 @@
   min-width: 0 !important;
   padding: 0 !important;
 }
+
+/* Restore dark Payload toast / notification styling. */
+.template-default [class*='toast']:not([class*='container']),
+.template-default [class*='Toast']:not([class*='container']),
+.template-login [class*='toast']:not([class*='container']),
+.template-login [class*='Toast']:not([class*='container']),
+.template-default [class*='notification']:not([class*='container']),
+.template-default [class*='Notification']:not([class*='container']),
+.template-login [class*='notification']:not([class*='container']),
+.template-login [class*='Notification']:not([class*='container']) {
+  background: #043f49 !important;
+  background-color: #043f49 !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  box-shadow: 0 18px 42px rgba(4, 63, 73, 0.28) !important;
+  color: #ffffff !important;
+}
+
+.template-default [class*='toast']:not([class*='container']) *,
+.template-default [class*='Toast']:not([class*='container']) *,
+.template-login [class*='toast']:not([class*='container']) *,
+.template-login [class*='Toast']:not([class*='container']) *,
+.template-default [class*='notification']:not([class*='container']) *,
+.template-default [class*='Notification']:not([class*='container']) *,
+.template-login [class*='notification']:not([class*='container']) *,
+.template-login [class*='Notification']:not([class*='container']) * {
+  color: #ffffff !important;
+  opacity: 1 !important;
+}
+
+.template-default [class*='toast']:not([class*='container']) button,
+.template-default [class*='Toast']:not([class*='container']) button,
+.template-login [class*='toast']:not([class*='container']) button,
+.template-login [class*='Toast']:not([class*='container']) button,
+.template-default [class*='notification']:not([class*='container']) button,
+.template-default [class*='Notification']:not([class*='container']) button,
+.template-login [class*='notification']:not([class*='container']) button,
+.template-login [class*='Notification']:not([class*='container']) button {
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(255, 255, 255, 0.22) !important;
+  color: #ffffff !important;
+}
