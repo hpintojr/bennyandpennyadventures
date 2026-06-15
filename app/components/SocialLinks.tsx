@@ -21,21 +21,39 @@ const socialLinks = [
   }
 ];
 
+const iconClass = "grid h-12 w-12 place-items-center rounded-full bg-teal text-white transition hover:bg-[#0a5f68]";
+const disabledIconClass = "grid h-12 w-12 place-items-center rounded-full bg-teal text-white/80";
+
+function SocialIcon({ path }: { path: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
+      <path d={path} />
+    </svg>
+  );
+}
+
 export default function SocialLinks({ align = "left" }: { align?: "left" | "center" | "right" }) {
   const justify = align === "right" ? "justify-center md:justify-end" : align === "center" ? "justify-center" : "justify-start";
-  const activeLinks = socialLinks.filter((link): link is { label: string; href: string; path: string } => Boolean(link.href));
   const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "hello@bennyandpenny.com";
 
   return (
     <div className={`mt-5 flex gap-3 ${justify}`}>
-      {activeLinks.map((link) => (
-        <a key={link.label} href={link.href} aria-label={link.label} className="grid h-12 w-12 place-items-center rounded-full bg-teal text-white transition hover:bg-[#0a5f68]">
-          <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
-            <path d={link.path} />
-          </svg>
-        </a>
-      ))}
-      <a href={`mailto:${contactEmail}`} aria-label="Email" className="grid h-12 w-12 place-items-center rounded-full bg-teal text-white transition hover:bg-[#0a5f68]">
+      {socialLinks.map((link) => {
+        if (link.href) {
+          return (
+            <a key={link.label} href={link.href} aria-label={link.label} target="_blank" rel="noopener noreferrer" className={iconClass}>
+              <SocialIcon path={link.path} />
+            </a>
+          );
+        }
+
+        return (
+          <span key={link.label} aria-label={`${link.label} coming soon`} title={`${link.label} coming soon`} className={disabledIconClass}>
+            <SocialIcon path={link.path} />
+          </span>
+        );
+      })}
+      <a href={`mailto:${contactEmail}`} aria-label="Email" className={iconClass}>
         <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5"><path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm9 7L4 7v.6l8 5 8-5V7l-8 5z" /></svg>
       </a>
     </div>
