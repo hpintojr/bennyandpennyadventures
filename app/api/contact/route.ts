@@ -1,4 +1,3 @@
-import config from "@payload-config";
 import Mailjet from "node-mailjet";
 import { NextResponse } from "next/server";
 import { getPayload } from "payload";
@@ -50,6 +49,11 @@ function getMailjetClient() {
   return Mailjet.apiConnect(mailjetApiKey, mailjetSecretKey);
 }
 
+async function getPayloadClient() {
+  const { default: config } = await import("@payload-config");
+  return getPayload({ config });
+}
+
 async function saveContactSubmission({
   name,
   email,
@@ -77,7 +81,7 @@ async function saveContactSubmission({
   consentIpAddress: string;
   consentUserAgent: string;
 }) {
-  const payload = await getPayload({ config });
+  const payload = await getPayloadClient();
   const created = await payload.create({
     collection: "contact-submissions",
     data: {
