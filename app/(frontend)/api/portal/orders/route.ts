@@ -27,8 +27,12 @@ function getRelationId(value: unknown) {
   return null;
 }
 
+function getEmail(value: unknown) {
+  return typeof value === "string" ? value.trim() : "";
+}
+
 function normalizeEmail(value: unknown) {
-  return typeof value === "string" ? value.trim().toLowerCase() : "";
+  return getEmail(value).toLowerCase();
 }
 
 export async function GET() {
@@ -41,11 +45,37 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const rawEmail = getEmail(user.email);
   const userEmail = normalizeEmail(user.email);
+  const emailConditions = rawEmail
+    ? [
+        {
+          customerEmail: {
+            equals: rawEmail
+          }
+        },
+        {
+          customerEmail: {
+            equals: userEmail
+          }
+        },
+        {
+          customerEmail: {
+            like: rawEmail
+          }
+        },
+        {
+          customerEmail: {
+            like: userEmail
+          }
+        }
+      ]
+    : [];
+
   const orders = (await payload.find({
     collection: "orders",
     depth: 1,
-    limit: 50,
+    limit: 100,
     sort: "-createdAt",
     where: {
       or: [
@@ -54,11 +84,7 @@ export async function GET() {
             equals: user.id
           }
         },
-        {
-          customerEmail: {
-            equals: userEmail
-          }
-        }
+        ...emailConditions
       ]
     }
   })) as PayloadFindResult;
@@ -90,6 +116,10 @@ export async function GET() {
       firstName: user.firstName,
       lastName: user.lastName
     },
+    match: {
+      userId: user.id,
+      email: rawEmail
+    },
     orders: orderDocs.map((order) => ({
       id: order.id,
       orderNumber: order.orderNumber,
@@ -118,6 +148,7 @@ export async function GET() {
       shippingAddressPostalCode: order.shippingAddressPostalCode,
       shippingAddressCountry: order.shippingAddressCountry,
       customerId: getRelationId(order.customer),
+      customerEmail: order.customerEmail,
       items: (itemsByOrder.get(String(order.id)) || []).map((item) => ({
         id: item.id,
         title: item.title,
