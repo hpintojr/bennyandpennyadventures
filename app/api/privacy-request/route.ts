@@ -1,4 +1,3 @@
-import config from "@payload-config";
 import Mailjet from "node-mailjet";
 import { NextResponse } from "next/server";
 import { getPayload } from "payload";
@@ -54,6 +53,11 @@ function getMailjetClient() {
   }
 
   return Mailjet.apiConnect(mailjetApiKey, mailjetSecretKey);
+}
+
+async function getPayloadClient() {
+  const { default: config } = await import("@payload-config");
+  return getPayload({ config });
 }
 
 async function sendPrivacyRequestNotification({
@@ -162,7 +166,7 @@ export async function POST(request: Request) {
     }
 
     try {
-      const payload = await getPayload({ config });
+      const payload = await getPayloadClient();
       const created = await payload.create({
         collection: "privacy-requests" as never,
         data: {
