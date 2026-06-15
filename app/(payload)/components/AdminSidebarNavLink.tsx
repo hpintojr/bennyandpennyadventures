@@ -1,0 +1,60 @@
+"use client";
+
+import { Activity, BookOpen, Image as ImageIcon, LayoutDashboard, Mail, Package, ShieldAlert, UserCog, Users, type LucideIcon } from "lucide-react";
+import Link from "next/link";
+import { usePathname, useSearchParams } from "next/navigation";
+import React from "react";
+
+export type SidebarIconName = "activity" | "book" | "dashboard" | "image" | "mail" | "package" | "shield" | "userCog" | "users";
+export type SidebarActiveKey = "books" | "customers" | "dashboard" | "media" | "orders" | "privacy" | "subscribers" | "system" | "users";
+
+const iconMap: Record<SidebarIconName, LucideIcon> = {
+  activity: Activity,
+  book: BookOpen,
+  dashboard: LayoutDashboard,
+  image: ImageIcon,
+  mail: Mail,
+  package: Package,
+  shield: ShieldAlert,
+  userCog: UserCog,
+  users: Users
+};
+
+type Props = { activeKey: SidebarActiveKey; badge?: number; href: string; iconName: SidebarIconName; label: string };
+
+function isBasePath(pathname: string, base: string) {
+  return pathname === base || pathname.startsWith(`${base}/`);
+}
+
+function isCustomerFilter(searchParams: URLSearchParams) {
+  return searchParams.get("where[role][equals]") === "customer";
+}
+
+function isLinkActive(activeKey: SidebarActiveKey, pathname: string, searchParams: URLSearchParams) {
+  if (activeKey === "dashboard") return pathname === "/admin" || pathname === "/admin/";
+  if (activeKey === "orders") return isBasePath(pathname, "/admin/collections/orders");
+  if (activeKey === "customers") return isBasePath(pathname, "/admin/collections/users") && isCustomerFilter(searchParams);
+  if (activeKey === "users") return isBasePath(pathname, "/admin/collections/users") && !isCustomerFilter(searchParams);
+  if (activeKey === "books") return isBasePath(pathname, "/admin/collections/books");
+  if (activeKey === "media") return isBasePath(pathname, "/admin/collections/downloads");
+  if (activeKey === "subscribers") return isBasePath(pathname, "/admin/collections/subscribers");
+  if (activeKey === "privacy") return isBasePath(pathname, "/admin/collections/privacy-requests");
+  return false;
+}
+
+export function AdminSidebarNavLink({ activeKey, badge, href, iconName, label }: Props) {
+  const pathname = usePathname() || "";
+  const searchParams = useSearchParams();
+  const Icon = iconMap[iconName];
+  const active = isLinkActive(activeKey, pathname, searchParams);
+
+  return (
+    <Link aria-current={active ? "page" : undefined} className={active ? "bp-admin-nav-extra__link bp-admin-nav-extra__link--active" : "bp-admin-nav-extra__link"} href={href}>
+      <Icon className="bp-admin-nav-extra__iconSvg" size={18} strokeWidth={2.5} aria-hidden="true" />
+      <em>{label}</em>
+      {typeof badge === "number" && badge > 0 ? <strong>{badge}</strong> : null}
+    </Link>
+  );
+}
+
+export default AdminSidebarNavLink;
