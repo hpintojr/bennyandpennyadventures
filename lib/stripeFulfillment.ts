@@ -66,6 +66,13 @@ function getString(value: unknown): string | null {
   return typeof value === "string" && value.trim() ? value.trim() : null;
 }
 
+function normalizeEmail(value: unknown): string | null {
+  const email = getString(value)?.toLowerCase();
+  if (!email) return null;
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return null;
+  return email;
+}
+
 function getRelationId(value: unknown): string | number | null {
   if (typeof value === "string" || typeof value === "number") return value;
   if (value && typeof value === "object" && "id" in value) {
@@ -92,7 +99,7 @@ function getStripeCustomerId(session: Stripe.Checkout.Session): string | null {
 }
 
 function getCustomerEmail(session: Stripe.Checkout.Session): string | null {
-  return session.customer_details?.email || session.customer_email || null;
+  return normalizeEmail(session.customer_details?.email) || normalizeEmail(session.customer_email);
 }
 
 function getOrderPrefix() {
@@ -164,7 +171,7 @@ function getOrderSessionData(session: Stripe.Checkout.Session, customer: Payload
     shippingAddressLine2: shippingAddress?.line2 || undefined,
     shippingAddressCity: shippingAddress?.city || undefined,
     shippingAddressState: shippingAddress?.state || undefined,
-    shippingAddressPostalCode: shippingAddress?.postal_code || undefined,
+    shippingAddressPostalCode: shippingAddress?.address?.postal_code || shippingAddress?.postal_code || undefined,
     shippingAddressCountry: shippingAddress?.country || undefined
   };
 
@@ -243,31 +250,36 @@ async function findOrCreateCustomer(payload: PayloadClient, session: Stripe.Chec
   const email = getCustomerEmail(session);
   if (!email) return null;
 
-  const existing = (await payload.find({
-    collection: "users",
-    limit: 1,
-    where: {
-      email: {
-        equals: email
+  try {
+    const existing = (await payload.find({
+      collection: "users",
+      limit: 1,
+      where: {
+        email: {
+          equals: email
+        }
       }
-    }
-  })) as PayloadFindResult;
+    })) as PayloadFindResult;
 
-  if (existing.docs?.[0]) return existing.docs[0];
+    if (existing.docs?.[0]) return existing.docs[0];
 
-  const { firstName, lastName } = splitName(session.customer_details?.name);
+    const { firstName, lastName } = splitName(session.customer_details?.name);
 
-  return (await payload.create({
-    collection: "users",
-    data: {
-      email,
-      firstName,
-      lastName,
-      phone: session.customer_details?.phone || undefined,
-      password: crypto.randomBytes(24).toString("base64url"),
-      role: "customer"
-    }
-  })) as PayloadDoc;
+    return (await payload.create({
+      collection: "users",
+      data: {
+        email,
+        firstName,
+        lastName,
+        phone: session.customer_details?.phone || undefined,
+        password: crypto.randomBytes(24).toString("base64url"),
+        role: "customer"
+      }
+    })) as PayloadDoc;
+  } catch (error) {
+    console.error("Stripe fulfillment customer profile creation failed; order will still be created", { email, error });
+    return null;
+  }
 }
 
 async function findExistingAddress(payload: PayloadClient, customerId: string | number, address: Stripe.Address, addressType: AddressType) {
@@ -419,7 +431,7 @@ export async function fulfillCheckoutSession(session: Stripe.Checkout.Session): 
   const customerEmail = getCustomerEmail(fulfillmentSession);
 
   if (!customerEmail) {
-    throw new Error(`Stripe session ${session.id} does not include a customer email.`);
+    throw new Error(`Stripe session ${session.id} does not include a valid customer email.`);
   }
 
   const orderNumber = await getNextOrderNumber(payload);
@@ -434,6 +446,7 @@ export async function fulfillCheckoutSession(session: Stripe.Checkout.Session): 
       orderNumber,
       customer: customer?.id,
       ...getOrderSessionData(fulfillmentSession, customer),
+      customerEmail,
       itemCount,
       itemsSummary,
       notes: buildInternalOrderNote(items)
