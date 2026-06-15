@@ -15,7 +15,7 @@ export default function PortalAddressesPage() {
           <p className="font-serif text-2xl italic text-coral">Addresses ♥</p>
           <h1 className="mt-2 font-serif text-[42px] font-bold leading-tight text-teal sm:text-6xl">Billing &amp; Shipping Addresses</h1>
           <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-ink">
-            View billing and shipping addresses linked to your Benny &amp; Penny customer account.
+            Add, edit, and manage the billing and shipping addresses on your Benny &amp; Penny account. Set defaults for faster checkout and archive ones you no longer use.
           </p>
         </div>
       </section>

@@ -8,10 +8,18 @@ export const CustomerAddresses: CollectionConfig = {
   },
   admin: {
     useAsTitle: "fullName",
-    description: "Structured customer addresses collected through checkout and customer account workflows.",
-    defaultColumns: ["addressType", "fullName", "customer", "street1", "city", "state", "postalCode", "country", "phone"]
+    description: "Structured customer addresses collected through checkout and managed in the customer Address Book.",
+    defaultColumns: ["label", "addressType", "fullName", "customer", "city", "state", "postalCode", "isDefaultShipping", "isDefaultBilling", "isArchived"]
   },
   fields: [
+    {
+      name: "label",
+      type: "text",
+      label: "Label",
+      admin: {
+        description: "Friendly nickname for this address, e.g. Home, Work, Grandma."
+      }
+    },
     {
       name: "addressType",
       type: "select",
@@ -19,7 +27,8 @@ export const CustomerAddresses: CollectionConfig = {
       defaultValue: "billing",
       options: [
         { label: "Billing", value: "billing" },
-        { label: "Shipping", value: "shipping" }
+        { label: "Shipping", value: "shipping" },
+        { label: "Billing & Shipping", value: "both" }
       ]
     },
     { name: "customer", type: "relationship", relationTo: "users", required: true },
@@ -36,6 +45,35 @@ export const CustomerAddresses: CollectionConfig = {
       type: "text",
       label: "Phone number"
     },
-    { name: "isDefaultShipping", type: "checkbox", defaultValue: false }
+    {
+      name: "isDefaultShipping",
+      type: "checkbox",
+      label: "Default shipping address",
+      defaultValue: false
+    },
+    {
+      name: "isDefaultBilling",
+      type: "checkbox",
+      label: "Default billing address",
+      defaultValue: false
+    },
+    {
+      name: "isArchived",
+      type: "checkbox",
+      label: "Archived",
+      defaultValue: false,
+      admin: {
+        description: "Archived addresses stay on past orders but are hidden from the active Address Book."
+      }
+    },
+    {
+      name: "lastUsedAt",
+      type: "date",
+      label: "Last used",
+      admin: {
+        description: "Updated when this address is used on a new order.",
+        date: { pickerAppearance: "dayAndTime" }
+      }
+    }
   ]
 };
