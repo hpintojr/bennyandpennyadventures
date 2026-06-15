@@ -6,11 +6,11 @@ export const Orders: CollectionConfig = {
     singular: "Order",
     plural: "Orders"
   },
+  defaultSort: "-createdAt",
   admin: {
     useAsTitle: "orderNumber",
     description: "Review checkout orders, customer purchase data, addresses, taxes, and fulfillment progress.",
-    defaultColumns: ["orderNumber", "customerName", "customerEmail", "itemsSummary", "status", "total", "createdAt"],
-    defaultSort: "-createdAt"
+    defaultColumns: ["orderNumber", "customerName", "customerEmail", "itemsSummary", "status", "total", "createdAt"]
   },
   fields: [
     { name: "orderNumber", type: "text", required: true, unique: true },
