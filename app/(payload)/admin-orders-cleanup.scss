@@ -187,3 +187,24 @@
   border-color: rgba(6, 87, 102, 0.28) !important;
   color: #043f49 !important;
 }
+
+.bp-boolean-cell {
+  align-items: center !important;
+  border-radius: 999px !important;
+  display: inline-flex !important;
+  font-size: 0.78rem !important;
+  font-weight: 950 !important;
+  justify-content: center !important;
+  min-width: 2.55rem !important;
+  padding: 0.2rem 0.55rem !important;
+}
+
+.bp-boolean-cell--yes {
+  background: #c9f0f5 !important;
+  color: #043f49 !important;
+}
+
+.bp-boolean-cell--no {
+  background: #f1ece5 !important;
+  color: #6f4c1d !important;
+}
