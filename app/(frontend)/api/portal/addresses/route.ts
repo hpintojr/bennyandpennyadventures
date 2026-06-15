@@ -18,12 +18,26 @@ async function getPayloadClient() {
   return getPayload({ config });
 }
 
+function getEmail(value: unknown) {
+  return typeof value === "string" ? value.trim() : "";
+}
+
 function normalizeEmail(value: unknown) {
-  return typeof value === "string" ? value.trim().toLowerCase() : "";
+  return getEmail(value).toLowerCase();
 }
 
 function getText(value: unknown) {
   return typeof value === "string" && value.trim() ? value.trim() : undefined;
+}
+
+function emailConditions(rawEmail: string, userEmail: string) {
+  if (!rawEmail) return [];
+  return [
+    { customerEmail: { equals: rawEmail } },
+    { customerEmail: { equals: userEmail } },
+    { customerEmail: { like: rawEmail } },
+    { customerEmail: { like: userEmail } }
+  ];
 }
 
 function snapshotAddressFromOrder(order: PayloadDoc, type: "billing" | "shipping") {
@@ -62,6 +76,7 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const rawEmail = getEmail(user.email);
   const userEmail = normalizeEmail(user.email);
   const result = (await payload.find({
     collection: "customer-addresses",
@@ -94,7 +109,7 @@ export async function GET() {
   const orders = (await payload.find({
     collection: "orders",
     depth: 0,
-    limit: 50,
+    limit: 100,
     sort: "-createdAt",
     where: {
       or: [
@@ -103,11 +118,7 @@ export async function GET() {
             equals: user.id
           }
         },
-        {
-          customerEmail: {
-            equals: userEmail
-          }
-        }
+        ...emailConditions(rawEmail, userEmail)
       ]
     }
   })) as PayloadFindResult;
