@@ -24,17 +24,31 @@ function isNewsletterSignup(searchParams: Record<string, string | string[] | und
   return Boolean(email && !sessionId);
 }
 
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function getCheckoutReference(sessionId: string | undefined) {
+  if (!sessionId || !sessionId.startsWith("cs_")) return null;
+  const compact = sessionId.replace(/^cs_(test|live)_/, "");
+  return compact.slice(-10).toUpperCase();
+}
+
 async function reconcileStripeCheckout(sessionId: string | undefined): Promise<FulfillmentSummary | null> {
   if (!sessionId || !sessionId.startsWith("cs_")) return null;
 
-  try {
-    const summary = await fulfillCheckoutSessionById(sessionId);
-    console.log("Stripe checkout fulfilled from thank-you fallback", summary);
-    return summary;
-  } catch (error) {
-    console.error("Stripe thank-you fallback fulfillment failed", error);
-    return null;
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    try {
+      const summary = await fulfillCheckoutSessionById(sessionId);
+      console.log("Stripe checkout fulfilled from thank-you fallback", { attempt, ...summary });
+      return summary;
+    } catch (error) {
+      console.error("Stripe thank-you fallback fulfillment failed", { attempt, error });
+      if (attempt < 3) await sleep(1200);
+    }
   }
+
+  return null;
 }
 
 export default async function ThankYouPage({ searchParams }: ThankYouPageProps) {
@@ -42,12 +56,15 @@ export default async function ThankYouPage({ searchParams }: ThankYouPageProps) 
   const sessionId = getSearchParam(resolvedSearchParams, "session_id");
   const newsletterSignup = isNewsletterSignup(resolvedSearchParams);
   const fulfillment = newsletterSignup ? null : await reconcileStripeCheckout(sessionId);
+  const checkoutReference = getCheckoutReference(sessionId);
 
   const orderMessage = fulfillment
     ? fulfillment.created
-      ? `Order ${fulfillment.orderNumber} has been created.`
-      : `Order ${fulfillment.orderNumber} was already created.`
-    : "Your payment was received. Your order will appear in the admin once fulfillment sync finishes.";
+      ? `Order #${fulfillment.orderNumber} has been created.`
+      : `Order #${fulfillment.orderNumber} has been confirmed.`
+    : checkoutReference
+      ? `Your payment was received. Confirmation reference: ${checkoutReference}. Your order number will appear in the admin once fulfillment sync finishes.`
+      : "Your payment was received. Your order will appear in the admin once fulfillment sync finishes.";
 
   if (newsletterSignup) {
     return (
