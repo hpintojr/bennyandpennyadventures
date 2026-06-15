@@ -135,3 +135,76 @@
 .template-create-first-user .logo {
   display: none !important;
 }
+
+/* Payload notifications / toast messages on auth pages should keep the dark admin style. */
+.template-login .notification,
+.template-create-first-user .notification,
+.template-login .toast,
+.template-create-first-user .toast,
+.template-login .Toastify__toast,
+.template-create-first-user .Toastify__toast,
+.template-login [class*='notification'],
+.template-create-first-user [class*='notification'],
+.template-login [class*='Notification'],
+.template-create-first-user [class*='Notification'],
+.template-login [class*='toast']:not([class*='container']),
+.template-create-first-user [class*='toast']:not([class*='container']),
+.template-login [class*='Toast']:not([class*='container']),
+.template-create-first-user [class*='Toast']:not([class*='container']),
+.template-login [role='alert'],
+.template-create-first-user [role='alert'] {
+  background: #043f49 !important;
+  background-color: #043f49 !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  border-radius: 0.55rem !important;
+  box-shadow: 0 18px 42px rgba(4, 63, 73, 0.32) !important;
+  color: #ffffff !important;
+}
+
+.template-login .notification *,
+.template-create-first-user .notification *,
+.template-login .toast *,
+.template-create-first-user .toast *,
+.template-login .Toastify__toast *,
+.template-create-first-user .Toastify__toast *,
+.template-login [class*='notification'] *,
+.template-create-first-user [class*='notification'] *,
+.template-login [class*='Notification'] *,
+.template-create-first-user [class*='Notification'] *,
+.template-login [class*='toast']:not([class*='container']) *,
+.template-create-first-user [class*='toast']:not([class*='container']) *,
+.template-login [class*='Toast']:not([class*='container']) *,
+.template-create-first-user [class*='Toast']:not([class*='container']) *,
+.template-login [role='alert'] *,
+.template-create-first-user [role='alert'] * {
+  color: #ffffff !important;
+  opacity: 1 !important;
+}
+
+.template-login .notification button,
+.template-create-first-user .notification button,
+.template-login .toast button,
+.template-create-first-user .toast button,
+.template-login .Toastify__toast button,
+.template-create-first-user .Toastify__toast button,
+.template-login [class*='notification'] button,
+.template-create-first-user [class*='notification'] button,
+.template-login [class*='Notification'] button,
+.template-create-first-user [class*='Notification'] button,
+.template-login [class*='toast']:not([class*='container']) button,
+.template-create-first-user [class*='toast']:not([class*='container']) button,
+.template-login [class*='Toast']:not([class*='container']) button,
+.template-create-first-user [class*='Toast']:not([class*='container']) button,
+.template-login [role='alert'] button,
+.template-create-first-user [role='alert'] button {
+  background: rgba(255, 255, 255, 0.14) !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  border-radius: 999px !important;
+  box-shadow: none !important;
+  color: #ffffff !important;
+  font-size: 0.9rem !important;
+  font-weight: 900 !important;
+  min-height: 1.45rem !important;
+  min-width: 1.45rem !important;
+  padding: 0 !important;
+}
