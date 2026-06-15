@@ -9,8 +9,8 @@ export const Users: CollectionConfig = {
   auth: true,
   admin: {
     useAsTitle: "email",
-    description: "Manage backend users, customers, roles, support contact details, and customer purchase history.",
-    defaultColumns: ["email", "firstName", "lastName", "role"]
+    description: "Manage backend users, customers, roles, support contact details, addresses, and customer purchase history.",
+    defaultColumns: ["email", "firstName", "lastName", "phone", "role"]
   },
   fields: [
     {
@@ -54,13 +54,23 @@ export const Users: CollectionConfig = {
       }
     },
     {
+      name: "addressHistory",
+      type: "join",
+      collection: "customer-addresses",
+      on: "customer",
+      label: "Mailing / Shipping Addresses",
+      admin: {
+        description: "Billing, mailing, and shipping addresses linked to this customer through Customer Addresses → Customer."
+      }
+    },
+    {
       name: "purchaseHistory",
       type: "join",
       collection: "orders",
       on: "customer",
       label: "Purchase history",
       admin: {
-        description: "Orders linked to this customer through the Orders → Customer relationship. New Stripe purchases should appear here once fulfillment creates the order."
+        description: "Orders linked to this customer through Orders → Customer. This should show order number, purchase summary, totals, and status from the related Order records."
       }
     }
   ]
