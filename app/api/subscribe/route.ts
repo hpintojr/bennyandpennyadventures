@@ -1,4 +1,3 @@
-import config from "@payload-config";
 import { NextResponse } from "next/server";
 import { getPayload } from "payload";
 
@@ -21,6 +20,11 @@ function getRequestIp(request: Request) {
   return request.headers.get("x-real-ip") || "";
 }
 
+async function getPayloadClient() {
+  const { default: config } = await import("@payload-config");
+  return getPayload({ config });
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -40,7 +44,7 @@ export async function POST(request: Request) {
     }
 
     try {
-      const payload = await getPayload({ config });
+      const payload = await getPayloadClient();
       const existing = await payload.find({
         collection: "subscribers",
         where: { email: { equals: email } },
