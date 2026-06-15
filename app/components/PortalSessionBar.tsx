@@ -73,7 +73,7 @@ export default function PortalSessionBar() {
   if (loading) {
     return (
       <div className="wrap pb-2">
-        <div className="rounded-2xl border border-tan bg-white/60 px-4 py-3 text-center text-sm font-bold text-teal shadow-soft">Checking portal session...</div>
+        <div className="rounded-full border border-tan bg-white/65 px-5 py-3 text-center text-sm font-bold text-teal">Checking portal session...</div>
       </div>
     );
   }
@@ -81,11 +81,12 @@ export default function PortalSessionBar() {
   if (!user) {
     return (
       <div className="wrap pb-2">
-        <div className="rounded-2xl border border-tan bg-white/70 px-4 py-4 text-center text-sm shadow-soft">
-          <div className="font-bold text-ink">You are not signed in to the customer portal.</div>
-          <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
-            <Link href="/portal/login" className="rounded-full bg-coral px-4 py-2 font-extrabold text-white hover:bg-[#d95660]">Sign in</Link>
-            <Link href="/books" className="rounded-full border border-tan bg-white px-4 py-2 font-extrabold text-teal hover:text-coral">Shop Books</Link>
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-full border border-tan bg-white/75 px-5 py-3 text-sm">
+          <span className="font-bold text-ink">Not signed in</span>
+          <div className="flex items-center gap-3">
+            <Link href="/portal/login" className="font-extrabold text-coral hover:text-[#d95660]">Sign in</Link>
+            <span className="text-tan">|</span>
+            <Link href="/books" className="font-extrabold text-teal hover:text-coral">Shop Books</Link>
           </div>
         </div>
       </div>
@@ -94,29 +95,28 @@ export default function PortalSessionBar() {
 
   return (
     <div className="wrap pb-2">
-      <div className="rounded-2xl border border-tan bg-white/75 px-4 py-4 shadow-soft">
-        <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
-          <div>
-            <span className="font-bold text-ink">Signed in as <span className="text-teal">{displayName(user)}</span></span>
-            {user.email && <span className="ml-2 text-ink/60">{user.email}</span>}
-          </div>
-          <button type="button" onClick={handleLogout} className="font-extrabold text-coral underline decoration-coral/40 underline-offset-4 hover:text-[#d95660]">Log out</button>
+      <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 rounded-full border border-tan bg-white/75 px-5 py-3 text-sm">
+        <div className="min-w-0 shrink text-ink">
+          <span className="font-bold">Signed in as <span className="text-teal">{displayName(user)}</span></span>
+          {user.email && <span className="ml-2 text-ink/55">{user.email}</span>}
         </div>
 
-        <nav className="mt-4 flex flex-wrap items-center justify-center gap-2 border-t border-tan pt-4">
+        <nav className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
           {portalLinks.map((link) => {
             const active = isActiveLink(pathname, link.href);
             return (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`rounded-full px-4 py-2 text-sm font-extrabold transition ${active ? "bg-coral text-white" : "border border-tan bg-cream text-teal hover:border-coral/50 hover:text-coral"}`}
+                className={`font-extrabold transition ${active ? "text-coral" : "text-teal hover:text-coral"}`}
               >
                 {link.label}
               </Link>
             );
           })}
         </nav>
+
+        <button type="button" onClick={handleLogout} className="font-extrabold text-coral hover:text-[#d95660]">Log out</button>
       </div>
     </div>
   );
