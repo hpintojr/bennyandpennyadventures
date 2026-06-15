@@ -34,8 +34,12 @@ async function getPayloadClient() {
   return getPayload({ config });
 }
 
+function getEmail(value: unknown) {
+  return typeof value === "string" ? value.trim() : "";
+}
+
 function normalizeEmail(value: unknown) {
-  return typeof value === "string" ? value.trim().toLowerCase() : "";
+  return getEmail(value).toLowerCase();
 }
 
 function getRelationId(value: unknown) {
@@ -63,6 +67,16 @@ function getNumber(value: unknown, fallback = 0) {
   return typeof value === "number" && Number.isFinite(value) ? value : fallback;
 }
 
+function emailConditions(rawEmail: string, userEmail: string) {
+  if (!rawEmail) return [];
+  return [
+    { customerEmail: { equals: rawEmail } },
+    { customerEmail: { equals: userEmail } },
+    { customerEmail: { like: rawEmail } },
+    { customerEmail: { like: userEmail } }
+  ];
+}
+
 function formatLabel(value: string) {
   if (value === "digital") return "PDF / EPUB";
   if (value === "audiobook") return "Audiobook";
@@ -87,6 +101,7 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const rawEmail = getEmail(user.email);
   const userEmail = normalizeEmail(user.email);
   const orders = (await payload.find({
     collection: "orders",
@@ -100,11 +115,7 @@ export async function GET() {
             equals: user.id
           }
         },
-        {
-          customerEmail: {
-            equals: userEmail
-          }
-        }
+        ...emailConditions(rawEmail, userEmail)
       ]
     }
   })) as PayloadFindResult;
