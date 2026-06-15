@@ -28,10 +28,15 @@ type FulfillmentLineItem = {
   stripePriceId: string | null;
 };
 
+type StripeShippingDetails = {
+  name?: string | null;
+  address?: Stripe.Address | null;
+} | null;
+
 type CheckoutSessionWithShipping = Stripe.Checkout.Session & {
-  shipping_details?: {
-    name?: string | null;
-    address?: Stripe.Address | null;
+  shipping_details?: StripeShippingDetails;
+  collected_information?: {
+    shipping_details?: StripeShippingDetails;
   } | null;
 };
 
@@ -131,7 +136,8 @@ function buildInternalOrderNote(items: FulfillmentLineItem[]) {
 }
 
 function getShippingDetails(session: Stripe.Checkout.Session) {
-  return (session as CheckoutSessionWithShipping).shipping_details;
+  const checkoutSession = session as CheckoutSessionWithShipping;
+  return checkoutSession.shipping_details || checkoutSession.collected_information?.shipping_details || null;
 }
 
 async function retrieveCheckoutSessionForFulfillment(session: Stripe.Checkout.Session) {
