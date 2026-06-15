@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 
 const buttonBase: React.CSSProperties = {
@@ -37,7 +38,7 @@ export function CustomerProfileActions() {
       </div>
 
       <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
-        <a
+        <Link
           href="/admin/collections/users?where[role][equals]=customer"
           style={{
             ...buttonBase,
@@ -46,8 +47,8 @@ export function CustomerProfileActions() {
           }}
         >
           ← Back to Customers
-        </a>
-        <a
+        </Link>
+        <Link
           href="/admin/collections/users"
           style={{
             ...buttonBase,
@@ -57,7 +58,7 @@ export function CustomerProfileActions() {
           }}
         >
           Back to Users
-        </a>
+        </Link>
       </div>
     </div>
   );
