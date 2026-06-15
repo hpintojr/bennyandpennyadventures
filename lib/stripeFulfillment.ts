@@ -1,5 +1,4 @@
 import crypto from "node:crypto";
-import config from "@payload-config";
 import { getPayload } from "payload";
 import type Stripe from "stripe";
 import { getStripe } from "@/lib/stripe";
@@ -138,6 +137,7 @@ function lineItemToFulfillmentItem(lineItem: Stripe.LineItem): FulfillmentLineIt
 }
 
 async function getPayloadClient(): Promise<PayloadClient> {
+  const { default: config } = await import("@payload-config");
   return (await getPayload({ config })) as unknown as PayloadClient;
 }
 
