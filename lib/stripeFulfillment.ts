@@ -117,6 +117,13 @@ function getShippingDetails(session: Stripe.Checkout.Session) {
   return (session as CheckoutSessionWithShipping).shipping_details;
 }
 
+async function retrieveCheckoutSessionForFulfillment(session: Stripe.Checkout.Session) {
+  const stripe = getStripe();
+  return stripe.checkout.sessions.retrieve(session.id, {
+    expand: ["customer", "payment_intent"]
+  });
+}
+
 function lineItemToFulfillmentItem(lineItem: Stripe.LineItem): FulfillmentLineItem {
   const price = lineItem.price;
   const product = price && typeof price.product === "object" && price.product !== null ? price.product : null;
@@ -340,18 +347,20 @@ export async function fulfillCheckoutSession(session: Stripe.Checkout.Session): 
     };
   }
 
-  const customerEmail = getCustomerEmail(session);
+  const fulfillmentSession = await retrieveCheckoutSessionForFulfillment(session);
+  const customerEmail = getCustomerEmail(fulfillmentSession);
+
   if (!customerEmail) {
     throw new Error(`Stripe session ${session.id} does not include a customer email.`);
   }
 
   const orderNumber = await getNextOrderNumber(payload);
-  const items = await getFulfillmentItems(session.id);
+  const items = await getFulfillmentItems(fulfillmentSession.id);
   const itemCount = getItemCount(items);
   const itemsSummary = getItemsSummary(items);
-  const customer = await findOrCreateCustomer(payload, session);
-  const shipping = getShippingDetails(session);
-  const billingAddress = session.customer_details?.address;
+  const customer = await findOrCreateCustomer(payload, fulfillmentSession);
+  const shipping = getShippingDetails(fulfillmentSession);
+  const billingAddress = fulfillmentSession.customer_details?.address;
   const shippingAddress = shipping?.address;
 
   const order = (await payload.create({
@@ -359,22 +368,22 @@ export async function fulfillCheckoutSession(session: Stripe.Checkout.Session): 
     data: {
       orderNumber,
       customer: customer?.id,
-      customerName: session.customer_details?.name || undefined,
+      customerName: fulfillmentSession.customer_details?.name || undefined,
       customerEmail,
-      customerPhone: session.customer_details?.phone || undefined,
+      customerPhone: fulfillmentSession.customer_details?.phone || undefined,
       status: "paid",
-      stripeCheckoutSessionId: session.id,
-      stripePaymentIntentId: getPaymentIntentId(session),
-      stripeCustomerId: getStripeCustomerId(session),
-      subtotal: centsToDollars(session.amount_subtotal),
-      taxTotal: centsToDollars(session.total_details?.amount_tax),
-      shippingTotal: centsToDollars(session.total_details?.amount_shipping),
-      discountTotal: centsToDollars(session.total_details?.amount_discount),
-      total: centsToDollars(session.amount_total),
-      currency: session.currency || "usd",
+      stripeCheckoutSessionId: fulfillmentSession.id,
+      stripePaymentIntentId: getPaymentIntentId(fulfillmentSession),
+      stripeCustomerId: getStripeCustomerId(fulfillmentSession),
+      subtotal: centsToDollars(fulfillmentSession.amount_subtotal),
+      taxTotal: centsToDollars(fulfillmentSession.total_details?.amount_tax),
+      shippingTotal: centsToDollars(fulfillmentSession.total_details?.amount_shipping),
+      discountTotal: centsToDollars(fulfillmentSession.total_details?.amount_discount),
+      total: centsToDollars(fulfillmentSession.amount_total),
+      currency: fulfillmentSession.currency || "usd",
       itemCount,
       itemsSummary,
-      billingAddressName: session.customer_details?.name || undefined,
+      billingAddressName: fulfillmentSession.customer_details?.name || undefined,
       billingAddressLine1: billingAddress?.line1 || undefined,
       billingAddressLine2: billingAddress?.line2 || undefined,
       billingAddressCity: billingAddress?.city || undefined,
@@ -393,7 +402,7 @@ export async function fulfillCheckoutSession(session: Stripe.Checkout.Session): 
   })) as PayloadDoc;
 
   try {
-    await createCheckoutAddresses(payload, customer, session);
+    await createCheckoutAddresses(payload, customer, fulfillmentSession);
   } catch (error) {
     console.error("Stripe fulfillment address table write failed; order was still created", error);
   }
