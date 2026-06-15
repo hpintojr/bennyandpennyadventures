@@ -332,7 +332,8 @@ async function createCustomerAddress(
       postalCode: address.postal_code,
       country: address.country,
       phone: phone || undefined,
-      isDefaultShipping: addressType === "shipping"
+      isDefaultShipping: addressType === "shipping",
+      lastUsedAt: new Date().toISOString()
     }
   });
 }
@@ -407,6 +408,40 @@ async function createOrderItem(
   });
 }
 
+// Stamps lastUsedAt on the saved addresses the customer chose at checkout.
+// Address ids ride along in the Stripe session metadata; ownership is re-checked here.
+async function stampChosenAddressesLastUsed(payload: PayloadClient, session: Stripe.Checkout.Session, customer: PayloadDoc | null) {
+  if (!customer?.id) return;
+  const metadata = (session.metadata || {}) as Record<string, string | undefined>;
+  const ids = [metadata.shippingAddressId, metadata.billingAddressId].filter(Boolean) as string[];
+  if (!ids.length) return;
+
+  const stampedAt = new Date().toISOString();
+
+  for (const rawId of ids) {
+    try {
+      const owned = (await payload.find({
+        collection: "customer-addresses",
+        limit: 1,
+        where: {
+          and: [{ id: { equals: rawId } }, { customer: { equals: customer.id } }]
+        }
+      })) as PayloadFindResult;
+
+      const address = owned.docs?.[0];
+      if (!address) continue;
+
+      await payload.update({
+        collection: "customer-addresses",
+        id: address.id,
+        data: { lastUsedAt: stampedAt }
+      });
+    } catch (error) {
+      console.error("Stripe fulfillment lastUsedAt stamp failed; order is unaffected", { rawId, error });
+    }
+  }
+}
+
 export async function fulfillCheckoutSession(session: Stripe.Checkout.Session): Promise<FulfillmentSummary> {
   const payload = await getPayloadClient();
   const fulfillmentSession = await retrieveCheckoutSessionForFulfillment(session);
@@ -423,6 +458,8 @@ export async function fulfillCheckoutSession(session: Stripe.Checkout.Session): 
     } catch (error) {
       console.error("Stripe fulfillment address table backfill failed; existing order was still updated", error);
     }
+
+    await stampChosenAddressesLastUsed(payload, fulfillmentSession, existingCustomer);
 
     return {
       orderId: existingOrder.id,
@@ -464,6 +501,8 @@ export async function fulfillCheckoutSession(session: Stripe.Checkout.Session): 
   } catch (error) {
     console.error("Stripe fulfillment address table write failed; order was still created", error);
   }
+
+  await stampChosenAddressesLastUsed(payload, fulfillmentSession, customer);
 
   let orderItemsCreated = 0;
 
