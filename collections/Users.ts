@@ -9,7 +9,7 @@ export const Users: CollectionConfig = {
   auth: true,
   admin: {
     useAsTitle: "email",
-    description: "Manage backend users, customers, roles, support contact details, addresses, subscriber profile, and customer purchase history.",
+    description: "Manage backend users, customers, roles, support contact details, addresses, and customer purchase history.",
     defaultColumns: ["email", "firstName", "lastName", "phone", "role"]
   },
   fields: [
@@ -60,16 +60,6 @@ export const Users: CollectionConfig = {
       label: "SMS marketing opt-in",
       admin: {
         description: "Keep false unless the customer separately gives SMS marketing consent."
-      }
-    },
-    {
-      name: "subscriberProfile",
-      type: "join",
-      collection: "subscribers",
-      on: "linkedCustomer",
-      label: "Subscriber / Marketing Profile",
-      admin: {
-        description: "Subscriber record linked to this customer for email marketing segmentation and customer/non-customer status."
       }
     },
     {
