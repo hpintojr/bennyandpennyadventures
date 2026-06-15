@@ -171,7 +171,7 @@ function getOrderSessionData(session: Stripe.Checkout.Session, customer: Payload
     shippingAddressLine2: shippingAddress?.line2 || undefined,
     shippingAddressCity: shippingAddress?.city || undefined,
     shippingAddressState: shippingAddress?.state || undefined,
-    shippingAddressPostalCode: shippingAddress?.address?.postal_code || shippingAddress?.postal_code || undefined,
+    shippingAddressPostalCode: shippingAddress?.postal_code || undefined,
     shippingAddressCountry: shippingAddress?.country || undefined
   };
 
