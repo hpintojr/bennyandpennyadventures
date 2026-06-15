@@ -62,25 +62,12 @@
 .template-default .collection-list .table tbody td,
 .template-default table tbody td {
   background: transparent !important;
-  color: #043f49 !important;
 }
 
-/* Undo accidental teal blocks on text values such as Status = Paid, while preserving readable text.
-   Do not target the first table cell because Payload uses that for row-select checkboxes. */
-.template-default .collection-list table tbody td:not(:first-child) > span,
-.template-default .collection-list table tbody td:not(:first-child) > a,
-.template-default .collection-list table tbody td:not(:first-child) > div,
-.template-default .collection-list .table tbody td:not(:first-child) > span,
-.template-default .collection-list .table tbody td:not(:first-child) > a,
-.template-default .collection-list .table tbody td:not(:first-child) > div {
-  background: transparent !important;
-  background-color: transparent !important;
-  color: #043f49 !important;
-  opacity: 1 !important;
-}
-
-/* Payload boolean/list values can become too faint against the custom teal striping.
-   Keep this scoped away from checkbox cells and real form controls. */
+/* Text cells only. Do not touch first column because Payload uses it for row-select checkboxes. */
+.template-default .collection-list table tbody td:not(:first-child),
+.template-default .collection-list .table tbody td:not(:first-child),
+.template-default table tbody td:not(:first-child),
 .template-default .collection-list table tbody td:not(:first-child) > span:not([class*='checkbox']):not([class*='Checkbox']),
 .template-default .collection-list table tbody td:not(:first-child) > a,
 .template-default .collection-list table tbody td:not(:first-child) > div:not([class*='checkbox']):not([class*='Checkbox']),
@@ -91,30 +78,54 @@
   opacity: 1 !important;
 }
 
-/* Restore row-selection checkbox visuals after the text contrast fix. */
+.template-default .collection-list table tbody td:not(:first-child) > span,
+.template-default .collection-list table tbody td:not(:first-child) > a,
+.template-default .collection-list table tbody td:not(:first-child) > div,
+.template-default .collection-list .table tbody td:not(:first-child) > span,
+.template-default .collection-list .table tbody td:not(:first-child) > a,
+.template-default .collection-list .table tbody td:not(:first-child) > div {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+/* Restore row-selection checkbox visuals. */
 .template-default .collection-list table tbody td:first-child,
 .template-default .collection-list .table tbody td:first-child,
 .template-default table tbody td:first-child {
-  color: inherit !important;
+  color: unset !important;
 }
 
 .template-default .collection-list table tbody td:first-child *,
 .template-default .collection-list .table tbody td:first-child *,
 .template-default table tbody td:first-child * {
-  background-color: revert !important;
-  color: revert !important;
-  opacity: revert !important;
-}
-
-.template-default input[type='checkbox'],
-.template-default [role='checkbox'],
-.template-default [class*='checkbox'],
-.template-default [class*='Checkbox'] {
-  color: revert !important;
   opacity: 1 !important;
 }
 
-/* Keep real inputs/selects styled, but stop broad [class*='select'] rules from painting table content. */
+.template-default .collection-list table tbody td:first-child input[type='checkbox'],
+.template-default .collection-list .table tbody td:first-child input[type='checkbox'],
+.template-default table tbody td:first-child input[type='checkbox'] {
+  accent-color: #065766 !important;
+  background-color: #ffffff !important;
+  color: initial !important;
+}
+
+.template-default .collection-list table tbody td:first-child [role='checkbox'],
+.template-default .collection-list .table tbody td:first-child [role='checkbox'],
+.template-default table tbody td:first-child [role='checkbox'],
+.template-default .collection-list table tbody td:first-child [class*='checkbox'],
+.template-default .collection-list .table tbody td:first-child [class*='checkbox'],
+.template-default table tbody td:first-child [class*='checkbox'],
+.template-default .collection-list table tbody td:first-child [class*='Checkbox'],
+.template-default .collection-list .table tbody td:first-child [class*='Checkbox'],
+.template-default table tbody td:first-child [class*='Checkbox'] {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  border-color: rgba(6, 87, 102, 0.28) !important;
+  box-shadow: 0 0 0 1px rgba(6, 87, 102, 0.16) !important;
+  color: #065766 !important;
+}
+
+/* Keep real inputs/selects styled, but stop broad rules from painting table content. */
 .template-default .collection-list input:not([type='checkbox']),
 .template-default .collection-list textarea,
 .template-default .collection-list select {
@@ -189,22 +200,13 @@
 }
 
 .bp-boolean-cell {
-  align-items: center !important;
-  border-radius: 999px !important;
-  display: inline-flex !important;
-  font-size: 0.78rem !important;
-  font-weight: 950 !important;
-  justify-content: center !important;
-  min-width: 2.55rem !important;
-  padding: 0.2rem 0.55rem !important;
-}
-
-.bp-boolean-cell--yes {
-  background: #c9f0f5 !important;
+  background: transparent !important;
+  border-radius: 0 !important;
   color: #043f49 !important;
-}
-
-.bp-boolean-cell--no {
-  background: #f1ece5 !important;
-  color: #6f4c1d !important;
+  display: inline !important;
+  font-size: inherit !important;
+  font-weight: inherit !important;
+  line-height: inherit !important;
+  min-width: 0 !important;
+  padding: 0 !important;
 }
