@@ -12,7 +12,7 @@ type CheckoutRequestBody = {
 const shippingCountries: Stripe.Checkout.SessionCreateParams.ShippingAddressCollection.AllowedCountry[] = ["US"];
 
 function automaticTaxEnabled() {
-  return process.env.STRIPE_AUTOMATIC_TAX_ENABLED === "true";
+  return process.env.STRIPE_AUTOMATIC_TAX_ENABLED !== "false";
 }
 
 export async function POST(request: Request) {
