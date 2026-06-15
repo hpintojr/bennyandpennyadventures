@@ -9,7 +9,7 @@ export const Users: CollectionConfig = {
   auth: true,
   admin: {
     useAsTitle: "email",
-    description: "Manage backend users, customers, roles, and optional support contact details.",
+    description: "Manage backend users, customers, roles, support contact details, and customer purchase history.",
     defaultColumns: ["email", "firstName", "lastName", "role"]
   },
   fields: [
@@ -51,6 +51,16 @@ export const Users: CollectionConfig = {
       label: "SMS marketing opt-in",
       admin: {
         description: "Keep false unless the customer separately gives SMS marketing consent."
+      }
+    },
+    {
+      name: "purchaseHistory",
+      type: "join",
+      collection: "orders",
+      on: "customer",
+      label: "Purchase history",
+      admin: {
+        description: "Orders linked to this customer through the Orders → Customer relationship. New Stripe purchases should appear here once fulfillment creates the order."
       }
     }
   ]
