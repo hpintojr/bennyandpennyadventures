@@ -2,11 +2,13 @@
 
 import type { FormEvent } from "react";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 type LoginState = "idle" | "loading" | "success" | "error";
 
 export default function PortalLoginForm() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [state, setState] = useState<LoginState>("idle");
@@ -34,7 +36,12 @@ export default function PortalLoginForm() {
       }
 
       setState("success");
-      setMessage("Signed in successfully. Your customer portal is ready for the next data-connected pass.");
+      setMessage("Signed in successfully. Taking you to your portal...");
+      // Refresh so server components pick up the new auth cookie, then redirect.
+      router.refresh();
+      setTimeout(() => {
+        router.push("/portal");
+      }, 700);
     } catch (error) {
       setState("error");
       setMessage(error instanceof Error ? error.message : "We could not sign you in. Please try again.");
@@ -77,8 +84,8 @@ export default function PortalLoginForm() {
         </p>
       )}
 
-      <button type="submit" disabled={state === "loading"} className="btn mt-6 w-full disabled:cursor-not-allowed disabled:opacity-70">
-        {state === "loading" ? "Signing In..." : "Sign In ♥"}
+      <button type="submit" disabled={state === "loading" || state === "success"} className="btn mt-6 w-full disabled:cursor-not-allowed disabled:opacity-70">
+        {state === "loading" ? "Signing In..." : state === "success" ? "Redirecting..." : "Sign In ♥"}
       </button>
 
       <p className="mt-5 text-center text-sm leading-6 text-ink/80">
