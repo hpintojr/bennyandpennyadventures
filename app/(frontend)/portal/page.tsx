@@ -14,10 +14,10 @@ const portalCards = [
     cta: "View Orders"
   },
   {
-    title: "Purchased Books",
-    text: "Access purchased digital books and audiobook delivery links once fulfillment is connected.",
-    href: "/portal/orders",
-    cta: "View Purchases"
+    title: "My Library",
+    text: "See the books and formats linked to your customer account.",
+    href: "/portal/library",
+    cta: "View Library"
   },
   {
     title: "Addresses",
