@@ -88,41 +88,28 @@
   background-color: transparent !important;
 }
 
-/* Restore row-selection checkbox visuals. */
+/* Do not style Payload row-selection checkboxes. They are button-like UI elements and need native Payload states. */
 .template-default .collection-list table tbody td:first-child,
 .template-default .collection-list .table tbody td:first-child,
 .template-default table tbody td:first-child {
-  color: unset !important;
+  background: transparent !important;
 }
 
-.template-default .collection-list table tbody td:first-child *,
-.template-default .collection-list .table tbody td:first-child *,
-.template-default table tbody td:first-child * {
-  opacity: 1 !important;
-}
-
+.template-default .collection-list table tbody td:first-child button,
+.template-default .collection-list .table tbody td:first-child button,
+.template-default table tbody td:first-child button,
 .template-default .collection-list table tbody td:first-child input[type='checkbox'],
 .template-default .collection-list .table tbody td:first-child input[type='checkbox'],
-.template-default table tbody td:first-child input[type='checkbox'] {
-  accent-color: #065766 !important;
-  background-color: #ffffff !important;
-  color: initial !important;
-}
-
+.template-default table tbody td:first-child input[type='checkbox'],
 .template-default .collection-list table tbody td:first-child [role='checkbox'],
 .template-default .collection-list .table tbody td:first-child [role='checkbox'],
-.template-default table tbody td:first-child [role='checkbox'],
-.template-default .collection-list table tbody td:first-child [class*='checkbox'],
-.template-default .collection-list .table tbody td:first-child [class*='checkbox'],
-.template-default table tbody td:first-child [class*='checkbox'],
-.template-default .collection-list table tbody td:first-child [class*='Checkbox'],
-.template-default .collection-list .table tbody td:first-child [class*='Checkbox'],
-.template-default table tbody td:first-child [class*='Checkbox'] {
-  background: #ffffff !important;
-  background-color: #ffffff !important;
-  border-color: rgba(6, 87, 102, 0.28) !important;
-  box-shadow: 0 0 0 1px rgba(6, 87, 102, 0.16) !important;
-  color: #065766 !important;
+.template-default table tbody td:first-child [role='checkbox'] {
+  background: revert !important;
+  background-color: revert !important;
+  border-color: revert !important;
+  box-shadow: revert !important;
+  color: revert !important;
+  opacity: revert !important;
 }
 
 /* Keep real inputs/selects styled, but stop broad rules from painting table content. */
@@ -187,10 +174,11 @@
   color: #043f49 !important;
 }
 
-/* Collection action controls should also stay in the teal family. */
-.template-default .collection-list button:not(.nav-toggler):not(.template-default__nav-toggler),
-.template-default [class*='ListControls'] button,
-.template-default [class*='list-controls'] button,
+/* Collection action controls should also stay in the teal family.
+   Exclude row-selection checkboxes because Payload renders them as button-like controls. */
+.template-default .collection-list button:not(.nav-toggler):not(.template-default__nav-toggler):not([role='checkbox']):not([aria-checked]):not([class*='checkbox']):not([class*='Checkbox']),
+.template-default [class*='ListControls'] button:not([role='checkbox']):not([aria-checked]):not([class*='checkbox']):not([class*='Checkbox']),
+.template-default [class*='list-controls'] button:not([role='checkbox']):not([aria-checked]):not([class*='checkbox']):not([class*='Checkbox']),
 .template-default button[aria-label*='Columns'],
 .template-default button[aria-label*='Filters'] {
   background: #e2f7fa !important;
