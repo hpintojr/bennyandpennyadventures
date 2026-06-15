@@ -1,5 +1,6 @@
 "use client";
 
+import type { FormEvent } from "react";
 import { useState } from "react";
 import Link from "next/link";
 
@@ -11,7 +12,7 @@ export default function PortalLoginForm() {
   const [state, setState] = useState<LoginState>("idle");
   const [message, setMessage] = useState<string | null>(null);
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setState("loading");
     setMessage(null);
