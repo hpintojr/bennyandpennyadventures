@@ -6,6 +6,7 @@ import { getStripe } from "@/lib/stripe";
 type PayloadClient = {
   find: (args: Record<string, unknown>) => Promise<unknown>;
   create: (args: Record<string, unknown>) => Promise<unknown>;
+  update: (args: Record<string, unknown>) => Promise<unknown>;
 };
 
 type PayloadDoc = {
@@ -63,6 +64,15 @@ function formatFromStripeLabel(value: string | null | undefined): FulfillmentLin
 
 function getString(value: unknown): string | null {
   return typeof value === "string" && value.trim() ? value.trim() : null;
+}
+
+function getRelationId(value: unknown): string | number | null {
+  if (typeof value === "string" || typeof value === "number") return value;
+  if (value && typeof value === "object" && "id" in value) {
+    const id = (value as { id?: unknown }).id;
+    if (typeof id === "string" || typeof id === "number") return id;
+  }
+  return null;
 }
 
 function centsToDollars(value: number | null | undefined) {
@@ -124,6 +134,45 @@ async function retrieveCheckoutSessionForFulfillment(session: Stripe.Checkout.Se
   });
 }
 
+function getOrderSessionData(session: Stripe.Checkout.Session, customer: PayloadDoc | null = null) {
+  const shipping = getShippingDetails(session);
+  const billingAddress = session.customer_details?.address;
+  const shippingAddress = shipping?.address;
+  const data: Record<string, unknown> = {
+    customerName: session.customer_details?.name || undefined,
+    customerEmail: getCustomerEmail(session) || undefined,
+    customerPhone: session.customer_details?.phone || undefined,
+    status: "paid",
+    stripeCheckoutSessionId: session.id,
+    stripePaymentIntentId: getPaymentIntentId(session),
+    stripeCustomerId: getStripeCustomerId(session),
+    subtotal: centsToDollars(session.amount_subtotal),
+    taxTotal: centsToDollars(session.total_details?.amount_tax),
+    shippingTotal: centsToDollars(session.total_details?.amount_shipping),
+    discountTotal: centsToDollars(session.total_details?.amount_discount),
+    total: centsToDollars(session.amount_total),
+    currency: session.currency || "usd",
+    billingAddressName: session.customer_details?.name || undefined,
+    billingAddressLine1: billingAddress?.line1 || undefined,
+    billingAddressLine2: billingAddress?.line2 || undefined,
+    billingAddressCity: billingAddress?.city || undefined,
+    billingAddressState: billingAddress?.state || undefined,
+    billingAddressPostalCode: billingAddress?.postal_code || undefined,
+    billingAddressCountry: billingAddress?.country || undefined,
+    shippingAddressName: shipping?.name || undefined,
+    shippingAddressLine1: shippingAddress?.line1 || undefined,
+    shippingAddressLine2: shippingAddress?.line2 || undefined,
+    shippingAddressCity: shippingAddress?.city || undefined,
+    shippingAddressState: shippingAddress?.state || undefined,
+    shippingAddressPostalCode: shippingAddress?.postal_code || undefined,
+    shippingAddressCountry: shippingAddress?.country || undefined
+  };
+
+  if (customer?.id) data.customer = customer.id;
+
+  return data;
+}
+
 function lineItemToFulfillmentItem(lineItem: Stripe.LineItem): FulfillmentLineItem {
   const price = lineItem.price;
   const product = price && typeof price.product === "object" && price.product !== null ? price.product : null;
@@ -160,6 +209,14 @@ async function findExistingOrder(payload: PayloadClient, sessionId: string): Pro
   })) as PayloadFindResult;
 
   return result.docs?.[0] || null;
+}
+
+async function updateExistingOrderFromSession(payload: PayloadClient, order: PayloadDoc, session: Stripe.Checkout.Session, customer: PayloadDoc | null) {
+  await payload.update({
+    collection: "orders",
+    id: order.id,
+    data: getOrderSessionData(session, customer)
+  });
 }
 
 async function getNextOrderNumber(payload: PayloadClient) {
@@ -334,9 +391,21 @@ async function createOrderItem(
 
 export async function fulfillCheckoutSession(session: Stripe.Checkout.Session): Promise<FulfillmentSummary> {
   const payload = await getPayloadClient();
-  const existingOrder = await findExistingOrder(payload, session.id);
+  const fulfillmentSession = await retrieveCheckoutSessionForFulfillment(session);
+  const existingOrder = await findExistingOrder(payload, fulfillmentSession.id);
 
   if (existingOrder) {
+    const existingCustomerId = getRelationId(existingOrder.customer);
+    const existingCustomer = existingCustomerId ? { id: existingCustomerId, email: existingOrder.customerEmail } : await findOrCreateCustomer(payload, fulfillmentSession);
+
+    await updateExistingOrderFromSession(payload, existingOrder, fulfillmentSession, existingCustomer);
+
+    try {
+      await createCheckoutAddresses(payload, existingCustomer, fulfillmentSession);
+    } catch (error) {
+      console.error("Stripe fulfillment address table backfill failed; existing order was still updated", error);
+    }
+
     return {
       orderId: existingOrder.id,
       orderNumber: getString(existingOrder.orderNumber) || String(existingOrder.id),
@@ -347,7 +416,6 @@ export async function fulfillCheckoutSession(session: Stripe.Checkout.Session): 
     };
   }
 
-  const fulfillmentSession = await retrieveCheckoutSessionForFulfillment(session);
   const customerEmail = getCustomerEmail(fulfillmentSession);
 
   if (!customerEmail) {
@@ -359,44 +427,15 @@ export async function fulfillCheckoutSession(session: Stripe.Checkout.Session): 
   const itemCount = getItemCount(items);
   const itemsSummary = getItemsSummary(items);
   const customer = await findOrCreateCustomer(payload, fulfillmentSession);
-  const shipping = getShippingDetails(fulfillmentSession);
-  const billingAddress = fulfillmentSession.customer_details?.address;
-  const shippingAddress = shipping?.address;
 
   const order = (await payload.create({
     collection: "orders",
     data: {
       orderNumber,
       customer: customer?.id,
-      customerName: fulfillmentSession.customer_details?.name || undefined,
-      customerEmail,
-      customerPhone: fulfillmentSession.customer_details?.phone || undefined,
-      status: "paid",
-      stripeCheckoutSessionId: fulfillmentSession.id,
-      stripePaymentIntentId: getPaymentIntentId(fulfillmentSession),
-      stripeCustomerId: getStripeCustomerId(fulfillmentSession),
-      subtotal: centsToDollars(fulfillmentSession.amount_subtotal),
-      taxTotal: centsToDollars(fulfillmentSession.total_details?.amount_tax),
-      shippingTotal: centsToDollars(fulfillmentSession.total_details?.amount_shipping),
-      discountTotal: centsToDollars(fulfillmentSession.total_details?.amount_discount),
-      total: centsToDollars(fulfillmentSession.amount_total),
-      currency: fulfillmentSession.currency || "usd",
+      ...getOrderSessionData(fulfillmentSession, customer),
       itemCount,
       itemsSummary,
-      billingAddressName: fulfillmentSession.customer_details?.name || undefined,
-      billingAddressLine1: billingAddress?.line1 || undefined,
-      billingAddressLine2: billingAddress?.line2 || undefined,
-      billingAddressCity: billingAddress?.city || undefined,
-      billingAddressState: billingAddress?.state || undefined,
-      billingAddressPostalCode: billingAddress?.postal_code || undefined,
-      billingAddressCountry: billingAddress?.country || undefined,
-      shippingAddressName: shipping?.name || undefined,
-      shippingAddressLine1: shippingAddress?.line1 || undefined,
-      shippingAddressLine2: shippingAddress?.line2 || undefined,
-      shippingAddressCity: shippingAddress?.city || undefined,
-      shippingAddressState: shippingAddress?.state || undefined,
-      shippingAddressPostalCode: shippingAddress?.postal_code || undefined,
-      shippingAddressCountry: shippingAddress?.country || undefined,
       notes: buildInternalOrderNote(items)
     }
   })) as PayloadDoc;
