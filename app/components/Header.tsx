@@ -11,7 +11,8 @@ const links = [
   { label: "Our Characters", href: "/#family" },
   { label: "Books", href: "/books" },
   { label: "For Parents", href: "/for-parents" },
-  { label: "Contact", href: "/contact" }
+  { label: "Contact", href: "/contact" },
+  { label: "My Account", href: "/portal" }
 ];
 
 function CartIcon() {
@@ -48,7 +49,7 @@ export default function Header() {
           <p className="mt-2 text-center text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#6b5d4f] sm:text-[11px]">Medical Books for Brave Little Hearts</p>
         </Link>
 
-        <nav className="hidden items-center gap-5 text-sm font-bold text-[#102f35] lg:flex xl:gap-7">
+        <nav className="hidden items-center gap-4 text-sm font-bold text-[#102f35] lg:flex xl:gap-6">
           {links.map((link) => (
             <Link key={link.label} href={link.href} className={isActive(link.href) ? "text-coral" : "transition hover:text-coral"}>
               {link.label}
