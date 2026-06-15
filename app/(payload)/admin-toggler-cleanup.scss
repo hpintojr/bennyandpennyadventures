@@ -193,58 +193,16 @@
   --theme-success-700: #043f49;
 }
 
-/* Orders/collection pages: force actual top gap below hidden breadcrumbs. */
-.template-default .collection-list,
-.template-default [class*='collection-list'],
-.template-default [class*='CollectionList'],
-.template-default [class*='list-header'],
-.template-default [class*='ListHeader'] {
-  margin-top: 1.9rem !important;
-}
+/* Legacy collection page spacing and striping are corrected by the later admin-orders-cleanup.scss file. */
 
-.template-default main:not(:has(.bp-dashboard)) h1,
-.template-default main:not(:has(.bp-dashboard)) .doc-header,
-.template-default main:not(:has(.bp-dashboard)) [class*='doc-header'],
-.template-default main:not(:has(.bp-dashboard)) [class*='DocHeader'] {
-  margin-top: 1.9rem !important;
-}
-
-/* Keep the controls close to the title after pushing the page down. */
-.template-default .collection-list__wrap,
-.template-default [class*='collection-list__wrap'],
-.template-default [class*='ListControls'] {
-  margin-top: 0 !important;
-}
-
-/* Make Payload table striping more teal and less green across collection pages. */
-.template-default table tr:nth-child(even),
-.template-default .table tbody tr:nth-child(even),
-.template-default .collection-list table tbody tr:nth-child(even),
-.template-default .collection-list .table tbody tr:nth-child(even) {
-  background: #e2f7fa !important;
-}
-
-.template-default table tr:nth-child(even) td,
-.template-default .table tbody tr:nth-child(even) td,
-.template-default .collection-list table tbody tr:nth-child(even) td,
-.template-default .collection-list .table tbody tr:nth-child(even) td {
-  background: #e2f7fa !important;
-}
-
-/* Teal all collection-page controls, especially Per Page dropdown. */
+/* Teal real collection-page controls only. Avoid broad [class*='select'] selectors because row checkboxes use select-row classes. */
 .template-default select,
-.template-default .select,
-.template-default [class*='select'],
-.template-default [class*='Select'],
-.template-default .list-controls button,
-.template-default [class*='list-controls'] button,
-.template-default [class*='ListControls'] button,
-.template-default button[aria-label*='Columns'],
-.template-default button[aria-label*='Filters'],
-.template-default button[aria-label*='Per Page'],
 .template-default select[name='limit'],
 .template-default select[aria-label*='Per Page'],
-.template-default select[aria-label*='per page'] {
+.template-default select[aria-label*='per page'],
+.template-default button[aria-label*='Columns'],
+.template-default button[aria-label*='Filters'],
+.template-default button[aria-label*='Per Page'] {
   background-color: #e2f7fa !important;
   background-image: none !important;
   border-color: rgba(6, 87, 102, 0.26) !important;
@@ -253,14 +211,12 @@
 }
 
 .template-default select:hover,
-.template-default .select:hover,
-.template-default [class*='select']:hover,
-.template-default [class*='Select']:hover,
-.template-default .list-controls button:hover,
-.template-default [class*='list-controls'] button:hover,
-.template-default [class*='ListControls'] button:hover,
+.template-default select[name='limit']:hover,
+.template-default select[aria-label*='Per Page']:hover,
+.template-default select[aria-label*='per page']:hover,
 .template-default button[aria-label*='Columns']:hover,
-.template-default button[aria-label*='Filters']:hover {
+.template-default button[aria-label*='Filters']:hover,
+.template-default button[aria-label*='Per Page']:hover {
   background-color: #c9f0f5 !important;
   border-color: rgba(6, 87, 102, 0.34) !important;
   color: #043f49 !important;
