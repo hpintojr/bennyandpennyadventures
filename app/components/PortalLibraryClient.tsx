@@ -38,6 +38,18 @@ function badgeClass(format: string) {
   return "bg-teal/10 text-teal";
 }
 
+function isDigitalAccess(format: string) {
+  return format === "digital" || format === "audiobook";
+}
+
+function accessButtonLabel(format: string) {
+  if (format === "digital") return "PDF / EPUB Access Coming Soon";
+  if (format === "audiobook") return "Audiobook Access Coming Soon";
+  if (format === "paperback") return "Paperback Order Recorded";
+  if (format === "hardcover") return "Hardcover Order Recorded";
+  return "Purchased";
+}
+
 export default function PortalLibraryClient() {
   const [books, setBooks] = useState<LibraryBook[]>([]);
   const [loading, setLoading] = useState(true);
@@ -110,6 +122,15 @@ export default function PortalLibraryClient() {
                   <span className="text-sm font-bold text-teal">Qty {format.quantity}</span>
                 </div>
                 <p className="mt-3 text-sm leading-6 text-ink">{format.status}</p>
+                <div className="mt-4">
+                  <button
+                    type="button"
+                    disabled
+                    className={`w-full rounded-full px-5 py-3 text-sm font-extrabold transition ${isDigitalAccess(format.format) ? "bg-coral/20 text-coral" : "bg-teal/10 text-teal"}`}
+                  >
+                    {accessButtonLabel(format.format)}
+                  </button>
+                </div>
                 <p className="mt-2 text-xs leading-5 text-ink/65">Orders: {format.orderNumbers.join(", ")}</p>
               </div>
             ))}
