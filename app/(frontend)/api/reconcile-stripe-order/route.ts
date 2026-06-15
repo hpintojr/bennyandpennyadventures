@@ -12,6 +12,20 @@ function isAuthorized(request: Request) {
   return provided === expected;
 }
 
+function getErrorMessage(error: unknown) {
+  if (error instanceof Error) return error.message;
+  if (typeof error === "string") return error;
+  return "Unknown reconciliation error.";
+}
+
+function getPayloadErrors(error: unknown) {
+  if (!error || typeof error !== "object") return undefined;
+  const data = (error as { data?: unknown }).data;
+  if (!data || typeof data !== "object") return undefined;
+  const errors = (data as { errors?: unknown }).errors;
+  return Array.isArray(errors) ? errors : undefined;
+}
+
 export async function GET(request: Request) {
   if (!isAuthorized(request)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -29,6 +43,13 @@ export async function GET(request: Request) {
     return NextResponse.json({ ok: true, summary });
   } catch (error) {
     console.error("Manual Stripe order reconciliation failed", error);
-    return NextResponse.json({ error: "Manual Stripe order reconciliation failed." }, { status: 500 });
+    return NextResponse.json(
+      {
+        error: "Manual Stripe order reconciliation failed.",
+        detail: getErrorMessage(error),
+        payloadErrors: getPayloadErrors(error)
+      },
+      { status: 500 }
+    );
   }
 }
