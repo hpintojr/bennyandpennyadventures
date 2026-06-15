@@ -5,6 +5,8 @@ import SiteShell from "../../../components/SiteShell";
 import ImageSlot from "../../../components/ImageSlot";
 import ProductActions from "../../../components/ProductActions";
 import { getPayloadBookBySlug } from "@/lib/payloadBooks";
+import JsonLd from "../../../components/JsonLd";
+import { bookSchema, breadcrumbSchema } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +28,16 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   return (
     <SiteShell>
+      <JsonLd
+        data={[
+          bookSchema(book),
+          breadcrumbSchema([
+            { name: "Home", path: "/" },
+            { name: "Books", path: "/books" },
+            { name: book.title, path: `/books/${slug}` }
+          ])
+        ]}
+      />
       <div className="page-wrap pb-16 pt-3">
         <div className="mb-4 text-sm font-semibold text-[#6b7d80]"><Link href="/">Home</Link> / <Link href="/books">Books</Link> / {book.title}</div>
         <section className="grid gap-10 md:grid-cols-2">

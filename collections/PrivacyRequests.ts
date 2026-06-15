@@ -1,7 +1,9 @@
 import type { CollectionConfig } from "payload";
+import { adminOnly } from "@/lib/access";
 
 export const PrivacyRequests: CollectionConfig = {
   slug: "privacy-requests",
+  access: adminOnly,
   labels: {
     singular: "Privacy Request",
     plural: "Privacy Requests"

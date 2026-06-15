@@ -1,7 +1,9 @@
 import type { CollectionConfig } from "payload";
+import { adminOnly } from "@/lib/access";
 
 export const OrderItems: CollectionConfig = {
   slug: "order-items",
+  access: adminOnly,
   labels: {
     singular: "Order Detail",
     plural: "Order Details"

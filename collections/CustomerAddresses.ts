@@ -1,7 +1,14 @@
 import type { CollectionConfig } from "payload";
+import { isAdmin, isAdminOrSelf } from "@/lib/access";
 
 export const CustomerAddresses: CollectionConfig = {
   slug: "customer-addresses",
+  access: {
+    read: isAdminOrSelf("customer"),
+    create: isAdmin,
+    update: isAdmin,
+    delete: isAdmin
+  },
   labels: {
     singular: "Customer Address",
     plural: "Customer Addresses"

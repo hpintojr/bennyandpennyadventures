@@ -1,7 +1,14 @@
 import type { CollectionConfig } from "payload";
+import { isAdmin, isAdminOrSelf } from "@/lib/access";
 
 export const Orders: CollectionConfig = {
   slug: "orders",
+  access: {
+    read: isAdminOrSelf("customer"),
+    create: isAdmin,
+    update: isAdmin,
+    delete: isAdmin
+  },
   labels: {
     singular: "Order",
     plural: "Orders"

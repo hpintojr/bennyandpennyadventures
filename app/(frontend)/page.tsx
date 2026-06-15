@@ -3,6 +3,8 @@ import SiteShell from "../components/SiteShell";
 import ImageSlot from "../components/ImageSlot";
 import NewsletterForm from "../components/NewsletterForm";
 import SocialLinks from "../components/SocialLinks";
+import JsonLd from "../components/JsonLd";
+import { organizationSchema, websiteSchema } from "@/lib/seo";
 
 const familyMembers = [
   { name: "Michelle", role: "Nurse. Mom. Writer.", image: "/images/michelle.png" },
@@ -35,6 +37,7 @@ function HeroContent({ className = "" }: { className?: string }) {
 export default function HomePage() {
   return (
     <SiteShell>
+      <JsonLd data={[organizationSchema(), websiteSchema()]} />
       <section className="wrap pb-10 pt-2">
         <div className="lg:hidden">
           <HeroContent />

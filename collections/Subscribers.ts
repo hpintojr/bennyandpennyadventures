@@ -1,9 +1,11 @@
 import type { CollectionConfig } from "payload";
+import { adminOnly } from "@/lib/access";
 
 const yesNoCell = "/app/(payload)/components/BooleanYesNoCell.tsx#BooleanYesNoCell";
 
 export const Subscribers: CollectionConfig = {
   slug: "subscribers",
+  access: adminOnly,
   labels: { singular: "Subscriber", plural: "Subscribers" },
   admin: {
     useAsTitle: "email",

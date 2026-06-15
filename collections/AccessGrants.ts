@@ -1,7 +1,9 @@
 import type { CollectionConfig } from "payload";
+import { adminOnly } from "@/lib/access";
 
 export const AccessGrants: CollectionConfig = {
   slug: "access-grants",
+  access: adminOnly,
   admin: {
     hidden: true,
     useAsTitle: "reason",

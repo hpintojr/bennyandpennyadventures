@@ -1,7 +1,15 @@
 import type { CollectionConfig } from "payload";
+import { isAdmin, isAdminOrSelf, isAdminPanel, isAdminFieldLevel } from "@/lib/access";
 
 export const Users: CollectionConfig = {
   slug: "users",
+  access: {
+    read: isAdminOrSelf("id"),
+    create: isAdmin,
+    update: isAdminOrSelf("id"),
+    delete: isAdmin,
+    admin: isAdminPanel
+  },
   labels: {
     singular: "User",
     plural: "Users"
@@ -34,6 +42,7 @@ export const Users: CollectionConfig = {
     },
     {
       name: "role",
+      access: { update: isAdminFieldLevel, create: isAdminFieldLevel },
       type: "select",
       required: true,
       defaultValue: "customer",
@@ -60,6 +69,16 @@ export const Users: CollectionConfig = {
       label: "SMS marketing opt-in",
       admin: {
         description: "Keep false unless the customer separately gives SMS marketing consent."
+      }
+    },
+    {
+      name: "passwordSetByCustomer",
+      type: "checkbox",
+      defaultValue: false,
+      label: "Password set by customer",
+      access: { update: isAdminFieldLevel },
+      admin: {
+        description: "True once the customer has set their own portal password from the order confirmation page."
       }
     },
     {

@@ -1,7 +1,14 @@
 import type { CollectionConfig } from "payload";
+import { anyone, isAdmin } from "@/lib/access";
 
 export const Books: CollectionConfig = {
   slug: "books",
+  access: {
+    read: anyone,
+    create: isAdmin,
+    update: isAdmin,
+    delete: isAdmin
+  },
   labels: {
     singular: "Product",
     plural: "Product Catalog"

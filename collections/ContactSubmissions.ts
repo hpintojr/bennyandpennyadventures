@@ -1,7 +1,9 @@
 import type { CollectionConfig } from "payload";
+import { adminOnly } from "@/lib/access";
 
 export const ContactSubmissions: CollectionConfig = {
   slug: "contact-submissions",
+  access: adminOnly,
   admin: {
     hidden: true,
     useAsTitle: "name",

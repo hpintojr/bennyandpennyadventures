@@ -1,7 +1,9 @@
 import type { CollectionConfig } from "payload";
+import { adminOnly } from "@/lib/access";
 
 export const SupportMessages: CollectionConfig = {
   slug: "support-messages",
+  access: adminOnly,
   admin: {
     hidden: true,
     useAsTitle: "messagePreview",

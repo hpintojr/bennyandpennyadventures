@@ -10,6 +10,11 @@ function isAuthorized(request: Request) {
 }
 
 export async function GET(request: Request) {
+  // Setup/debug endpoints are disabled in production. Set ALLOW_SETUP_ROUTES=true to re-enable temporarily.
+  if (process.env.NODE_ENV === "production" && process.env.ALLOW_SETUP_ROUTES !== "true") {
+    return new Response("Not found", { status: 404 });
+  }
+
   if (!isAuthorized(request)) {
     return Response.json({ ok: false, message: "Unauthorized debug request." }, { status: 401 });
   }
