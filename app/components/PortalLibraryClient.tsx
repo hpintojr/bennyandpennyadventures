@@ -3,7 +3,15 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
-type LibraryFormat = { format: string; label: string; quantity: number; orderNumbers: string[]; status: string };
+type LibraryFormat = {
+  format: string;
+  label: string;
+  quantity: number;
+  orderNumbers: string[];
+  status: string;
+  downloadId?: string | number | null;
+  downloadable?: boolean;
+};
 type LibraryBook = { title: string; bookId?: string | number | null; latestPurchaseAt?: string; formats?: LibraryFormat[] };
 type PortalLibraryResponse = { books?: LibraryBook[]; error?: string };
 
@@ -20,7 +28,7 @@ function isDigital(format: string) {
   return format === "digital" || format === "audiobook";
 }
 
-function buttonLabel(format: string) {
+function fallbackButtonLabel(format: string) {
   if (format === "digital") return "Digital file pending";
   if (format === "audiobook") return "Audio file pending";
   if (format === "paperback") return "Paperback recorded";
@@ -32,6 +40,63 @@ function summary(book: LibraryBook) {
   const formats = book.formats || [];
   if (!formats.length) return "No formats listed";
   return formats.map((format) => `${format.label} x${format.quantity}`).join(" · ");
+}
+
+function FormatCard({ format }: { format: LibraryFormat }) {
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const canDownload = Boolean(format.downloadable && format.downloadId);
+
+  async function handleDownload() {
+    if (!format.downloadId) return;
+    setBusy(true);
+    setError(null);
+    try {
+      const response = await fetch(`/api/portal/downloads?download_id=${encodeURIComponent(String(format.downloadId))}`, {
+        credentials: "include"
+      });
+      const data = (await response.json()) as { url?: string; error?: string };
+      if (!response.ok || !data.url) throw new Error(data.error || "Could not prepare your download.");
+      window.location.href = data.url;
+    } catch (downloadError) {
+      setError(downloadError instanceof Error ? downloadError.message : "Could not prepare your download.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="rounded-2xl border border-tan bg-cream/60 p-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <span className={`rounded-full px-3 py-1 text-xs font-extrabold uppercase tracking-[0.1em] ${badgeClass(format.format)}`}>{format.label}</span>
+        <span className="text-sm font-bold text-teal">Qty {format.quantity}</span>
+      </div>
+      <p className="mt-3 text-sm leading-6 text-ink">{format.status}</p>
+
+      {canDownload ? (
+        <button
+          type="button"
+          onClick={handleDownload}
+          disabled={busy}
+          className="mt-4 w-full rounded-full bg-coral px-5 py-3 text-sm font-extrabold text-white transition hover:bg-coral/90 disabled:cursor-not-allowed disabled:opacity-70"
+        >
+          {busy ? "Preparing…" : isDigital(format.format) ? "Download" : "View"}
+        </button>
+      ) : (
+        <button
+          type="button"
+          disabled
+          className={`mt-4 w-full rounded-full px-5 py-3 text-sm font-extrabold transition ${isDigital(format.format) ? "bg-coral/20 text-coral" : "bg-teal/10 text-teal"}`}
+        >
+          {fallbackButtonLabel(format.format)}
+        </button>
+      )}
+
+      {error && <p className="mt-2 text-xs font-bold text-coral">{error}</p>}
+      <p className="mt-2 text-xs leading-5 text-ink/65">Orders: {format.orderNumbers.join(", ")}</p>
+    </div>
+  );
 }
 
 export default function PortalLibraryClient() {
@@ -54,7 +119,9 @@ export default function PortalLibraryClient() {
       }
     }
     loadLibrary();
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, []);
 
   if (loading) return <p className="mx-auto mt-8 max-w-3xl rounded-[2rem] border border-tan bg-white/70 p-6 text-center font-bold text-teal shadow-soft">Loading your library...</p>;
@@ -98,15 +165,7 @@ export default function PortalLibraryClient() {
 
           <div className="grid gap-3 border-t border-tan px-5 pb-5 pt-4 md:grid-cols-2">
             {(book.formats || []).map((format) => (
-              <div key={format.format} className="rounded-2xl border border-tan bg-cream/60 p-4">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <span className={`rounded-full px-3 py-1 text-xs font-extrabold uppercase tracking-[0.1em] ${badgeClass(format.format)}`}>{format.label}</span>
-                  <span className="text-sm font-bold text-teal">Qty {format.quantity}</span>
-                </div>
-                <p className="mt-3 text-sm leading-6 text-ink">{format.status}</p>
-                <button type="button" disabled className={`mt-4 w-full rounded-full px-5 py-3 text-sm font-extrabold transition ${isDigital(format.format) ? "bg-coral/20 text-coral" : "bg-teal/10 text-teal"}`}>{buttonLabel(format.format)}</button>
-                <p className="mt-2 text-xs leading-5 text-ink/65">Orders: {format.orderNumbers.join(", ")}</p>
-              </div>
+              <FormatCard key={format.format} format={format} />
             ))}
           </div>
         </details>

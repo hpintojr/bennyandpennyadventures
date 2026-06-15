@@ -19,6 +19,8 @@ type LibraryFormat = {
   quantity: number;
   orderNumbers: string[];
   status: string;
+  downloadId?: string | number | null;
+  downloadable?: boolean;
 };
 
 type LibraryBook = {
@@ -177,12 +179,61 @@ export async function GET() {
     }
   }
 
+  // Attach private R2 download records to digital/audiobook formats.
+  const downloadRecords = (await payload.find({
+    collection: "downloads",
+    depth: 1,
+    limit: 200,
+    where: { customer: { equals: user.id } }
+  })) as PayloadFindResult;
+
+  const downloadsByBook = new Map<string, PayloadDoc[]>();
+  for (const dl of downloadRecords.docs || []) {
+    const dlBookId = getRelationId(dl.book);
+    const k = `${dlBookId ?? ""}`;
+    if (!downloadsByBook.has(k)) downloadsByBook.set(k, []);
+    downloadsByBook.get(k)!.push(dl);
+  }
+
+  function pickDownload(bookKey: string, libFormat: string): PayloadDoc | null {
+    const list = downloadsByBook.get(bookKey) || [];
+    const wanted = libFormat === "digital" ? ["pdf", "epub"] : libFormat === "audiobook" ? ["audiobook"] : [];
+    for (const fmt of wanted) {
+      const match = list.find((d) => getString(d.format) === fmt);
+      if (match) return match;
+    }
+    return null;
+  }
+
+  function downloadState(dl: PayloadDoc): { downloadable: boolean; status: string; id: string | number | null } {
+    if (dl.isActive === false) return { downloadable: false, status: "Access paused", id: dl.id };
+    const exp = getString(dl.accessExpiresAt);
+    if (exp && new Date(exp).getTime() < Date.now()) return { downloadable: false, status: "Access expired", id: dl.id };
+    const max = typeof dl.maxDownloads === "number" ? dl.maxDownloads : null;
+    const used = getNumber(dl.downloadsUsed, 0);
+    if (max !== null && used >= max) return { downloadable: false, status: "Download limit reached", id: dl.id };
+    const remaining = max !== null ? Math.max(0, max - used) : null;
+    return {
+      downloadable: true,
+      status: remaining !== null ? `Ready to download — ${remaining} left` : "Ready to download",
+      id: dl.id
+    };
+  }
+
   const books = Array.from(library.values()).map((book) => ({
     title: book.title,
     bookId: book.bookId,
     latestPurchaseAt: book.latestPurchaseAt,
     orderNumbers: Array.from(book.orderNumbers),
-    formats: Array.from(book.formats.values())
+    formats: Array.from(book.formats.values()).map((f): LibraryFormat => {
+      if (f.format !== "digital" && f.format !== "audiobook") {
+        return { ...f, downloadId: null, downloadable: false };
+      }
+      const dl = pickDownload(`${book.bookId ?? ""}`, f.format);
+      if (!dl) return { ...f, downloadId: null, downloadable: false, status: "Digital file pending" };
+      const st = downloadState(dl);
+      return { ...f, downloadId: st.id, downloadable: st.downloadable, status: st.status };
+    })
   }));
 
   return NextResponse.json({

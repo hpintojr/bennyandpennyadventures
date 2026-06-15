@@ -408,6 +408,79 @@ async function createOrderItem(
   });
 }
 
+// --- Digital delivery: optionally auto-create R2 download records on purchase ---
+// Gated by R2_AUTO_CREATE_DOWNLOADS=true so it stays off until files + a key
+// convention exist. Keys follow `${R2_KEY_PREFIX|books}/<slug>/<format>.<ext>`.
+function autoCreateDownloadsEnabled() {
+  return process.env.R2_AUTO_CREATE_DOWNLOADS === "true";
+}
+
+function downloadDefsForItem(item: FulfillmentLineItem): { format: "pdf" | "audiobook"; ext: string }[] {
+  if (item.format === "digital") return [{ format: "pdf", ext: "pdf" }];
+  if (item.format === "audiobook") return [{ format: "audiobook", ext: "mp3" }];
+  return [];
+}
+
+async function findExistingDownload(
+  payload: PayloadClient,
+  customerId: string | number,
+  bookId: string | number,
+  format: string
+): Promise<PayloadDoc | null> {
+  const result = (await payload.find({
+    collection: "downloads",
+    limit: 1,
+    where: {
+      and: [{ customer: { equals: customerId } }, { book: { equals: bookId } }, { format: { equals: format } }]
+    }
+  })) as PayloadFindResult;
+  return result.docs?.[0] || null;
+}
+
+async function createDownloadsForOrder(
+  payload: PayloadClient,
+  customer: PayloadDoc | null,
+  order: PayloadDoc,
+  items: FulfillmentLineItem[]
+): Promise<number> {
+  if (!autoCreateDownloadsEnabled() || !customer?.id) return 0;
+
+  const prefix = (process.env.R2_KEY_PREFIX || "books").replace(/\/+$/g, "");
+  const maxDownloads = Number(process.env.R2_MAX_DOWNLOADS) > 0 ? Number(process.env.R2_MAX_DOWNLOADS) : 5;
+  let created = 0;
+
+  for (const item of items) {
+    if (!item.slug) continue;
+    const book = await findBookBySlug(payload, item.slug);
+    if (!book?.id) continue;
+
+    for (const def of downloadDefsForItem(item)) {
+      try {
+        const existing = await findExistingDownload(payload, customer.id, book.id, def.format);
+        if (existing) continue;
+        await payload.create({
+          collection: "downloads",
+          data: {
+            customer: customer.id,
+            order: order.id,
+            book: book.id,
+            fileLabel: `${getString(book.title) || item.title} — ${def.format.toUpperCase()}`,
+            format: def.format,
+            r2ObjectKey: `${prefix}/${item.slug}/${def.format}.${def.ext}`,
+            maxDownloads,
+            downloadsUsed: 0,
+            isActive: true
+          }
+        });
+        created += 1;
+      } catch (error) {
+        console.error("Auto-create download record failed; order is unaffected", { slug: item.slug, format: def.format, error });
+      }
+    }
+  }
+  return created;
+}
+
 // Stamps lastUsedAt on the saved addresses the customer chose at checkout.
 // Address ids ride along in the Stripe session metadata; ownership is re-checked here.
 async function stampChosenAddressesLastUsed(payload: PayloadClient, session: Stripe.Checkout.Session, customer: PayloadDoc | null) {
@@ -461,12 +534,20 @@ export async function fulfillCheckoutSession(session: Stripe.Checkout.Session): 
 
     await stampChosenAddressesLastUsed(payload, fulfillmentSession, existingCustomer);
 
+    let existingDownloadsCreated = 0;
+    try {
+      const existingItems = await getFulfillmentItems(fulfillmentSession.id);
+      existingDownloadsCreated = await createDownloadsForOrder(payload, existingCustomer, existingOrder, existingItems);
+    } catch (error) {
+      console.error("Auto-create downloads (existing order) failed; order is unaffected", error);
+    }
+
     return {
       orderId: existingOrder.id,
       orderNumber: getString(existingOrder.orderNumber) || String(existingOrder.id),
       created: false,
       orderItemsCreated: 0,
-      downloadsCreated: 0,
+      downloadsCreated: existingDownloadsCreated,
       accessGrantsCreated: 0
     };
   }
@@ -516,12 +597,19 @@ export async function fulfillCheckoutSession(session: Stripe.Checkout.Session): 
     }
   }
 
+  let downloadsCreated = 0;
+  try {
+    downloadsCreated = await createDownloadsForOrder(payload, customer, order, items);
+  } catch (error) {
+    console.error("Auto-create downloads (new order) failed; order was still created", error);
+  }
+
   return {
     orderId: order.id,
     orderNumber,
     created: true,
     orderItemsCreated,
-    downloadsCreated: 0,
+    downloadsCreated,
     accessGrantsCreated: 0
   };
 }
