@@ -14,6 +14,15 @@ export const Users: CollectionConfig = {
   },
   fields: [
     {
+      name: "customerProfileActions",
+      type: "ui",
+      admin: {
+        components: {
+          Field: "/app/(payload)/components/CustomerProfileActions.tsx#CustomerProfileActions"
+        }
+      }
+    },
+    {
       name: "firstName",
       type: "text",
       label: "First name"
