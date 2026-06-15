@@ -1,5 +1,4 @@
 import crypto from "node:crypto";
-import config from "@payload-config";
 import { getPayload } from "payload";
 import type Stripe from "stripe";
 import { getStripe } from "@/lib/stripe";
@@ -46,6 +45,13 @@ export type FulfillmentSummary = {
   accessGrantsCreated: number;
 };
 
+const formatLabels: Record<FulfillmentLineItem["format"], string> = {
+  digital: "PDF / EPUB",
+  audiobook: "Audiobook",
+  paperback: "Paperback",
+  hardcover: "Hardcover"
+};
+
 function formatFromStripeLabel(value: string | null | undefined): FulfillmentLineItem["format"] {
   const normalized = (value || "").trim().toLowerCase();
 
@@ -69,6 +75,12 @@ function getPaymentIntentId(session: Stripe.Checkout.Session): string | null {
   return session.payment_intent.id;
 }
 
+function getStripeCustomerId(session: Stripe.Checkout.Session): string | null {
+  if (!session.customer) return null;
+  if (typeof session.customer === "string") return session.customer;
+  return session.customer.id;
+}
+
 function getCustomerEmail(session: Stripe.Checkout.Session): string | null {
   return session.customer_details?.email || session.customer_email || null;
 }
@@ -84,8 +96,21 @@ function splitName(fullName: string | null | undefined) {
   return { firstName: parts.slice(0, -1).join(" "), lastName: parts.at(-1) };
 }
 
-function buildInternalOrderNote() {
-  return "Stripe Checkout fulfilled. Customer identity, addresses, and purchased items are stored in structured related collections.";
+function getItemCount(items: FulfillmentLineItem[]) {
+  return items.reduce((count, item) => count + item.quantity, 0);
+}
+
+function getItemsSummary(items: FulfillmentLineItem[]) {
+  return items
+    .map((item) => `${item.title} — ${formatLabels[item.format]} × ${item.quantity}`)
+    .join("\n");
+}
+
+function buildInternalOrderNote(items: FulfillmentLineItem[]) {
+  const summary = getItemsSummary(items);
+  return summary
+    ? `Stripe Checkout fulfilled. Purchased items are also stored as Order Details.\n\n${summary}`
+    : "Stripe Checkout fulfilled. Purchased items are stored as Order Details.";
 }
 
 function getShippingDetails(session: Stripe.Checkout.Session) {
@@ -112,6 +137,7 @@ function lineItemToFulfillmentItem(lineItem: Stripe.LineItem): FulfillmentLineIt
 }
 
 async function getPayloadClient(): Promise<PayloadClient> {
+  const { default: config } = await import("@payload-config");
   return (await getPayload({ config })) as unknown as PayloadClient;
 }
 
@@ -321,19 +347,48 @@ export async function fulfillCheckoutSession(session: Stripe.Checkout.Session): 
 
   const orderNumber = await getNextOrderNumber(payload);
   const items = await getFulfillmentItems(session.id);
+  const itemCount = getItemCount(items);
+  const itemsSummary = getItemsSummary(items);
   const customer = await findOrCreateCustomer(payload, session);
+  const shipping = getShippingDetails(session);
+  const billingAddress = session.customer_details?.address;
+  const shippingAddress = shipping?.address;
+
   const order = (await payload.create({
     collection: "orders",
     data: {
       orderNumber,
       customer: customer?.id,
+      customerName: session.customer_details?.name || undefined,
       customerEmail,
+      customerPhone: session.customer_details?.phone || undefined,
       status: "paid",
       stripeCheckoutSessionId: session.id,
       stripePaymentIntentId: getPaymentIntentId(session),
+      stripeCustomerId: getStripeCustomerId(session),
+      subtotal: centsToDollars(session.amount_subtotal),
+      taxTotal: centsToDollars(session.total_details?.amount_tax),
+      shippingTotal: centsToDollars(session.total_details?.amount_shipping),
+      discountTotal: centsToDollars(session.total_details?.amount_discount),
       total: centsToDollars(session.amount_total),
       currency: session.currency || "usd",
-      notes: buildInternalOrderNote()
+      itemCount,
+      itemsSummary,
+      billingAddressName: session.customer_details?.name || undefined,
+      billingAddressLine1: billingAddress?.line1 || undefined,
+      billingAddressLine2: billingAddress?.line2 || undefined,
+      billingAddressCity: billingAddress?.city || undefined,
+      billingAddressState: billingAddress?.state || undefined,
+      billingAddressPostalCode: billingAddress?.postal_code || undefined,
+      billingAddressCountry: billingAddress?.country || undefined,
+      shippingAddressName: shipping?.name || undefined,
+      shippingAddressLine1: shippingAddress?.line1 || undefined,
+      shippingAddressLine2: shippingAddress?.line2 || undefined,
+      shippingAddressCity: shippingAddress?.city || undefined,
+      shippingAddressState: shippingAddress?.state || undefined,
+      shippingAddressPostalCode: shippingAddress?.postal_code || undefined,
+      shippingAddressCountry: shippingAddress?.country || undefined,
+      notes: buildInternalOrderNote(items)
     }
   })) as PayloadDoc;
 
