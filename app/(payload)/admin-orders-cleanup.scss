@@ -198,15 +198,14 @@
   padding: 0 !important;
 }
 
-/* Restore dark Payload toast / notification styling. */
-.template-default [class*='toast']:not([class*='container']),
-.template-default [class*='Toast']:not([class*='container']),
-.template-login [class*='toast']:not([class*='container']),
-.template-login [class*='Toast']:not([class*='container']),
-.template-default [class*='notification']:not([class*='container']),
-.template-default [class*='Notification']:not([class*='container']),
-.template-login [class*='notification']:not([class*='container']),
-.template-login [class*='Notification']:not([class*='container']) {
+/* Restore dark Payload toast / notification styling. Payload renders these in a portal, so do not scope to templates. */
+.notification,
+[class*='notification']:not([class*='container']),
+[class*='Notification']:not([class*='container']),
+.toast:not([class*='container']),
+[class*='toast']:not([class*='container']),
+[class*='Toast']:not([class*='container']),
+[role='alert'] {
   background: #043f49 !important;
   background-color: #043f49 !important;
   border: 1px solid rgba(255, 255, 255, 0.18) !important;
@@ -214,26 +213,24 @@
   color: #ffffff !important;
 }
 
-.template-default [class*='toast']:not([class*='container']) *,
-.template-default [class*='Toast']:not([class*='container']) *,
-.template-login [class*='toast']:not([class*='container']) *,
-.template-login [class*='Toast']:not([class*='container']) *,
-.template-default [class*='notification']:not([class*='container']) *,
-.template-default [class*='Notification']:not([class*='container']) *,
-.template-login [class*='notification']:not([class*='container']) *,
-.template-login [class*='Notification']:not([class*='container']) * {
+.notification *,
+[class*='notification']:not([class*='container']) *,
+[class*='Notification']:not([class*='container']) *,
+.toast:not([class*='container']) *,
+[class*='toast']:not([class*='container']) *,
+[class*='Toast']:not([class*='container']) *,
+[role='alert'] * {
   color: #ffffff !important;
   opacity: 1 !important;
 }
 
-.template-default [class*='toast']:not([class*='container']) button,
-.template-default [class*='Toast']:not([class*='container']) button,
-.template-login [class*='toast']:not([class*='container']) button,
-.template-login [class*='Toast']:not([class*='container']) button,
-.template-default [class*='notification']:not([class*='container']) button,
-.template-default [class*='Notification']:not([class*='container']) button,
-.template-login [class*='notification']:not([class*='container']) button,
-.template-login [class*='Notification']:not([class*='container']) button {
+.notification button,
+[class*='notification']:not([class*='container']) button,
+[class*='Notification']:not([class*='container']) button,
+.toast:not([class*='container']) button,
+[class*='toast']:not([class*='container']) button,
+[class*='Toast']:not([class*='container']) button,
+[role='alert'] button {
   background: rgba(255, 255, 255, 0.12) !important;
   border-color: rgba(255, 255, 255, 0.22) !important;
   color: #ffffff !important;
