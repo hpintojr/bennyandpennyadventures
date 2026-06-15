@@ -1,38 +1,15 @@
-import config from "@payload-config";
 import { ShoppingCart, Ticket } from "lucide-react";
-import { getPayload } from "payload";
 import React from "react";
 import { AdminSidebarNavLink } from "./AdminSidebarNavLink";
+import { OrderProfileActions } from "./OrderProfileActions";
 import "./AdminSidebarCompliance.scss";
 
 const customersFilterHref = "/admin/collections/users?where%5Brole%5D%5Bequals%5D=customer";
 
-async function getPendingOrderCount() {
-  try {
-    const payload = await getPayload({ config });
-    const result = await payload.find({
-      collection: "orders",
-      depth: 0,
-      limit: 1,
-      where: {
-        status: {
-          equals: "pending"
-        }
-      }
-    } as never);
-
-    return typeof result.totalDocs === "number" ? result.totalDocs : 0;
-  } catch (error) {
-    console.error("Unable to load pending order count for admin sidebar", error);
-    return 0;
-  }
-}
-
 export async function AdminBeforeNavLinks() {
-  const pendingOrders = await getPendingOrderCount();
-
   return (
     <div className="bp-admin-nav-extra bp-admin-nav-extra--top">
+      <OrderProfileActions />
       <div className="bp-admin-sidebar-brand" aria-label="Benny and Penny admin panel">
         <div className="bp-admin-sidebar-brand__heart" aria-hidden="true">♥</div>
         <div className="bp-admin-sidebar-brand__title">Benny &amp; Penny&apos;s</div>
@@ -45,7 +22,7 @@ export async function AdminBeforeNavLinks() {
 
       <div className="bp-admin-nav-extra__section">
         <div className="bp-admin-nav-extra__heading">Sales</div>
-        <AdminSidebarNavLink activeKey="orders" badge={pendingOrders} href="/admin/collections/orders" iconName="package" label="Orders" />
+        <AdminSidebarNavLink activeKey="orders" href="/admin/collections/orders" iconName="package" label="Orders" />
         <AdminSidebarNavLink activeKey="customers" href={customersFilterHref} iconName="users" label="Customers" />
         <span className="bp-admin-nav-extra__link bp-admin-nav-extra__link--disabled" title="Coming soon">
           <ShoppingCart className="bp-admin-nav-extra__iconSvg" size={18} strokeWidth={2.5} aria-hidden="true" />
