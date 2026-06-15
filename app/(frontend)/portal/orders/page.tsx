@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import SiteShell from "../../../components/SiteShell";
+import PortalSessionBar from "../../../components/PortalSessionBar";
 import PortalOrdersClient from "../../../components/PortalOrdersClient";
 
 export const metadata: Metadata = {
@@ -9,7 +10,7 @@ export const metadata: Metadata = {
 export default function PortalOrdersPage() {
   return (
     <SiteShell>
-      <section className="wrap pb-20 pt-10">
+      <section className="wrap pb-8 pt-10">
         <div className="mx-auto max-w-4xl text-center">
           <p className="font-serif text-2xl italic text-coral">My Orders ♥</p>
           <h1 className="mt-2 font-serif text-[42px] font-bold leading-tight text-teal sm:text-6xl">Order History</h1>
@@ -17,7 +18,11 @@ export default function PortalOrdersPage() {
             View your Benny &amp; Penny orders, purchased formats, totals, and shipping details.
           </p>
         </div>
+      </section>
 
+      <PortalSessionBar />
+
+      <section className="wrap pb-20">
         <PortalOrdersClient />
       </section>
     </SiteShell>
