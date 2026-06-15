@@ -62,9 +62,10 @@
 .template-default .collection-list .table tbody td,
 .template-default table tbody td {
   background: transparent !important;
+  color: #043f49 !important;
 }
 
-/* Undo accidental teal blocks on text values such as Status = Paid. */
+/* Undo accidental teal blocks on text values such as Status = Paid, while preserving readable text. */
 .template-default .collection-list table tbody td > span,
 .template-default .collection-list table tbody td > a,
 .template-default .collection-list table tbody td > div,
@@ -73,6 +74,15 @@
 .template-default .collection-list .table tbody td > div {
   background: transparent !important;
   background-color: transparent !important;
+  color: #043f49 !important;
+}
+
+/* Payload boolean/list values can become too faint against the custom teal striping. */
+.template-default .collection-list table tbody td *:not(svg):not(path),
+.template-default .collection-list .table tbody td *:not(svg):not(path),
+.template-default table tbody td *:not(svg):not(path) {
+  color: #043f49 !important;
+  opacity: 1 !important;
 }
 
 /* Keep real inputs/selects styled, but stop broad [class*='select'] rules from painting table content. */
