@@ -1,0 +1,101 @@
+/* Final mobile dashboard row overrides.
+   Loaded last from the Payload admin layout so table-like data rows do not collapse into stacked cards. */
+
+@media (max-width: 900px) {
+  .template-default .bp-dashboard__cardHeader {
+    align-items: flex-start !important;
+    flex-direction: row !important;
+    gap: 0.75rem !important;
+    justify-content: space-between !important;
+  }
+
+  .template-default .bp-dashboard__cardHeader > div {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+
+  .template-default .bp-dashboard__cardHeader h2,
+  .template-default .bp-dashboard__cardHeader p {
+    max-width: none !important;
+    width: 100% !important;
+  }
+
+  .template-default .bp-dashboard__systemItem {
+    align-items: center !important;
+    display: grid !important;
+    gap: 0.5rem !important;
+    grid-template-columns: 2.35rem minmax(0, 1fr) auto !important;
+    min-height: 3.2rem !important;
+  }
+
+  .template-default .bp-dashboard__systemItem > div {
+    min-width: 0 !important;
+  }
+
+  .template-default .bp-dashboard__systemItem em {
+    grid-column: auto !important;
+    justify-self: end !important;
+    margin-top: 0 !important;
+  }
+
+  .template-default .bp-dashboard__orderRow {
+    align-items: center !important;
+    display: grid !important;
+    gap: 0.45rem !important;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.95fr) auto auto !important;
+    min-height: 3.25rem !important;
+  }
+
+  .template-default .bp-dashboard__orderRow > span,
+  .template-default .bp-dashboard__subscriberRow > span {
+    min-width: 0 !important;
+  }
+
+  .template-default .bp-dashboard__orderRow > span:nth-child(2) {
+    font-size: 0.66rem !important;
+    white-space: nowrap !important;
+  }
+
+  .template-default .bp-dashboard__orderRow > em {
+    font-size: 0.62rem !important;
+    justify-self: center !important;
+    padding: 0.22rem 0.42rem !important;
+    white-space: nowrap !important;
+  }
+
+  .template-default .bp-dashboard__orderRow > strong:last-child {
+    font-size: 0.76rem !important;
+    justify-self: end !important;
+    text-align: right !important;
+    white-space: nowrap !important;
+  }
+
+  .template-default .bp-dashboard__subscriberRow {
+    align-items: center !important;
+    display: grid !important;
+    gap: 0.45rem !important;
+    grid-template-columns: minmax(0, 1fr) auto auto !important;
+    min-height: 3.25rem !important;
+  }
+
+  .template-default .bp-dashboard__subscriberRow em,
+  .template-default .bp-dashboard__subscriberRow > small {
+    font-size: 0.66rem !important;
+    white-space: nowrap !important;
+  }
+}
+
+@media (max-width: 420px) {
+  .template-default .bp-dashboard__orderRow {
+    gap: 0.35rem !important;
+    grid-template-columns: minmax(0, 1.05fr) minmax(4.8rem, 0.8fr) auto auto !important;
+    padding-left: 0.55rem !important;
+    padding-right: 0.55rem !important;
+  }
+
+  .template-default .bp-dashboard__subscriberRow {
+    gap: 0.35rem !important;
+    padding-left: 0.55rem !important;
+    padding-right: 0.55rem !important;
+  }
+}
