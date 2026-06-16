@@ -437,6 +437,41 @@ async function findExistingDownload(
   return result.docs?.[0] || null;
 }
 
+// Total licenses (summed quantity) this customer has bought of a given format for a book,
+// across ALL their orders. Drives how many downloads the access record grants.
+async function totalLicensedQuantity(
+  payload: PayloadClient,
+  customerId: string | number,
+  bookId: string | number,
+  orderItemFormat: string
+): Promise<number> {
+  const orders = (await payload.find({
+    collection: "orders",
+    depth: 0,
+    limit: 500,
+    where: { customer: { equals: customerId } }
+  })) as PayloadFindResult;
+
+  const orderIds = (orders.docs || []).map((o) => o.id);
+  if (!orderIds.length) return 0;
+
+  const lineItems = (await payload.find({
+    collection: "order-items",
+    depth: 0,
+    limit: 1000,
+    where: {
+      and: [{ order: { in: orderIds } }, { book: { equals: bookId } }, { format: { equals: orderItemFormat } }]
+    }
+  })) as PayloadFindResult;
+
+  let total = 0;
+  for (const li of lineItems.docs || []) {
+    const q = typeof li.quantity === "number" && li.quantity > 0 ? li.quantity : 1;
+    total += q;
+  }
+  return total;
+}
+
 async function createDownloadsForOrder(
   payload: PayloadClient,
   customer: PayloadDoc | null,
@@ -446,7 +481,12 @@ async function createDownloadsForOrder(
   if (!autoCreateDownloadsEnabled() || !customer?.id) return 0;
 
   const prefix = (process.env.R2_KEY_PREFIX || "books").replace(/\/+$/g, "");
-  const maxDownloads = Number(process.env.R2_MAX_DOWNLOADS) > 0 ? Number(process.env.R2_MAX_DOWNLOADS) : 5;
+  const perLicense =
+    Number(process.env.R2_DOWNLOADS_PER_LICENSE) > 0
+      ? Number(process.env.R2_DOWNLOADS_PER_LICENSE)
+      : Number(process.env.R2_MAX_DOWNLOADS) > 0
+        ? Number(process.env.R2_MAX_DOWNLOADS)
+        : 5;
   let created = 0;
 
   for (const item of items) {
@@ -454,10 +494,20 @@ async function createDownloadsForOrder(
     const book = await findBookBySlug(payload, item.slug);
     if (!book?.id) continue;
 
+    const licenses = Math.max(1, await totalLicensedQuantity(payload, customer.id, book.id, item.format));
+    const grantedMax = perLicense * licenses;
+
     for (const def of downloadDefsForItem(item)) {
       try {
         const existing = await findExistingDownload(payload, customer.id, book.id, def.format);
-        if (existing) continue;
+        if (existing) {
+          const existingMax = typeof existing.maxDownloads === "number" ? existing.maxDownloads : 0;
+          const newMax = Math.max(grantedMax, existingMax);
+          if (newMax !== existingMax) {
+            await payload.update({ collection: "downloads", id: existing.id, data: { maxDownloads: newMax } });
+          }
+          continue;
+        }
         await payload.create({
           collection: "downloads",
           data: {
@@ -467,7 +517,7 @@ async function createDownloadsForOrder(
             fileLabel: `${getString(book.title) || item.title} — ${def.format.toUpperCase()}`,
             format: def.format,
             r2ObjectKey: `${prefix}/${item.slug}/${def.format}.${def.ext}`,
-            maxDownloads,
+            maxDownloads: grantedMax,
             downloadsUsed: 0,
             isActive: true
           }
