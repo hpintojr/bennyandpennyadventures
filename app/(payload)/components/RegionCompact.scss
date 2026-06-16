@@ -84,11 +84,11 @@
 
 .bp-dashboard__serviceIcon img {
   display: block !important;
-  height: 100% !important;
-  max-height: 100% !important;
-  max-width: 100% !important;
+  height: auto !important;
+  max-height: 1.65rem !important;
+  max-width: 1.65rem !important;
   object-fit: contain !important;
-  width: 100% !important;
+  width: auto !important;
 }
 
 @media (max-width: 760px) {
@@ -108,5 +108,9 @@
     max-height: 2.35rem !important;
     max-width: 2.35rem !important;
     width: 2.35rem !important;
+  }
+  .bp-dashboard__serviceIcon img {
+    max-height: 1.55rem !important;
+    max-width: 1.55rem !important;
   }
 }
