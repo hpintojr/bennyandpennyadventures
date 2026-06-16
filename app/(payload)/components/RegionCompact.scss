@@ -71,7 +71,6 @@
   align-items: center !important;
   background: #ecf1f1 !important;
   border-radius: 10px !important;
-  color: #0f6170 !important;
   display: inline-flex !important;
   flex: 0 0 2.5rem !important;
   height: 2.5rem !important;
@@ -79,14 +78,17 @@
   max-height: 2.5rem !important;
   max-width: 2.5rem !important;
   overflow: hidden !important;
-  padding: 0 !important;
+  padding: 0.42rem !important;
   width: 2.5rem !important;
 }
 
-.bp-dashboard__serviceIcon svg {
+.bp-dashboard__serviceIcon img {
   display: block !important;
-  height: 1.1rem !important;
-  width: 1.1rem !important;
+  height: auto !important;
+  max-height: 1.65rem !important;
+  max-width: 1.65rem !important;
+  object-fit: contain !important;
+  width: auto !important;
 }
 
 @media (max-width: 760px) {
@@ -106,5 +108,9 @@
     max-height: 2.35rem !important;
     max-width: 2.35rem !important;
     width: 2.35rem !important;
+  }
+  .bp-dashboard__serviceIcon img {
+    max-height: 1.55rem !important;
+    max-width: 1.55rem !important;
   }
 }
