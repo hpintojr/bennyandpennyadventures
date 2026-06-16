@@ -19,20 +19,17 @@
   .template-default .bp-dashboard {
     background: #fbfffc !important;
     min-height: 100dvh !important;
-    padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px)) !important;
+    padding-bottom: env(safe-area-inset-bottom, 0px) !important;
   }
 
   .template-default::after {
-    background: #fbfffc !important;
-    bottom: 0 !important;
-    content: '' !important;
+    content: none !important;
+    display: none !important;
+  }
+
+  .template-default .bp-dashboard__welcomeName {
     display: block !important;
-    height: calc(4rem + env(safe-area-inset-bottom, 0px)) !important;
-    left: 0 !important;
-    pointer-events: none !important;
-    position: fixed !important;
-    right: 0 !important;
-    z-index: 0 !important;
+    white-space: nowrap !important;
   }
 
   .template-default .bp-dashboard__intro p {
@@ -133,6 +130,16 @@
 
   .template-default .nav > button,
   .template-default aside > button,
+  .template-default button[class*='close'],
+  .template-default button[class*='Close'],
+  .template-default button[class*='toggle'],
+  .template-default button[class*='Toggle'],
+  .template-default button[class*='menu'],
+  .template-default button[class*='Menu'],
+  .template-default [class*='close'] button,
+  .template-default [class*='Close'] button,
+  .template-default [class*='toggle'] button,
+  .template-default [class*='Toggle'] button,
   .template-default .nav button[aria-label*='Collapse'],
   .template-default .nav button[aria-label*='collapse'],
   .template-default .nav button[aria-label*='Open'],
@@ -181,6 +188,16 @@
 
   .template-default .nav > button::before,
   .template-default aside > button::before,
+  .template-default button[class*='close']::before,
+  .template-default button[class*='Close']::before,
+  .template-default button[class*='toggle']::before,
+  .template-default button[class*='Toggle']::before,
+  .template-default button[class*='menu']::before,
+  .template-default button[class*='Menu']::before,
+  .template-default [class*='close'] button::before,
+  .template-default [class*='Close'] button::before,
+  .template-default [class*='toggle'] button::before,
+  .template-default [class*='Toggle'] button::before,
   .template-default .nav button[aria-label*='Collapse']::before,
   .template-default .nav button[aria-label*='collapse']::before,
   .template-default .nav button[aria-label*='Open']::before,
@@ -212,6 +229,16 @@
 
   .template-default .nav > button > *,
   .template-default aside > button > *,
+  .template-default button[class*='close'] > *,
+  .template-default button[class*='Close'] > *,
+  .template-default button[class*='toggle'] > *,
+  .template-default button[class*='Toggle'] > *,
+  .template-default button[class*='menu'] > *,
+  .template-default button[class*='Menu'] > *,
+  .template-default [class*='close'] button > *,
+  .template-default [class*='Close'] button > *,
+  .template-default [class*='toggle'] button > *,
+  .template-default [class*='Toggle'] button > *,
   .template-default .nav button[aria-label*='Collapse'] > *,
   .template-default .nav button[aria-label*='collapse'] > *,
   .template-default .nav button[aria-label*='Open'] > *,
