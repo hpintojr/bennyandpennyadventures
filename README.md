@@ -2,7 +2,7 @@
 
 Production website and customer portal for **Benny & Penny's Adventures**, a children's medical book series and digital-product business.
 
-The site is built with **Next.js App Router**, **Payload CMS**, **Neon Postgres**, **Stripe Checkout**, **Cloudflare R2 signed digital delivery**, and **Sequenzy transactional email**.
+The site is built with **Next.js App Router**, **Payload CMS**, **Neon Postgres**, **Stripe Checkout**, **Cloudflare R2 signed digital delivery**, and transactional email support.
 
 ## Current status
 
@@ -21,7 +21,7 @@ This repo is no longer a starter site. It now includes the public marketing site
 - Account/password routes: `/forgot-password` and `/account/set-password`.
 - Gift redemption flow.
 - Cloudflare R2 signed-link digital delivery support.
-- Sequenzy transactional email support.
+- Sequenzy transactional email support, with Mailjet intended as backup or secondary provider.
 - Privacy, Terms, Messaging Terms, California Notice, State Rights, and Privacy Requests pages.
 - Sitemap, robots, JSON-LD, `llms.txt`, OG image, favicon, and baseline security headers.
 
@@ -30,6 +30,7 @@ This repo is no longer a starter site. It now includes the public marketing site
 - Live verification of Payload access-control lockdown.
 - Bot/spam protection on public forms, preferably honeypot + Cloudflare Turnstile + rate limiting.
 - Sequenzy environment verification and email delivery testing.
+- Mailjet fallback/secondary-provider design and delivery testing.
 - Full end-to-end tests for register/setup link, forgot password, order receipt, gift email, gift redemption, and returning-customer flows.
 - Customer support portal workflow.
 - POD/Lulu print fulfillment automation.
@@ -48,6 +49,7 @@ This repo is no longer a starter site. It now includes the public marketing site
 - Stripe Checkout and webhooks
 - Cloudflare R2 via S3-compatible SDK
 - Sequenzy transactional email
+- Mailjet planned as backup or secondary email provider
 - Vercel hosting
 - Cloudflare DNS
 
@@ -93,12 +95,31 @@ Configuration groups include:
 - Stripe checkout and webhook settings.
 - Cloudflare R2 storage settings.
 - Sequenzy email sender/API settings.
+- Mailjet email sender/API settings if used as backup or secondary provider.
 
-Email sending is designed to fail soft. If Sequenzy is not configured, email helper calls return a non-fatal result instead of breaking checkout, password reset, gift, or account flows.
+Email sending is designed to fail soft. If the primary email provider is not configured, email helper calls should return a non-fatal result instead of breaking checkout, password reset, gift, or account flows.
 
-## Sequenzy automation status
+## Email provider strategy
 
-The email layer lives in:
+Current implementation uses Sequenzy for transactional direct-content email sends.
+
+Preferred long-term structure:
+
+- **Transactional/system emails:** account setup, forgot-password, order receipts, gift delivery, gift redeemed, digital delivery, support replies, dunning, and security/account notices.
+- **Marketing/promotional emails:** newsletter campaigns, product launches, nurture sequences, review requests, win-back, partner/influencer offers, and broader promotional campaigns.
+
+Recommended architecture:
+
+1. Keep a single internal email interface in app code, such as `sendEmail()` plus purpose-specific helpers.
+2. Route transactional/system messages through the primary transactional provider.
+3. Keep Mailjet available as either:
+   - a backup provider if the primary provider fails or is unavailable, or
+   - a dedicated marketing/promotional provider if segmentation, templates, campaigns, or compliance workflows are cleaner there.
+4. Do not mix provider-specific API logic throughout the app. Keep provider logic isolated in email service modules.
+5. Log email purpose, provider, result, and failure reason where practical so delivery problems can be audited later.
+6. Keep unsubscribe and consent behavior separate for marketing emails; system/transactional emails should not depend on marketing opt-in when they are required for purchases, account access, or security.
+
+Current email helper file:
 
 ```txt
 lib/email.ts
@@ -112,6 +133,17 @@ Current supported email/helper functions:
 - `sendGiftRedeemedEmail()` — notifies the gifter that a gift was claimed.
 - `upsertSubscriber()` — creates/updates a Sequenzy subscriber for lead tracking.
 - `sendPasswordLinkEmail()` — sends setup/reset password links.
+
+Future cleanup recommendation:
+
+```txt
+lib/email/index.ts              # app-facing email interface
+lib/email/providers/sequenzy.ts # Sequenzy provider implementation
+lib/email/providers/mailjet.ts  # Mailjet provider implementation
+lib/email/templates/*           # reusable message builders/templates
+```
+
+## Password and account email flow
 
 Password token logic lives in:
 
