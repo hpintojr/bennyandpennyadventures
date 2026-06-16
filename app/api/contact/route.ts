@@ -21,7 +21,8 @@ function isMissingTableError(error: unknown) {
 function isContactSchemaError(error: unknown) {
   const message = error instanceof Error ? error.message : String(error);
   return isMissingTableError(error) || message.includes("column") || message.includes("42703");
-}\n
+}
+
 function escapeHtml(value: string) {
   return value
     .replaceAll("&", "&amp;")
