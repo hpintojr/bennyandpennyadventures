@@ -97,7 +97,71 @@
     visibility: hidden !important;
   }
 
-  /* When Payload exposes a close state, keep the heart dark for contrast on the pale blue sidebar. */
+  /* The open sidebar close button is a direct button in the nav/aside, not always the nav-toggler class. */
+  .template-default .nav > button,
+  .template-default aside > button {
+    align-items: center !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    box-shadow: none !important;
+    color: transparent !important;
+    display: inline-flex !important;
+    font-size: 0 !important;
+    height: 2.85rem !important;
+    justify-content: center !important;
+    left: 0.9rem !important;
+    line-height: 1 !important;
+    min-height: 2.85rem !important;
+    min-width: 2.85rem !important;
+    opacity: 1 !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    position: absolute !important;
+    text-indent: 0 !important;
+    top: calc(env(safe-area-inset-top, 0px) + 0.95rem) !important;
+    transform: none !important;
+    visibility: visible !important;
+    width: 2.85rem !important;
+    z-index: 7000 !important;
+  }
+
+  .template-default .nav > button::before,
+  .template-default aside > button::before {
+    align-items: center !important;
+    color: #043f49 !important;
+    content: '♥' !important;
+    display: flex !important;
+    font-size: 1.35rem !important;
+    font-weight: 950 !important;
+    height: 100% !important;
+    justify-content: center !important;
+    left: 0 !important;
+    line-height: 1 !important;
+    position: absolute !important;
+    text-indent: 0 !important;
+    top: 0 !important;
+    transform: translateY(-1px) !important;
+    width: 100% !important;
+  }
+
+  .template-default .nav > button > *,
+  .template-default aside > button > *,
+  .template-default .nav > button svg,
+  .template-default aside > button svg,
+  .template-default .nav > button .hamburger,
+  .template-default aside > button .hamburger,
+  .template-default .nav > button .hamburger__close-icon,
+  .template-default aside > button .hamburger__close-icon,
+  .template-default .nav > button .hamburger__open-icon,
+  .template-default aside > button .hamburger__open-icon {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+  }
+
+  /* If the nav toggler itself exposes a close state, keep the heart dark for contrast on the pale blue sidebar. */
   .template-default .nav-toggler[aria-label*='Close'],
   .template-default .nav-toggler[aria-label*='close'],
   .template-default .template-default__nav-toggler[aria-label*='Close'],
