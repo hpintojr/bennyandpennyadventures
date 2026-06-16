@@ -21,6 +21,7 @@ const portalLinks = [
   { label: "Portal Home", href: "/portal" },
   { label: "My Orders", href: "/portal/orders" },
   { label: "My Library", href: "/portal/library" },
+  { label: "Gifts", href: "/portal/gifts" },
   { label: "Addresses", href: "/portal/addresses" }
 ];
 

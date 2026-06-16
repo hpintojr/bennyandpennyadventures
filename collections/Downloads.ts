@@ -36,6 +36,7 @@ export const Downloads: CollectionConfig = {
     { name: "r2ObjectKey", type: "text", required: true },
     { name: "maxDownloads", type: "number", required: true, defaultValue: 3 },
     { name: "downloadsUsed", type: "number", required: true, defaultValue: 0 },
+    { name: "giftsIssued", type: "number", required: true, defaultValue: 0, admin: { description: "Download slots spent on gifts. Personal downloads remaining = maxDownloads − downloadsUsed − giftsIssued." } },
     { name: "accessExpiresAt", type: "date" },
     { name: "lastDownloadedAt", type: "date" },
     { name: "isActive", type: "checkbox", defaultValue: true },

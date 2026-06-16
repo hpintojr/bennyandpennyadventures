@@ -59,30 +59,39 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "No email is associated with this order yet." }, { status: 404 });
   }
 
-  const payload = await getPayloadClient();
-  const found = (await payload.find({
-    collection: "users",
-    limit: 1,
-    where: { email: { equals: email } }
-  })) as PayloadFindResult;
+  try {
+    const payload = await getPayloadClient();
+    const found = (await payload.find({
+      collection: "users",
+      limit: 1,
+      where: { email: { equals: email } }
+    })) as PayloadFindResult;
 
-  const user = found.docs?.[0];
-  if (!user) {
-    return NextResponse.json({ error: "Your account is still being created. Please try again in a moment." }, { status: 404 });
-  }
+    const user = found.docs?.[0];
+    if (!user) {
+      return NextResponse.json({ error: "Your account is still being created. Please try again in a moment." }, { status: 404 });
+    }
 
-  if (user.passwordSetByCustomer === true) {
+    if (user.passwordSetByCustomer === true) {
+      return NextResponse.json(
+        { error: "This account already has a password. Please sign in instead.", alreadySet: true },
+        { status: 409 }
+      );
+    }
+
+    await payload.update({
+      collection: "users",
+      id: user.id,
+      data: { password, passwordSetByCustomer: true },
+      overrideAccess: true
+    });
+
+    return NextResponse.json({ ok: true, email });
+  } catch (error) {
+    console.error("Set-password failed", error);
     return NextResponse.json(
-      { error: "This account already has a password. Please sign in instead.", alreadySet: true },
-      { status: 409 }
+      { error: "We could not set your password right now. Please try again, or sign in if you already have an account." },
+      { status: 500 }
     );
   }
-
-  await payload.update({
-    collection: "users",
-    id: user.id,
-    data: { password, passwordSetByCustomer: true }
-  });
-
-  return NextResponse.json({ ok: true, email });
 }

@@ -33,7 +33,8 @@ export default function SetPasswordCard({ sessionId }: { sessionId: string }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ sessionId, password })
       });
-      const data = (await response.json()) as { ok?: boolean; error?: string; alreadySet?: boolean };
+      const raw = await response.text();
+      const data = (raw ? JSON.parse(raw) : {}) as { ok?: boolean; error?: string; alreadySet?: boolean };
 
       if (response.ok && data.ok) {
         setState("done");

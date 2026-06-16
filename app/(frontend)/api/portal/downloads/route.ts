@@ -82,7 +82,9 @@ export async function GET(request: Request) {
 
   const maxDownloads = typeof download.maxDownloads === "number" ? download.maxDownloads : null;
   const downloadsUsed = typeof download.downloadsUsed === "number" ? download.downloadsUsed : 0;
-  if (maxDownloads !== null && downloadsUsed >= maxDownloads) {
+  const giftsIssued = typeof download.giftsIssued === "number" ? download.giftsIssued : 0;
+  // Gifts consume slots from the same pool, so personal downloads stop at maxDownloads − giftsIssued.
+  if (maxDownloads !== null && downloadsUsed + giftsIssued >= maxDownloads) {
     return NextResponse.json({ error: "You have reached the download limit for this item." }, { status: 403 });
   }
 
@@ -116,7 +118,7 @@ export async function GET(request: Request) {
       url: signedUrl,
       filename: downloadFilename,
       expiresInSeconds,
-      downloadsRemaining: maxDownloads !== null ? Math.max(0, maxDownloads - (downloadsUsed + 1)) : null
+      downloadsRemaining: maxDownloads !== null ? Math.max(0, maxDownloads - giftsIssued - (downloadsUsed + 1)) : null
     });
   } catch (error) {
     console.error("R2 signed download URL generation failed", error);

@@ -72,6 +72,18 @@ export const Users: CollectionConfig = {
       }
     },
     {
+      name: "acquiredVia",
+      type: "select",
+      defaultValue: "organic",
+      admin: { description: "How this user was acquired (gift recipients are catalogued leads)." },
+      options: [
+        { label: "Organic", value: "organic" },
+        { label: "Purchase", value: "purchase" },
+        { label: "Gift", value: "gift" },
+        { label: "Admin", value: "admin" }
+      ]
+    },
+    {
       name: "passwordSetByCustomer",
       type: "checkbox",
       defaultValue: false,

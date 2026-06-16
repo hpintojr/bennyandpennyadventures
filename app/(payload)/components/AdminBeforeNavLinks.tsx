@@ -40,6 +40,7 @@ export async function AdminBeforeNavLinks() {
       <div className="bp-admin-nav-extra__section">
         <div className="bp-admin-nav-extra__heading">Marketing</div>
         <AdminSidebarNavLink activeKey="promotions" href="/admin/collections/promotions" iconName="ticket" label="Promotions" />
+        <AdminSidebarNavLink activeKey="gifts" href="/admin/collections/gifts" iconName="gift" label="Gifts" />
         <AdminSidebarNavLink activeKey="subscribers" href="/admin/collections/subscribers" iconName="mail" label="Subscribers" />
       </div>
 

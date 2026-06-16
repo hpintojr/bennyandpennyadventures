@@ -372,3 +372,53 @@
   text-align-last: center !important;
   vertical-align: middle !important;
 }
+
+/* --- Date picker visibility fix (Expires At, etc.) ---
+   The custom admin theme left react-datepicker day/time text invisible
+   (light text on light background). Restore readable colors. */
+.react-datepicker {
+  color: #3c3c3c;
+}
+.react-datepicker__header {
+  background: #f4efe6 !important;
+  border-bottom-color: #e6d9c4 !important;
+}
+.react-datepicker__current-month,
+.react-datepicker-time__header,
+.react-datepicker-year-header,
+.react-datepicker__day-name,
+.react-datepicker__day,
+.react-datepicker__time-name {
+  color: #1f5c5f !important;
+}
+.react-datepicker__day:hover,
+.react-datepicker__month-text:hover {
+  background: #e9f3f2 !important;
+  color: #1f5c5f !important;
+}
+.react-datepicker__day--selected,
+.react-datepicker__day--keyboard-selected,
+.react-datepicker__day--in-range,
+.react-datepicker__time-list-item--selected {
+  background: #1f5c5f !important;
+  color: #ffffff !important;
+}
+.react-datepicker__day--today {
+  font-weight: 800 !important;
+  color: #e86e6e !important;
+}
+.react-datepicker__day--disabled,
+.react-datepicker__day--outside-month {
+  color: #b9b3a8 !important;
+}
+.react-datepicker__time-container,
+.react-datepicker__time,
+.react-datepicker__time-box {
+  background: #ffffff !important;
+}
+.react-datepicker__time-list-item {
+  color: #1f5c5f !important;
+}
+.react-datepicker__time-list-item:hover {
+  background: #e9f3f2 !important;
+}

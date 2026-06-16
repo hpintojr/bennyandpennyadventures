@@ -26,10 +26,20 @@ create table if not exists promotions (
 );
 ```
 
-> If you let Payload create tables automatically in your environment, you can skip the
-> manual SQL — but the project has been using explicit Neon patches, so this matches that flow.
-> Also add the Payload locked-document relation column if your setup tracks it (see
-> `PAYLOAD_LOCKED_DOCUMENTS_SCHEMA_PATCH.md` for the pattern), pointing at `promotions`.
+## REQUIRED: locked-documents relation column
+
+Every new collection also needs a column in `payload_locked_documents_rels`, or the
+admin (and any user update that touches document locks) will 500 with
+`column ...promotions_id does not exist`. This breaks the Promotions admin page AND
+the set-password flow until it is run:
+
+```sql
+alter table if exists payload_locked_documents_rels
+  add column if not exists promotions_id integer;
+
+create index if not exists payload_locked_documents_rels_promotions_idx
+  on payload_locked_documents_rels (promotions_id);
+```
 
 ## How it works
 - `collections/Promotions.ts` — fields + `afterChange`/`afterDelete` hooks.
