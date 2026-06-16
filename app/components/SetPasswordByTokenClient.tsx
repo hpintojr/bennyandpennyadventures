@@ -44,7 +44,7 @@ export default function SetPasswordByTokenClient({ token }: { token: string }) {
   if (state === "done") {
     return (
       <div className="mx-auto mt-4 max-w-xl rounded-[2rem] border border-teal/30 bg-teal/5 p-8 text-center shadow-soft">
-        <h2 className="font-serif text-3xl font-bold text-teal">You're all set ♥</h2>
+        <h2 className="font-serif text-3xl font-bold text-teal">You&apos;re all set ♥</h2>
         <p className="mt-3 text-ink">Your password is ready. Sign in to access your portal.</p>
         <Link href="/portal/login" className="btn mt-6">Sign In</Link>
       </div>
