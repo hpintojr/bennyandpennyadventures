@@ -8,6 +8,60 @@
   height: 300px !important;
 }
 
+/* Force the dashboard hero/search into a stable stacked layout.
+   Payload's admin shell can report a wider layout viewport on mobile, so this is not breakpoint-only. */
+.bp-dashboard__topbar {
+  align-items: flex-start !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.95rem !important;
+  grid-template-columns: none !important;
+  margin-bottom: 1.15rem !important;
+  max-width: 100% !important;
+  width: 100% !important;
+}
+
+.bp-dashboard__topbar > div,
+.bp-dashboard__topbar > form {
+  max-width: 100% !important;
+  min-width: 0 !important;
+  width: 100% !important;
+}
+
+.bp-dashboard__search {
+  align-self: stretch !important;
+  border-radius: 1rem !important;
+  display: grid !important;
+  flex: none !important;
+  grid-template-columns: 2.6rem minmax(0, 1fr) !important;
+  margin-top: 0 !important;
+  max-width: 100% !important;
+  min-height: 3rem !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  padding: 0 0.5rem !important;
+  transform: none !important;
+  width: 100% !important;
+}
+
+.bp-dashboard__searchIcon {
+  align-items: center !important;
+  display: inline-flex !important;
+  font-size: 1.35rem !important;
+  justify-content: center !important;
+  min-width: 0 !important;
+}
+
+.bp-dashboard__search input {
+  border-width: 0 !important;
+  box-shadow: none !important;
+  font-size: 0.95rem !important;
+  min-height: 2.35rem !important;
+  min-width: 0 !important;
+  padding: 0.35rem 0.45rem !important;
+  width: 100% !important;
+}
+
 .bp-dashboard__card--region {
   align-self: start !important;
   display: flex !important;
@@ -101,24 +155,6 @@
     width: 100% !important;
   }
 
-  .bp-dashboard__topbar {
-    align-items: start !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 0.9rem !important;
-    grid-template-columns: none !important;
-    margin-bottom: 1rem !important;
-    max-width: 100% !important;
-    width: 100% !important;
-  }
-
-  .bp-dashboard__topbar > div,
-  .bp-dashboard__topbar > form {
-    max-width: 100% !important;
-    min-width: 0 !important;
-    width: 100% !important;
-  }
-
   .bp-dashboard h1 {
     font-size: clamp(2rem, 9vw, 2.85rem) !important;
     line-height: 0.98 !important;
@@ -129,40 +165,6 @@
     font-size: 0.92rem !important;
     line-height: 1.45 !important;
     max-width: 22rem !important;
-  }
-
-  .bp-dashboard__search {
-    align-self: stretch !important;
-    border-radius: 1rem !important;
-    display: grid !important;
-    flex: none !important;
-    grid-template-columns: 2.6rem minmax(0, 1fr) !important;
-    margin-top: 0.25rem !important;
-    max-width: 100% !important;
-    min-height: 3rem !important;
-    min-width: 0 !important;
-    overflow: hidden !important;
-    padding: 0 0.5rem !important;
-    transform: none !important;
-    width: 100% !important;
-  }
-
-  .bp-dashboard__searchIcon {
-    align-items: center !important;
-    display: inline-flex !important;
-    font-size: 1.35rem !important;
-    justify-content: center !important;
-    min-width: 0 !important;
-  }
-
-  .bp-dashboard__search input {
-    border-width: 0 !important;
-    box-shadow: none !important;
-    font-size: 0.95rem !important;
-    min-height: 2.35rem !important;
-    min-width: 0 !important;
-    padding: 0.35rem 0.45rem !important;
-    width: 100% !important;
   }
 
   .bp-dashboard__stats,
@@ -176,6 +178,23 @@
 }
 
 @media (max-width: 760px) {
+  .template-default .nav,
+  .template-default aside {
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain !important;
+  }
+
+  .template-default .bp-admin-nav-extra--bottom {
+    bottom: auto !important;
+    left: auto !important;
+    margin: 1rem 0.65rem 0 !important;
+    position: static !important;
+    width: auto !important;
+    z-index: auto !important;
+  }
+
   .template-default .nav > button,
   .template-default aside > button,
   .template-default .nav button[aria-label*='Collapse'],
