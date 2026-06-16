@@ -4,7 +4,20 @@
 @media (max-width: 900px) {
   /* Give the mobile heart/menu toggle room so it does not sit on top of the greeting. */
   .template-default .bp-dashboard__topbar {
-    margin-top: clamp(3.15rem, 12vw, 4.1rem) !important;
+    margin-top: clamp(3.75rem, 14vw, 4.85rem) !important;
+  }
+
+  /* Force the greeting into the approved two-line mobile treatment:
+     Welcome,
+     Hamilton Pinto! */
+  .template-default .bp-dashboard__welcomeName {
+    display: inline !important;
+    white-space: nowrap !important;
+  }
+
+  .template-default .bp-dashboard__welcomeName::before {
+    content: '\A' !important;
+    white-space: pre !important;
   }
 
   /* Center the generated heart precisely inside the collapsed red circle. */
