@@ -12,6 +12,7 @@ import "./admin-final-fixes.scss";
 import "./login-brand.scss";
 import "./admin-toggler-cleanup.scss";
 import "./admin-orders-cleanup.scss";
+import "./admin-dashboard-mobile-rows.scss";
 
 type Args = {
   children: React.ReactNode;
