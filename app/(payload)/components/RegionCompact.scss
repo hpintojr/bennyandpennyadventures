@@ -35,8 +35,11 @@
   letter-spacing: -0.02em !important;
   line-height: 1.12 !important;
   max-width: none !important;
-  text-wrap: balance;
+  overflow-wrap: normal !important;
+  text-wrap: wrap !important;
+  white-space: normal !important;
   width: 100% !important;
+  word-break: normal !important;
 }
 
 .bp-dashboard__intro p {
@@ -45,7 +48,11 @@
   line-height: 1.58 !important;
   margin-top: 0 !important;
   max-width: none !important;
+  overflow-wrap: normal !important;
+  text-wrap: wrap !important;
+  white-space: normal !important;
   width: 100% !important;
+  word-break: normal !important;
 }
 
 .bp-dashboard__topbar > div,
