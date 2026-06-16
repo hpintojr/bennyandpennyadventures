@@ -1,0 +1,133 @@
+/* Final tiny mobile polish layer.
+   Loaded after all other admin styles so it only corrects the remaining iPhone admin details. */
+
+@media (max-width: 900px) {
+  /* Give the mobile heart/menu toggle room so it does not sit on top of the greeting. */
+  .template-default .bp-dashboard__topbar {
+    margin-top: clamp(3.15rem, 12vw, 4.1rem) !important;
+  }
+
+  /* Center the generated heart precisely inside the collapsed red circle. */
+  .template-default .nav > button,
+  .template-default aside > button,
+  .template-default button[class*='close'],
+  .template-default button[class*='Close'],
+  .template-default button[class*='toggle'],
+  .template-default button[class*='Toggle'],
+  .template-default button[class*='menu'],
+  .template-default button[class*='Menu'],
+  .template-default [class*='close'] button,
+  .template-default [class*='Close'] button,
+  .template-default [class*='toggle'] button,
+  .template-default [class*='Toggle'] button,
+  .template-default .nav button[aria-label*='Open'],
+  .template-default .nav button[aria-label*='open'],
+  .template-default .nav button[aria-label*='Close'],
+  .template-default .nav button[aria-label*='close'],
+  .template-default .nav button[aria-label*='Menu'],
+  .template-default .nav button[aria-label*='menu'],
+  .template-default .nav button[aria-label*='Toggle'],
+  .template-default .nav button[aria-label*='toggle'],
+  .template-default aside button[aria-label*='Open'],
+  .template-default aside button[aria-label*='open'],
+  .template-default aside button[aria-label*='Close'],
+  .template-default aside button[aria-label*='close'],
+  .template-default aside button[aria-label*='Menu'],
+  .template-default aside button[aria-label*='menu'],
+  .template-default aside button[aria-label*='Toggle'],
+  .template-default aside button[aria-label*='toggle'] {
+    position: fixed !important;
+  }
+
+  .template-default .nav > button::before,
+  .template-default aside > button::before,
+  .template-default button[class*='close']::before,
+  .template-default button[class*='Close']::before,
+  .template-default button[class*='toggle']::before,
+  .template-default button[class*='Toggle']::before,
+  .template-default button[class*='menu']::before,
+  .template-default button[class*='Menu']::before,
+  .template-default [class*='close'] button::before,
+  .template-default [class*='Close'] button::before,
+  .template-default [class*='toggle'] button::before,
+  .template-default [class*='Toggle'] button::before,
+  .template-default .nav button[aria-label*='Open']::before,
+  .template-default .nav button[aria-label*='open']::before,
+  .template-default .nav button[aria-label*='Close']::before,
+  .template-default .nav button[aria-label*='close']::before,
+  .template-default .nav button[aria-label*='Menu']::before,
+  .template-default .nav button[aria-label*='menu']::before,
+  .template-default .nav button[aria-label*='Toggle']::before,
+  .template-default .nav button[aria-label*='toggle']::before,
+  .template-default aside button[aria-label*='Open']::before,
+  .template-default aside button[aria-label*='open']::before,
+  .template-default aside button[aria-label*='Close']::before,
+  .template-default aside button[aria-label*='close']::before,
+  .template-default aside button[aria-label*='Menu']::before,
+  .template-default aside button[aria-label*='menu']::before,
+  .template-default aside button[aria-label*='Toggle']::before,
+  .template-default aside button[aria-label*='toggle']::before {
+    align-items: center !important;
+    display: flex !important;
+    height: 100% !important;
+    justify-content: center !important;
+    left: 0 !important;
+    line-height: 1 !important;
+    position: absolute !important;
+    top: 0 !important;
+    transform: translateY(-1px) !important;
+    width: 100% !important;
+  }
+
+  /* Open-sidebar close control: dark heart so it is visible against the pale blue panel. */
+  .template-default .nav button[aria-label*='Close'],
+  .template-default .nav button[aria-label*='close'],
+  .template-default aside button[aria-label*='Close'],
+  .template-default aside button[aria-label*='close'],
+  .template-default button[class*='close'],
+  .template-default button[class*='Close'],
+  .template-default [class*='close'] button,
+  .template-default [class*='Close'] button {
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .template-default .nav button[aria-label*='Close']::before,
+  .template-default .nav button[aria-label*='close']::before,
+  .template-default aside button[aria-label*='Close']::before,
+  .template-default aside button[aria-label*='close']::before,
+  .template-default button[class*='close']::before,
+  .template-default button[class*='Close']::before,
+  .template-default [class*='close'] button::before,
+  .template-default [class*='Close'] button::before {
+    color: #043f49 !important;
+  }
+
+  /* Collapsed/sidebar-open trigger stays branded: red circle with a white heart. */
+  .template-default .nav button[aria-label*='Open'],
+  .template-default .nav button[aria-label*='open'],
+  .template-default aside button[aria-label*='Open'],
+  .template-default aside button[aria-label*='open'],
+  .template-default button[class*='toggle'],
+  .template-default button[class*='Toggle'],
+  .template-default button[class*='menu'],
+  .template-default button[class*='Menu'],
+  .template-default [class*='toggle'] button,
+  .template-default [class*='Toggle'] button {
+    background: #eb6373 !important;
+    box-shadow: 0 10px 24px rgba(4, 63, 73, 0.16) !important;
+  }
+
+  .template-default .nav button[aria-label*='Open']::before,
+  .template-default .nav button[aria-label*='open']::before,
+  .template-default aside button[aria-label*='Open']::before,
+  .template-default aside button[aria-label*='open']::before,
+  .template-default button[class*='toggle']::before,
+  .template-default button[class*='Toggle']::before,
+  .template-default button[class*='menu']::before,
+  .template-default button[class*='Menu']::before,
+  .template-default [class*='toggle'] button::before,
+  .template-default [class*='Toggle'] button::before {
+    color: #ffffff !important;
+  }
+}
