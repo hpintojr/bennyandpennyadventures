@@ -296,42 +296,79 @@
 .bp-performance-chart__dot--digital { fill: #91a7af; }
 .bp-performance-chart__axis text { fill: #526870; font-size: 0.68rem; font-weight: 900; }
 
-.bp-dashboard__statusGrid { display: grid; gap: 0.8rem 1.1rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.bp-dashboard__systemList,
+.bp-dashboard__statusGrid {
+  display: grid;
+  gap: 0.8rem 1.1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
 
+.bp-dashboard__systemItem,
 .bp-dashboard__statusItem {
   align-items: center;
   border-bottom: 1px solid rgba(23, 34, 39, 0.1);
   display: grid;
-  gap: 0.8rem;
-  grid-template-columns: 3.25rem 1fr;
-  min-height: 4.35rem;
+  gap: 0.7rem;
+  grid-template-columns: 2.7rem minmax(0, 1fr) auto;
+  min-height: 3.6rem;
+  overflow: hidden;
   padding: 0.45rem 0;
 }
 
+.bp-dashboard__serviceIcon,
 .bp-dashboard__statusIcon {
   align-items: center;
   background: #ecf1f1;
   border-radius: 12px;
   display: inline-flex;
-  height: 3.1rem;
+  flex: 0 0 2.7rem;
+  height: 2.7rem;
   justify-content: center;
   overflow: hidden;
-  padding: 0.48rem;
-  width: 3.1rem;
+  padding: 0.45rem;
+  width: 2.7rem;
 }
 
-.bp-dashboard__statusIcon img { display: block; height: 100%; object-fit: contain; width: 100%; }
-.bp-dashboard__statusItem strong { color: #172227; display: block; font-size: 1rem; font-weight: 950; }
+.bp-dashboard__serviceIcon img,
+.bp-dashboard__statusIcon img {
+  display: block;
+  height: 100% !important;
+  max-height: 100% !important;
+  max-width: 100% !important;
+  object-fit: contain;
+  width: 100% !important;
+}
 
+.bp-dashboard__systemItem strong,
+.bp-dashboard__statusItem strong { color: #172227; display: block; font-size: 0.92rem; font-weight: 950; line-height: 1.1; }
+
+.bp-dashboard__systemItem small,
 .bp-dashboard__statusItem small {
   align-items: center;
   color: #23713c;
   display: flex;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 950;
   gap: 0.35rem;
+  line-height: 1.1;
+  margin-top: 0.16rem;
 }
 
+.bp-dashboard__systemItem em {
+  align-items: center;
+  border-radius: 999px;
+  display: inline-flex;
+  font-size: 0.68rem;
+  font-style: normal;
+  font-weight: 950;
+  justify-content: center;
+  min-width: 3.2rem;
+  padding: 0.24rem 0.42rem;
+  white-space: nowrap;
+}
+
+.bp-dashboard__systemItem em.is-active { background: #bfe7c8; color: #173f25; }
+.bp-dashboard__systemItem em.is-pending { background: #f2d995; color: #5a410c; }
 .bp-dashboard__statusItem small i { background: #1fa44c; border-radius: 99px; display: inline-block; height: 0.62rem; width: 0.62rem; }
 .bp-dashboard__statusItem--attention small { color: #9d6718; }
 .bp-dashboard__statusItem--attention small i { background: #e0a02c; }
@@ -377,7 +414,12 @@
 @media (max-width: 760px) {
   .bp-dashboard__cardHeader,
   .bp-performance-tracker__toolbar { align-items: flex-start; flex-direction: column; }
+  .bp-dashboard__systemList,
   .bp-dashboard__statusGrid,
   .bp-dashboard__stats { grid-template-columns: 1fr; }
+  .bp-dashboard__systemItem,
+  .bp-dashboard__statusItem { grid-template-columns: 2.5rem minmax(0, 1fr) auto; }
+  .bp-dashboard__serviceIcon,
+  .bp-dashboard__statusIcon { flex-basis: 2.5rem; height: 2.5rem; width: 2.5rem; }
   .bp-dashboard__funnelRow { grid-template-columns: 86px 1fr 34px; }
 }
