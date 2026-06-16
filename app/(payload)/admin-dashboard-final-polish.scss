@@ -2,14 +2,14 @@
    Loaded after all other admin styles so it only corrects the remaining iPhone admin details. */
 
 @media (max-width: 900px) {
-  /* Give mobile admin headers clear room below the heart/menu toggle. */
+  /* Give mobile admin headers clear room below the top-of-page heart/menu toggle. */
   .template-default main {
-    padding-top: clamp(3.75rem, 12vw, 4.75rem) !important;
+    padding-top: clamp(5rem, 16vw, 6.25rem) !important;
   }
 
-  /* Dashboard has its own header spacing so it clears the top-of-page heart. */
+  /* Dashboard needs extra breathing room because the greeting is larger than collection headings. */
   .template-default .bp-dashboard__topbar {
-    margin-top: clamp(1.2rem, 5vw, 2rem) !important;
+    margin-top: clamp(3.9rem, 14vw, 5rem) !important;
   }
 
   /* Force the greeting into the approved two-line mobile treatment:
@@ -25,35 +25,21 @@
     display: none !important;
   }
 
-  /* Keep the mobile heart/menu control at the top of the page instead of floating while scrolling. */
+  /* Only style the actual Payload nav/sidebar trigger. Do not target generic toggle/menu/filter buttons. */
   .template-default .nav > button,
   .template-default aside > button,
-  .template-default button[class*='close'],
-  .template-default button[class*='Close'],
-  .template-default button[class*='toggle'],
-  .template-default button[class*='Toggle'],
-  .template-default button[class*='menu'],
-  .template-default button[class*='Menu'],
-  .template-default [class*='close'] button,
-  .template-default [class*='Close'] button,
-  .template-default [class*='toggle'] button,
-  .template-default [class*='Toggle'] button,
   .template-default .nav button[aria-label*='Open'],
   .template-default .nav button[aria-label*='open'],
   .template-default .nav button[aria-label*='Close'],
   .template-default .nav button[aria-label*='close'],
-  .template-default .nav button[aria-label*='Menu'],
-  .template-default .nav button[aria-label*='menu'],
-  .template-default .nav button[aria-label*='Toggle'],
-  .template-default .nav button[aria-label*='toggle'],
+  .template-default .nav button[aria-label*='Collapse'],
+  .template-default .nav button[aria-label*='collapse'],
   .template-default aside button[aria-label*='Open'],
   .template-default aside button[aria-label*='open'],
   .template-default aside button[aria-label*='Close'],
   .template-default aside button[aria-label*='close'],
-  .template-default aside button[aria-label*='Menu'],
-  .template-default aside button[aria-label*='menu'],
-  .template-default aside button[aria-label*='Toggle'],
-  .template-default aside button[aria-label*='toggle'] {
+  .template-default aside button[aria-label*='Collapse'],
+  .template-default aside button[aria-label*='collapse'] {
     left: 0.9rem !important;
     position: absolute !important;
     top: calc(env(safe-area-inset-top, 0px) + 0.95rem) !important;
@@ -61,32 +47,18 @@
 
   .template-default .nav > button::before,
   .template-default aside > button::before,
-  .template-default button[class*='close']::before,
-  .template-default button[class*='Close']::before,
-  .template-default button[class*='toggle']::before,
-  .template-default button[class*='Toggle']::before,
-  .template-default button[class*='menu']::before,
-  .template-default button[class*='Menu']::before,
-  .template-default [class*='close'] button::before,
-  .template-default [class*='Close'] button::before,
-  .template-default [class*='toggle'] button::before,
-  .template-default [class*='Toggle'] button::before,
   .template-default .nav button[aria-label*='Open']::before,
   .template-default .nav button[aria-label*='open']::before,
   .template-default .nav button[aria-label*='Close']::before,
   .template-default .nav button[aria-label*='close']::before,
-  .template-default .nav button[aria-label*='Menu']::before,
-  .template-default .nav button[aria-label*='menu']::before,
-  .template-default .nav button[aria-label*='Toggle']::before,
-  .template-default .nav button[aria-label*='toggle']::before,
+  .template-default .nav button[aria-label*='Collapse']::before,
+  .template-default .nav button[aria-label*='collapse']::before,
   .template-default aside button[aria-label*='Open']::before,
   .template-default aside button[aria-label*='open']::before,
   .template-default aside button[aria-label*='Close']::before,
   .template-default aside button[aria-label*='close']::before,
-  .template-default aside button[aria-label*='Menu']::before,
-  .template-default aside button[aria-label*='menu']::before,
-  .template-default aside button[aria-label*='Toggle']::before,
-  .template-default aside button[aria-label*='toggle']::before {
+  .template-default aside button[aria-label*='Collapse']::before,
+  .template-default aside button[aria-label*='collapse']::before {
     align-items: center !important;
     display: flex !important;
     height: 100% !important;
@@ -103,11 +75,7 @@
   .template-default .nav button[aria-label*='Close'],
   .template-default .nav button[aria-label*='close'],
   .template-default aside button[aria-label*='Close'],
-  .template-default aside button[aria-label*='close'],
-  .template-default button[class*='close'],
-  .template-default button[class*='Close'],
-  .template-default [class*='close'] button,
-  .template-default [class*='Close'] button {
+  .template-default aside button[aria-label*='close'] {
     background: transparent !important;
     box-shadow: none !important;
   }
@@ -115,11 +83,7 @@
   .template-default .nav button[aria-label*='Close']::before,
   .template-default .nav button[aria-label*='close']::before,
   .template-default aside button[aria-label*='Close']::before,
-  .template-default aside button[aria-label*='close']::before,
-  .template-default button[class*='close']::before,
-  .template-default button[class*='Close']::before,
-  .template-default [class*='close'] button::before,
-  .template-default [class*='Close'] button::before {
+  .template-default aside button[aria-label*='close']::before {
     color: #043f49 !important;
   }
 
@@ -128,12 +92,10 @@
   .template-default .nav button[aria-label*='open'],
   .template-default aside button[aria-label*='Open'],
   .template-default aside button[aria-label*='open'],
-  .template-default button[class*='toggle'],
-  .template-default button[class*='Toggle'],
-  .template-default button[class*='menu'],
-  .template-default button[class*='Menu'],
-  .template-default [class*='toggle'] button,
-  .template-default [class*='Toggle'] button {
+  .template-default .nav button[aria-label*='Collapse'],
+  .template-default .nav button[aria-label*='collapse'],
+  .template-default aside button[aria-label*='Collapse'],
+  .template-default aside button[aria-label*='collapse'] {
     background: #eb6373 !important;
     box-shadow: 0 10px 24px rgba(4, 63, 73, 0.16) !important;
   }
@@ -142,12 +104,10 @@
   .template-default .nav button[aria-label*='open']::before,
   .template-default aside button[aria-label*='Open']::before,
   .template-default aside button[aria-label*='open']::before,
-  .template-default button[class*='toggle']::before,
-  .template-default button[class*='Toggle']::before,
-  .template-default button[class*='menu']::before,
-  .template-default button[class*='Menu']::before,
-  .template-default [class*='toggle'] button::before,
-  .template-default [class*='Toggle'] button::before {
+  .template-default .nav button[aria-label*='Collapse']::before,
+  .template-default .nav button[aria-label*='collapse']::before,
+  .template-default aside button[aria-label*='Collapse']::before,
+  .template-default aside button[aria-label*='collapse']::before {
     color: #ffffff !important;
   }
 }
