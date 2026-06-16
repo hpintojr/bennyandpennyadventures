@@ -1,4 +1,4 @@
-/* Loaded after BeforeDashboard.scss so the region graph cannot stretch the page. */
+/* Loaded after BeforeDashboard.scss so compact dashboard overrides win over base dashboard CSS. */
 
 .bp-dashboard__mainGrid {
   align-items: start !important;
@@ -91,7 +91,142 @@
   width: auto !important;
 }
 
+@media (max-width: 900px) {
+  .bp-dashboard {
+    box-sizing: border-box !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    width: 100% !important;
+  }
+
+  .bp-dashboard__topbar {
+    align-items: start !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.9rem !important;
+    grid-template-columns: none !important;
+    margin-bottom: 1rem !important;
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  .bp-dashboard__topbar > div,
+  .bp-dashboard__topbar > form {
+    max-width: 100% !important;
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+
+  .bp-dashboard h1 {
+    font-size: clamp(2rem, 9vw, 2.85rem) !important;
+    line-height: 0.98 !important;
+    max-width: 18rem !important;
+  }
+
+  .bp-dashboard p {
+    font-size: 0.92rem !important;
+    line-height: 1.45 !important;
+    max-width: 22rem !important;
+  }
+
+  .bp-dashboard__search {
+    align-self: stretch !important;
+    border-radius: 1rem !important;
+    display: grid !important;
+    flex: none !important;
+    grid-template-columns: 2.6rem minmax(0, 1fr) !important;
+    margin-top: 0.25rem !important;
+    max-width: 100% !important;
+    min-height: 3rem !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+    padding: 0 0.5rem !important;
+    transform: none !important;
+    width: 100% !important;
+  }
+
+  .bp-dashboard__searchIcon {
+    align-items: center !important;
+    display: inline-flex !important;
+    font-size: 1.35rem !important;
+    justify-content: center !important;
+    min-width: 0 !important;
+  }
+
+  .bp-dashboard__search input {
+    border-width: 0 !important;
+    box-shadow: none !important;
+    font-size: 0.95rem !important;
+    min-height: 2.35rem !important;
+    min-width: 0 !important;
+    padding: 0.35rem 0.45rem !important;
+    width: 100% !important;
+  }
+
+  .bp-dashboard__stats,
+  .bp-dashboard__row--half,
+  .bp-dashboard__row--wide,
+  .bp-dashboard__row--subscribers,
+  .bp-dashboard__systemList,
+  .bp-dashboard__statusGrid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
 @media (max-width: 760px) {
+  .template-default .nav > button,
+  .template-default aside > button,
+  .template-default .nav button[aria-label*='Collapse'],
+  .template-default .nav button[aria-label*='collapse'],
+  .template-default .nav button[aria-label*='Open'],
+  .template-default .nav button[aria-label*='open'],
+  .template-default aside button[aria-label*='Collapse'],
+  .template-default aside button[aria-label*='collapse'],
+  .template-default aside button[aria-label*='Open'],
+  .template-default aside button[aria-label*='open'] {
+    align-items: center !important;
+    background: rgba(251, 255, 252, 0.96) !important;
+    border: 1px solid rgba(6, 87, 102, 0.22) !important;
+    border-radius: 999px !important;
+    box-shadow: 0 8px 20px rgba(4, 63, 73, 0.14) !important;
+    color: #043f49 !important;
+    display: inline-flex !important;
+    height: 2.65rem !important;
+    justify-content: center !important;
+    left: 0.75rem !important;
+    min-height: 2.65rem !important;
+    min-width: 2.65rem !important;
+    opacity: 1 !important;
+    padding: 0 !important;
+    position: fixed !important;
+    top: calc(env(safe-area-inset-top, 0px) + 0.75rem) !important;
+    transform: none !important;
+    visibility: visible !important;
+    width: 2.65rem !important;
+    z-index: 5000 !important;
+  }
+
+  .template-default .nav > button svg,
+  .template-default aside > button svg,
+  .template-default .nav button[aria-label*='Collapse'] svg,
+  .template-default .nav button[aria-label*='collapse'] svg,
+  .template-default .nav button[aria-label*='Open'] svg,
+  .template-default .nav button[aria-label*='open'] svg,
+  .template-default aside button[aria-label*='Collapse'] svg,
+  .template-default aside button[aria-label*='collapse'] svg,
+  .template-default aside button[aria-label*='Open'] svg,
+  .template-default aside button[aria-label*='open'] svg {
+    color: #043f49 !important;
+    display: block !important;
+    height: 1.2rem !important;
+    opacity: 1 !important;
+    stroke: currentColor !important;
+    visibility: visible !important;
+    width: 1.2rem !important;
+  }
+
   .bp-dashboard__systemList { grid-template-columns: 1fr !important; }
   .bp-dashboard__systemItem {
     gap: 0.5rem !important;
