@@ -48,5 +48,5 @@ export default function AdminWelcomeName() {
     };
   }, []);
 
-  return <>{name}</>;
+  return <span className="bp-dashboard__welcomeName">{name}</span>;
 }
