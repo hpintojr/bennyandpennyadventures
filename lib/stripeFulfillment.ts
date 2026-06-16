@@ -2,6 +2,8 @@ import crypto from "node:crypto";
 import { getPayload } from "payload";
 import type Stripe from "stripe";
 import { getStripe } from "@/lib/stripe";
+import { sendOrderReceiptEmail, sendPasswordLinkEmail, upsertSubscriber } from "@/lib/email";
+import { createPasswordToken, passwordSetupUrl } from "@/lib/authTokens";
 
 type PayloadClient = {
   find: (args: Record<string, unknown>) => Promise<unknown>;
@@ -650,6 +652,41 @@ export async function fulfillCheckoutSession(session: Stripe.Checkout.Session): 
     } catch (error) {
       console.error("Stripe fulfillment order item creation failed; order was still created", error);
     }
+  }
+
+  // Order receipt + set-password link (best-effort). New orders only.
+  try {
+    if (customerEmail) {
+      await sendOrderReceiptEmail({
+        to: customerEmail,
+        orderNumber,
+        items: items.map((it) => ({
+          title: it.title,
+          formatLabel: formatLabels[it.format],
+          quantity: it.quantity,
+          lineTotal: Number((it.unitPrice * it.quantity).toFixed(2))
+        })),
+        total: centsToDollars(fulfillmentSession.amount_total)
+      });
+      await upsertSubscriber({
+        email: customerEmail,
+        firstName: customer ? getString(customer.firstName) ?? undefined : undefined,
+        tags: ["customer"],
+        customAttributes: { acquiredVia: "purchase" }
+      });
+
+      // New/unactivated account → email a tokenized "finish setting up your account" link.
+      if (customer?.id && customer.passwordSetByCustomer !== true) {
+        try {
+          const raw = await createPasswordToken(payload, customer.id, customerEmail, "setup");
+          await sendPasswordLinkEmail({ to: customerEmail, link: passwordSetupUrl(raw), mode: "setup" });
+        } catch (setupError) {
+          console.error("Account setup email failed (non-fatal)", setupError);
+        }
+      }
+    }
+  } catch (error) {
+    console.error("Order receipt email failed (non-fatal)", error);
   }
 
   let downloadsCreated = 0;

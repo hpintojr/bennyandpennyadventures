@@ -108,3 +108,108 @@ export async function sendGiftEmail(opts: {
     html: layout(inner)
   });
 }
+
+export async function sendOrderReceiptEmail(opts: {
+  to: string;
+  orderNumber: string;
+  items: { title: string; formatLabel: string; quantity: number; lineTotal: number }[];
+  total: number;
+  sessionId?: string;
+}): Promise<{ ok: boolean; error?: string }> {
+  const rows = opts.items
+    .map(
+      (i) =>
+        `<tr><td style="padding:6px 0;border-bottom:1px solid #f0e7d8;">${escapeHtml(i.title)} — ${escapeHtml(i.formatLabel)} × ${i.quantity}</td><td style="padding:6px 0;border-bottom:1px solid #f0e7d8;text-align:right;white-space:nowrap;">$${i.lineTotal.toFixed(2)}</td></tr>`
+    )
+    .join("");
+  const setupBlock = opts.sessionId
+    ? `<div style="text-align:center;margin:22px 0 6px;"><a href="${siteUrl()}/thank-you?session_id=${encodeURIComponent(opts.sessionId)}" style="display:inline-block;background:#e86e6e;color:#ffffff;text-decoration:none;font-weight:bold;padding:13px 26px;border-radius:999px;">Set up your account &amp; access your books</a></div>`
+    : "";
+  const inner = `
+    <h1 style="font-size:22px;color:#1f5c5f;margin:0 0 6px;">Thank you for your order ♥</h1>
+    <p style="font-size:14px;color:#6b7d80;margin:0 0 16px;">Order #${escapeHtml(opts.orderNumber)}</p>
+    <table style="width:100%;border-collapse:collapse;font-size:14px;">${rows}
+      <tr><td style="padding:10px 0;font-weight:bold;">Total</td><td style="padding:10px 0;text-align:right;font-weight:bold;">$${opts.total.toFixed(2)}</td></tr>
+    </table>
+    ${setupBlock}
+    <p style="font-size:13px;color:#6b7d80;margin-top:16px;">You can view your orders and access your books any time in your <a href="${siteUrl()}/portal" style="color:#1f5c5f;">Customer Portal</a>.</p>`;
+  return sendEmail({
+    to: opts.to,
+    subject: `Your Benny & Penny order #${opts.orderNumber}`,
+    preview: "Thanks for your order — set up your account to access your books.",
+    html: layout(inner)
+  });
+}
+
+export async function sendGiftRedeemedEmail(opts: { to: string; code: string; bookTitle?: string }): Promise<{ ok: boolean; error?: string }> {
+  const inner = `
+    <h1 style="font-size:22px;color:#1f5c5f;margin:0 0 8px;">Your gift was claimed ♥</h1>
+    <p style="font-size:15px;line-height:1.6;">Good news — your gift code <strong style="font-family:'Courier New',monospace;">${escapeHtml(opts.code)}</strong>${
+      opts.bookTitle ? ` for <strong>${escapeHtml(opts.bookTitle)}</strong>` : ""
+    } was just redeemed. Thank you for sharing Benny &amp; Penny with someone you care about!</p>`;
+  return sendEmail({
+    to: opts.to,
+    subject: "Your Benny & Penny gift was claimed 🎁",
+    preview: "Someone just redeemed the gift you sent.",
+    html: layout(inner)
+  });
+}
+
+// Adds/updates a Sequenzy subscriber (auto-creates). Used to catalogue leads. Fails soft.
+export async function upsertSubscriber(opts: {
+  email: string;
+  firstName?: string;
+  lastName?: string;
+  tags?: string[];
+  customAttributes?: Record<string, unknown>;
+}): Promise<{ ok: boolean; error?: string }> {
+  if (!isEmailConfigured()) return { ok: false, error: "email-not-configured" };
+  try {
+    const response = await fetch(`${API_BASE}/subscribers`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.SEQUENZY_API_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        email: opts.email,
+        firstName: opts.firstName,
+        lastName: opts.lastName,
+        tags: opts.tags,
+        customAttributes: opts.customAttributes
+      })
+    });
+    const data = (await response.json().catch(() => null)) as { success?: boolean; error?: string } | null;
+    if (!response.ok || data?.success === false) return { ok: false, error: data?.error || `HTTP ${response.status}` };
+    return { ok: true };
+  } catch (error) {
+    return { ok: false, error: error instanceof Error ? error.message : "subscriber-failed" };
+  }
+}
+
+export async function sendPasswordLinkEmail(opts: {
+  to: string;
+  link: string;
+  mode: "setup" | "reset";
+}): Promise<{ ok: boolean; error?: string }> {
+  const isReset = opts.mode === "reset";
+  const heading = isReset ? "Reset your password" : "Finish setting up your account ♥";
+  const lead = isReset
+    ? "We received a request to reset your Benny &amp; Penny password. Tap below to choose a new one."
+    : "Thanks for joining Benny &amp; Penny's Adventures! Tap below to create your password and unlock your Customer Portal — orders, addresses, and book downloads in one place.";
+  const cta = isReset ? "Reset my password" : "Create my password";
+  const inner = `
+    <h1 style="font-size:22px;color:#1f5c5f;margin:0 0 8px;">${heading}</h1>
+    <p style="font-size:15px;line-height:1.6;">${lead}</p>
+    <div style="text-align:center;margin:22px 0 6px;">
+      <a href="${opts.link}" style="display:inline-block;background:#e86e6e;color:#ffffff;text-decoration:none;font-weight:bold;padding:14px 28px;border-radius:999px;">${cta}</a>
+    </div>
+    <p style="font-size:13px;color:#6b7d80;margin-top:14px;">Or paste this link:<br><span style="color:#1f5c5f;">${opts.link}</span></p>
+    <p style="font-size:12px;color:#9aa0a0;margin-top:14px;">This link expires in 48 hours. If you didn't request this, you can safely ignore this email.</p>`;
+  return sendEmail({
+    to: opts.to,
+    subject: isReset ? "Reset your Benny & Penny password" : "Finish setting up your Benny & Penny account",
+    preview: isReset ? "Choose a new password." : "Create your password to access your books.",
+    html: layout(inner)
+  });
+}

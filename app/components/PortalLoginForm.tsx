@@ -88,12 +88,14 @@ export default function PortalLoginForm() {
         {state === "loading" ? "Signing In..." : state === "success" ? "Redirecting..." : "Sign In ♥"}
       </button>
 
-      <p className="mt-5 text-center text-sm leading-6 text-ink/80">
-        Customer accounts are created after purchase. Password reset and account activation emails will be added after the email system is cleared.
-      </p>
+      <div className="mt-5 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm text-ink/80">
+        <Link href="/register" className="font-bold text-teal underline decoration-coral/40 underline-offset-4 hover:text-coral">Create an account</Link>
+        <span className="text-tan">·</span>
+        <Link href="/forgot-password" className="font-bold text-teal underline decoration-coral/40 underline-offset-4 hover:text-coral">Forgot password?</Link>
+      </div>
 
-      <div className="mt-5 text-center">
-        <Link href="/portal" className="font-bold text-teal underline decoration-coral/40 underline-offset-4 hover:text-coral">Back to portal overview</Link>
+      <div className="mt-4 text-center">
+        <Link href="/portal" className="text-sm font-semibold text-teal/80 underline decoration-coral/30 underline-offset-4 hover:text-coral">Back to portal overview</Link>
       </div>
     </form>
   );

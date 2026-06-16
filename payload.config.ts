@@ -12,6 +12,7 @@ import { Orders } from "./collections/Orders.ts";
 import { PrivacyRequests } from "./collections/PrivacyRequests.ts";
 import { Promotions } from "./collections/Promotions.ts";
 import { Gifts } from "./collections/Gifts.ts";
+import { PasswordTokens } from "./collections/PasswordTokens.ts";
 import { Subscribers } from "./collections/Subscribers.ts";
 import { SupportMessages } from "./collections/SupportMessages.ts";
 import { SupportTickets } from "./collections/SupportTickets.ts";
@@ -59,7 +60,8 @@ export default buildConfig({
     AccessGrants,
     AuditLogs,
     Promotions,
-    Gifts
+    Gifts,
+    PasswordTokens
   ],
   db: postgresAdapter({
     pool: {

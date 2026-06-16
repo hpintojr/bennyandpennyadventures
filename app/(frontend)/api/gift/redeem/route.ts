@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { getPayload } from "payload";
 import { books, bookFormats } from "@/lib/books";
 import { giftDownloadDef, isGiftCode, normalizeGiftCode } from "@/lib/gifts";
+import { sendGiftRedeemedEmail, upsertSubscriber } from "@/lib/email";
 
 export const runtime = "nodejs";
 
@@ -126,6 +127,20 @@ export async function POST(request: Request) {
       data: { status: "redeemed", redeemedBy: user.id, redeemedBook: book.id, redeemedDownload: download.id, redeemedAt: new Date().toISOString() }
     });
 
+    // Notify the gifter that their gift was claimed (best-effort).
+    try {
+      const gifterId = typeof gift.gifter === "object" && gift.gifter ? (gift.gifter as PayloadDoc).id : gift.gifter;
+      if (gifterId) {
+        const gifterRes = (await payload.find({ collection: "users", limit: 1, where: { id: { equals: gifterId } } })) as PayloadFindResult;
+        const gifterEmail = typeof gifterRes.docs?.[0]?.email === "string" ? (gifterRes.docs[0].email as string) : null;
+        if (gifterEmail) {
+          await sendGiftRedeemedEmail({ to: gifterEmail, code, bookTitle: catalogBook?.title });
+        }
+      }
+    } catch (notifyError) {
+      console.error("Gift-redeemed notify failed (non-fatal)", notifyError);
+    }
+
     // Catalogue the lead (best-effort).
     if (consent) {
       try {
@@ -133,6 +148,7 @@ export async function POST(request: Request) {
         if (!sub.docs?.length) {
           await payload.create({ collection: "subscribers", data: { email, marketingOptIn: true, source: "gift-redemption" } });
         }
+        await upsertSubscriber({ email, tags: ["gift-recipient"], customAttributes: { acquiredVia: "gift" } });
       } catch (e) {
         console.error("Gift lead capture failed (non-fatal)", e);
       }
