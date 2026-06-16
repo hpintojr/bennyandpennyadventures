@@ -1,9 +1,9 @@
 import crypto from "node:crypto";
 
 type PayloadLike = {
-  create: (args: Record<string, unknown>) => Promise<unknown>;
-  find: (args: Record<string, unknown>) => Promise<{ docs?: { id: string | number; [k: string]: unknown }[] }>;
-  update: (args: Record<string, unknown>) => Promise<unknown>;
+  create: (args: any) => Promise<any>;
+  find: (args: any) => Promise<{ docs?: { id: string | number; [k: string]: unknown }[] }>;
+  update: (args: any) => Promise<any>;
 };
 
 export function makeRawToken(): string {
