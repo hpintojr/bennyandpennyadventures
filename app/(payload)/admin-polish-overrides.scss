@@ -265,13 +265,15 @@
   .bp-dashboard h1 {
     font-size: clamp(2rem, 9vw, 2.65rem) !important;
     line-height: 0.98 !important;
-    max-width: 18rem !important;
+    max-width: none !important;
+    width: 100% !important;
   }
 
   .bp-dashboard p {
     font-size: 0.9rem !important;
     line-height: 1.45 !important;
-    max-width: 21rem !important;
+    max-width: none !important;
+    width: 100% !important;
   }
 
   .bp-dashboard__search {
