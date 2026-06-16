@@ -52,10 +52,10 @@ export default function SetPasswordCard({ sessionId }: { sessionId: string }) {
     <div className="mx-auto mt-6 max-w-xl rounded-3xl border border-teal/30 bg-teal/5 p-6 text-center shadow-soft">
       <h2 className="font-serif text-2xl font-bold text-teal">Check your email ♥</h2>
       <p className="mt-2 text-sm text-ink">
-        We've sent a link to <strong>finish setting up your account</strong> and create your password. Once it's set, your orders and book downloads live in your Customer Portal.
+        We&apos;ve sent a link to <strong>finish setting up your account</strong> and create your password. Once it&apos;s set, your orders and book downloads live in your Customer Portal.
       </p>
       <p className="mt-4 text-xs text-ink/70">
-        Didn't get it? <Link href="/forgot-password" className="font-bold text-teal underline decoration-coral/40 underline-offset-4">Request a new link</Link>
+        Didn&apos;t get it? <Link href="/forgot-password" className="font-bold text-teal underline decoration-coral/40 underline-offset-4">Request a new link</Link>
         {" · "}
         <Link href="/portal/login" className="font-bold text-teal underline decoration-coral/40 underline-offset-4">Already set up? Sign in</Link>
       </p>
