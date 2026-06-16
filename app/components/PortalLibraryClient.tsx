@@ -67,12 +67,12 @@ function FormatCard({ format }: { format: LibraryFormat }) {
   }
 
   return (
-    <div className="rounded-2xl border border-tan bg-cream/60 p-4">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
-        <span className={`w-fit rounded-full px-3 py-1 text-xs font-extrabold uppercase tracking-[0.1em] ${badgeClass(format.format)}`}>{format.label}</span>
+    <div className="min-w-0 rounded-2xl border border-tan bg-cream/60 p-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <span className={`rounded-full px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.1em] sm:text-xs ${badgeClass(format.format)}`}>{format.label}</span>
         <span className="text-sm font-bold text-teal">Qty {format.quantity}</span>
       </div>
-      <p className="mt-3 text-sm leading-6 text-ink">{format.status}</p>
+      <p className="mt-3 break-words text-sm leading-6 text-ink">{format.status}</p>
 
       {canDownload ? (
         <button
@@ -128,7 +128,7 @@ export default function PortalLibraryClient() {
 
   if (error) {
     return (
-      <div className="mx-auto mt-8 max-w-3xl rounded-[2rem] border border-tan bg-white/70 p-8 text-center shadow-soft">
+      <div className="mx-auto mt-8 max-w-3xl rounded-[2rem] border border-tan bg-white/70 p-6 text-center shadow-soft sm:p-8">
         <h2 className="font-serif text-3xl font-bold text-teal">Sign in required</h2>
         <p className="mt-3 text-ink">{error}</p>
         <Link href="/portal/login" className="btn mt-6">Sign In</Link>
@@ -138,7 +138,7 @@ export default function PortalLibraryClient() {
 
   if (!books.length) {
     return (
-      <div className="mx-auto mt-8 max-w-3xl rounded-[2rem] border border-tan bg-white/70 p-8 text-center shadow-soft">
+      <div className="mx-auto mt-8 max-w-3xl rounded-[2rem] border border-tan bg-white/70 p-6 text-center shadow-soft sm:p-8">
         <h2 className="font-serif text-3xl font-bold text-teal">No purchased books found yet</h2>
         <p className="mt-3 text-ink">We did not find any purchased book formats linked to this customer account yet.</p>
         <Link href="/books" className="btn mt-6">Shop Books</Link>
@@ -154,16 +154,16 @@ export default function PortalLibraryClient() {
             <div className="min-w-0">
               <p className="text-xs font-extrabold uppercase tracking-[0.14em] text-coral">Purchased Book</p>
               <h2 className="mt-1 break-words font-serif text-2xl font-bold leading-tight text-teal">{book.title}</h2>
-              <p className="mt-1 text-sm leading-6 text-ink/70">{summary(book)}</p>
+              <p className="mt-1 break-words text-sm leading-6 text-ink/70">{summary(book)}</p>
             </div>
-            <div className="flex shrink-0 flex-wrap items-center gap-3 md:justify-end">
+            <div className="flex shrink-0 flex-wrap items-center gap-3 sm:gap-4">
               <span className="text-sm text-ink/65">Latest: {formatDate(book.latestPurchaseAt)}</span>
               <span className="text-sm font-extrabold text-coral group-open:hidden">View</span>
               <span className="hidden text-sm font-extrabold text-coral group-open:inline">Hide</span>
             </div>
           </summary>
 
-          <div className="grid gap-3 border-t border-tan px-4 pb-5 pt-4 sm:px-5 lg:grid-cols-2">
+          <div className="grid gap-3 border-t border-tan px-4 pb-5 pt-4 sm:px-5 md:grid-cols-2">
             {(book.formats || []).map((format) => (
               <FormatCard key={format.format} format={format} />
             ))}
