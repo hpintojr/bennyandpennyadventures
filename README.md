@@ -6,7 +6,7 @@ The site is built with **Next.js App Router**, **Payload CMS**, **Neon Postgres*
 
 ## Current status
 
-This repo is no longer a starter site. It now includes the public marketing site, product catalog, checkout flow, Payload Admin backend, customer portal, private digital delivery foundation, promotions/gifting, privacy/compliance pages, SEO/AI metadata, and transactional email helpers.
+This repo is no longer a starter site. It now includes the public marketing site, product catalog, checkout flow, Payload Admin backend, customer portal, private digital delivery, promotions/gifting, privacy/compliance pages, SEO/AI metadata, and transactional email helpers.
 
 ### Built and active
 
@@ -14,24 +14,30 @@ This repo is no longer a starter site. It now includes the public marketing site
 - Books catalog with 9 planned titles.
 - Product detail pages at `/books/[slug]`.
 - Cart and Stripe Checkout flow.
+- Saved-address checkout prefill for signed-in customers.
 - Payload CMS Admin at `/admin`.
 - Neon Postgres database integration.
+- Payload access control across collections, including customer/admin role separation and admin-panel gating.
 - Orders, order items, customers/users, customer addresses, downloads/media, subscribers, support tickets, privacy requests, consent logs, gifts, promotions, password tokens, and access grants collections.
-- Customer Portal routes: `/portal`, `/portal/login`, `/portal/orders`, `/portal/addresses`, `/portal/library`.
-- Account/password routes: `/forgot-password` and `/account/set-password`.
-- Gift redemption flow.
-- Cloudflare R2 signed-link digital delivery support.
+- Customer Portal routes: `/portal`, `/portal/login`, `/portal/orders`, `/portal/addresses`, `/portal/library`, `/portal/gifts`.
+- Account/password routes: `/register`, `/forgot-password`, and `/account/set-password`.
+- Tokenized email-link account setup and password reset flow.
+- Gift redemption flow at `/gift/redeem`.
+- Cloudflare R2 signed-link digital delivery with usage tracking and license-scaled download allowance.
+- Promotions synced to Stripe coupons/promotion codes.
 - Sequenzy transactional email support, with Mailjet intended as backup or secondary provider.
 - Privacy, Terms, Messaging Terms, California Notice, State Rights, and Privacy Requests pages.
 - Sitemap, robots, JSON-LD, `llms.txt`, OG image, favicon, and baseline security headers.
 
 ### Still in progress / launch cleanup
 
+- Run `npm run build` and redeploy after confirming required production environment values.
 - Live verification of Payload access-control lockdown.
+- End-to-end test register/setup link, forgot-password, new-order activation email, returning-customer thank-you, gift email, gift redemption, and R2 license scaling.
 - Bot/spam protection on public forms, preferably honeypot + Cloudflare Turnstile + rate limiting.
-- Sequenzy environment verification and email delivery testing.
+- Sequenzy sender/domain verification and live delivery testing.
 - Mailjet fallback/secondary-provider design and delivery testing.
-- Full end-to-end tests for register/setup link, forgot password, order receipt, gift email, gift redemption, and returning-customer flows.
+- Rotate the setup secret in Vercel after confirming setup/debug routes are no longer needed.
 - Customer support portal workflow.
 - POD/Lulu print fulfillment automation.
 - Admin actions such as refund, resend receipt, and regenerate download access.
@@ -154,8 +160,10 @@ lib/authTokens.ts
 Relevant routes/pages:
 
 ```txt
+/api/auth/register
 /api/auth/forgot-password
 /api/auth/set-password
+/register
 /forgot-password
 /account/set-password
 ```
@@ -166,7 +174,7 @@ Security notes:
 - Raw tokens are only used in the email link.
 - Tokens are single-use.
 - Links expire after 48 hours by default.
-- Forgot-password responses are intentionally generic to avoid email enumeration.
+- Register and forgot-password responses are intentionally generic to avoid email enumeration.
 
 ## Stripe / checkout status
 
@@ -179,6 +187,8 @@ Current behavior:
 - Automatic tax is off unless explicitly enabled in deployment settings.
 - Saved customer addresses can prefill Stripe Checkout when a signed-in customer selects saved addresses.
 - Checkout metadata can include customer and selected address IDs.
+- Fulfillment stamps selected saved addresses with `lastUsedAt`.
+- Digital/audiobook purchases can provision download records and update license-scaled download allowance.
 - Successful checkout returns customers to `/thank-you` with a Stripe Checkout Session reference.
 
 Primary checkout route:
@@ -198,6 +208,8 @@ order-items = purchased book formats
 customer-addresses = billing/shipping address book
 downloads = digital/audiobook delivery records
 access-grants = gifted/admin access
+gifts = customer-generated and admin-tracked gift codes
+promotions = admin discount codes synced to Stripe
 ```
 
 Customer-facing portal routes:
@@ -208,6 +220,7 @@ Customer-facing portal routes:
 /portal/orders
 /portal/addresses
 /portal/library
+/portal/gifts
 ```
 
 Portal APIs:
@@ -219,6 +232,7 @@ Portal APIs:
 /api/portal/addresses
 /api/portal/library
 /api/portal/downloads
+/api/portal/gifts
 ```
 
 ## Digital delivery
@@ -237,6 +251,31 @@ Stripe purchase or access grant
 ```
 
 Important rule: never expose permanent public ebook, EPUB, audiobook, or raw R2 object URLs in the customer portal.
+
+Current behavior:
+
+- Customer library buttons can call the protected download endpoint.
+- The download endpoint checks ownership, active/expired status, and available allowance.
+- Download links are short-lived R2 signed URLs.
+- Download usage and last-downloaded timestamp are tracked.
+- Allowance can scale by license quantity and repeat purchases.
+- Gift generation spends from the same allowance pool.
+
+## Promotions and gifting
+
+Promotions and gift codes are separate by design.
+
+- **Promotions:** owner/admin discount codes synced to Stripe coupons/promotion codes. These are entered at Stripe Checkout.
+- **Gift codes:** `BPG` codes generated from a customer's licensed download allowance. These are redeemed at `/gift/redeem`, not at Stripe Checkout.
+
+Gift rules:
+
+- Gift codes use the `BPG` prefix.
+- A gift consumes one slot from the purchased digital/audiobook license allowance.
+- A recipient gets one free download/access grant.
+- Gifts expire after 90 days.
+- Redeemed gifts are non-transferable.
+- Gift recipients can become consented leads for future marketing/nurture flows.
 
 ## Privacy and compliance pages
 
