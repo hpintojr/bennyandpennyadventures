@@ -93,7 +93,15 @@
 
 @media (max-width: 760px) {
   .bp-dashboard__systemList { grid-template-columns: 1fr !important; }
-  .bp-dashboard__systemItem { grid-template-columns: 2.35rem minmax(0, 1fr) auto !important; }
+  .bp-dashboard__systemItem {
+    gap: 0.5rem !important;
+    grid-template-columns: 2.35rem minmax(0, 1fr) !important;
+  }
+  .bp-dashboard__systemItem em {
+    grid-column: 2 !important;
+    justify-self: flex-start !important;
+    margin-top: -0.18rem !important;
+  }
   .bp-dashboard__serviceIcon {
     flex-basis: 2.35rem !important;
     height: 2.35rem !important;
