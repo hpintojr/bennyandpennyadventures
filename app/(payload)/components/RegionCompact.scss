@@ -71,6 +71,7 @@
   align-items: center !important;
   background: #ecf1f1 !important;
   border-radius: 10px !important;
+  color: #0f6170 !important;
   display: inline-flex !important;
   flex: 0 0 2.5rem !important;
   height: 2.5rem !important;
@@ -79,21 +80,13 @@
   max-width: 2.5rem !important;
   overflow: hidden !important;
   padding: 0 !important;
-  position: relative !important;
   width: 2.5rem !important;
 }
 
-.bp-dashboard__serviceIcon img {
-  display: none !important;
-}
-
-.bp-dashboard__serviceIcon::after {
-  color: #0f6170 !important;
-  content: '✓' !important;
+.bp-dashboard__serviceIcon svg {
   display: block !important;
-  font-size: 1rem !important;
-  font-weight: 950 !important;
-  line-height: 1 !important;
+  height: 1.1rem !important;
+  width: 1.1rem !important;
 }
 
 @media (max-width: 760px) {
