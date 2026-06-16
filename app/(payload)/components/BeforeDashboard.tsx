@@ -21,6 +21,7 @@ const serviceLogos = {
   neon: "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/neon-tech.svg",
   stripe: "https://cdn.jsdelivr.net/gh/selfhst/icons/svg/stripe.svg",
   r2: "https://cdn.jsdelivr.net/gh/selfhst/icons/svg/cloudflare-zero-trust.svg",
+  sequenzy: "https://media.theresanaiforthat.com/icons/sequenzy.svg",
   mailjet: "https://cdn.jsdelivr.net/gh/selfhst/icons/svg/mailjet.svg",
   lulu: "https://cdn.brandfetch.io/idICJd57ED/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1778052093073"
 };
@@ -201,6 +202,7 @@ async function getDashboardData() {
     { label: "Neon Database", detail: orders.ok && users.ok ? "CONNECTED/ACTIVE" : "CHECK CONNECTION", logoUrl: serviceLogos.neon, active: orders.ok && users.ok },
     { label: "Stripe API", detail: hasStripeRecords ? "CONNECTED/ACTIVE" : "READY TO VERIFY", logoUrl: serviceLogos.stripe, active: hasStripeRecords },
     { label: "R2 Fulfillment", detail: downloads.ok ? "CONNECTED/ACTIVE" : "CHECK FULFILLMENT", logoUrl: serviceLogos.r2, active: downloads.ok },
+    { label: "Sequenzy API", detail: subscribers.ok ? "CONNECTED/ACTIVE" : "CHECK EMAIL", logoUrl: serviceLogos.sequenzy, active: subscribers.ok },
     { label: "Mailjet API", detail: subscribers.ok ? "CONNECTED/ACTIVE" : "CHECK EMAIL", logoUrl: serviceLogos.mailjet, active: subscribers.ok },
     { label: "LuLu Press API", detail: orderItems.ok ? "CONNECTED/ACTIVE" : "READY TO VERIFY", logoUrl: serviceLogos.lulu, active: orderItems.ok }
   ];
@@ -251,34 +253,60 @@ async function BeforeDashboard() {
             <DashboardSalesChart orders={dashboard.chartOrders} />
           </article>
 
-          <article className="bp-dashboard__card bp-dashboard__card--status" id="system-status">
-            <div className="bp-dashboard__cardHeader"><div><h2>System Status Check</h2><p>Critical backend services and fulfillment readiness.</p></div></div>
-            <div className="bp-dashboard__statusGrid">
+          <article className="bp-dashboard__card bp-dashboard__card--system">
+            <div className="bp-dashboard__cardHeader"><div><h2>System Status Check</h2><p>CMS, checkout, email, and fulfillment services.</p></div></div>
+            <div className="bp-dashboard__systemList">
               {dashboard.systemStatus.map((item) => (
-                <div className={item.active ? "bp-dashboard__statusItem bp-dashboard__statusItem--active" : "bp-dashboard__statusItem bp-dashboard__statusItem--attention"} key={item.label}>
-                  <span className="bp-dashboard__statusIcon" aria-hidden="true"><img src={item.logoUrl} alt="" /></span><div><strong>{item.label}</strong><small><i aria-hidden="true" />{item.detail}</small></div>
+                <div className="bp-dashboard__systemItem" key={item.label}>
+                  <span className="bp-dashboard__serviceIcon"><img alt="" src={item.logoUrl} /></span>
+                  <div><strong>{item.label}</strong><small>{item.detail}</small></div>
+                  <em className={item.active ? "is-active" : "is-pending"}>{item.active ? "ONLINE" : "CHECK"}</em>
                 </div>
               ))}
             </div>
           </article>
         </div>
 
-        <div className="bp-dashboard__row bp-dashboard__row--full">
-          <article className="bp-dashboard__card bp-dashboard__card--orders">
-            <div className="bp-dashboard__cardHeader bp-dashboard__cardHeader--compact"><div><h2>Recent Orders</h2><p>{dashboard.pendingOrderCount} pending orders need review.</p></div><Link className="bp-dashboard__primaryAction" href="/admin/collections/orders">Bulk Fulfill Pending Orders</Link></div>
-            <div className="bp-dashboard__tableShell"><table><thead><tr><th>Order ID</th><th>Customer Name</th><th>Status</th><th>Total</th><th>Created</th><th>View Details</th></tr></thead><tbody>{dashboard.recentOrders.length ? dashboard.recentOrders.map((order) => (<tr key={order.id}><td>{order.orderId}</td><td>{order.customerName}</td><td><span className={`bp-dashboard__pill bp-dashboard__pill--${order.tone}`}>{order.status}</span></td><td>{order.total}</td><td>{order.created}</td><td><Link className="bp-dashboard__detailButton" href={order.href}>View Details</Link></td></tr>)) : (<tr><td colSpan={6}>No orders yet.</td></tr>)}</tbody></table></div>
+        <div className="bp-dashboard__row bp-dashboard__row--wide">
+          <article className="bp-dashboard__card bp-dashboard__card--recent">
+            <div className="bp-dashboard__cardHeader"><div><h2>Recent Orders</h2><p>Latest checkout activity from Stripe-backed orders.</p></div><Link href="/admin/collections/orders">View all</Link></div>
+            <div className="bp-dashboard__orderTable">
+              {dashboard.recentOrders.length ? dashboard.recentOrders.map((order) => (
+                <Link className="bp-dashboard__orderRow" href={order.href} key={order.id}>
+                  <span><strong>{order.orderId}</strong><small>{order.customerName}</small></span>
+                  <span>{order.created}</span>
+                  <em className={`tone-${order.tone}`}>{order.status}</em>
+                  <strong>{order.total}</strong>
+                </Link>
+              )) : <p className="bp-dashboard__empty">No orders yet.</p>}
+            </div>
           </article>
         </div>
 
-        <div className="bp-dashboard__row bp-dashboard__row--subscribers">
-          <article className="bp-dashboard__card bp-dashboard__card--subscribers">
-            <div className="bp-dashboard__cardHeader bp-dashboard__cardHeader--compact"><div><h2>Latest Subscribers</h2><p>Newest newsletter and resource-library signups.</p></div><Link className="bp-dashboard__detailButton" href="/admin/collections/subscribers">View All</Link></div>
-            <div className="bp-dashboard__tableShell"><table><thead><tr><th>Name</th><th>Email</th><th>Date Joined</th><th>Status</th></tr></thead><tbody>{dashboard.latestSubscribers.length ? dashboard.latestSubscribers.map((subscriber) => (<tr key={subscriber.id}><td><Link href={subscriber.href}>♥ {subscriber.name}</Link></td><td>{subscriber.email}</td><td>{subscriber.dateJoined}</td><td><span className="bp-dashboard__pill bp-dashboard__pill--success">{subscriber.status}</span></td></tr>)) : (<tr><td colSpan={4}>No subscribers yet.</td></tr>)}</tbody></table></div>
+        <div className="bp-dashboard__row bp-dashboard__row--half">
+          <article className="bp-dashboard__card bp-dashboard__card--funnel">
+            <div className="bp-dashboard__cardHeader"><div><h2>Launch Funnel</h2><p>Estimated funnel snapshot from current records.</p></div></div>
+            <div className="bp-dashboard__funnel">
+              {dashboard.funnel.map((item) => (
+                <div className="bp-dashboard__funnelItem" key={item.label}>
+                  <div><strong>{item.label}</strong><span>{item.value}</span></div>
+                  <div className="bp-dashboard__funnelBar"><span style={{ width: `${item.width}%` }} /></div>
+                </div>
+              ))}
+            </div>
           </article>
 
-          <article className="bp-dashboard__card bp-dashboard__card--funnel">
-            <div className="bp-dashboard__cardHeader"><div><h2>Conversion Funnel</h2><p>Cached funnel until visitor analytics are wired.</p></div></div>
-            <div className="bp-dashboard__funnelBars">{dashboard.funnel.map((item) => (<div className="bp-dashboard__funnelRow" key={item.label}><span>{item.label}</span><div><i style={{ width: `${item.width}%` }} title={`${item.label}: ${item.value}`} /></div><strong>{item.value}</strong></div>))}</div>
+          <article className="bp-dashboard__card bp-dashboard__card--subscribers">
+            <div className="bp-dashboard__cardHeader"><div><h2>Community Growth</h2><p>Recent subscribers and gift-led contacts.</p></div><Link href="/admin/collections/subscribers">Subscribers</Link></div>
+            <div className="bp-dashboard__subscriberList">
+              {dashboard.latestSubscribers.length ? dashboard.latestSubscribers.map((subscriber) => (
+                <Link className="bp-dashboard__subscriberRow" href={subscriber.href} key={subscriber.id}>
+                  <span><strong>{subscriber.name}</strong><small>{subscriber.email}</small></span>
+                  <em>{subscriber.dateJoined}</em>
+                  <small>{subscriber.status}</small>
+                </Link>
+              )) : <p className="bp-dashboard__empty">No subscribers yet.</p>}
+            </div>
           </article>
         </div>
       </div>
@@ -286,5 +314,4 @@ async function BeforeDashboard() {
   );
 }
 
-export { BeforeDashboard };
 export default BeforeDashboard;
