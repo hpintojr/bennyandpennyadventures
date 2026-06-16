@@ -1,12 +1,12 @@
 "use client";
 
-import { Activity, BookOpen, Image as ImageIcon, LayoutDashboard, Mail, Package, ShieldAlert, UserCog, Users, type LucideIcon } from "lucide-react";
+import { Activity, BookOpen, Image as ImageIcon, LayoutDashboard, Mail, Package, ShieldAlert, Ticket, UserCog, Users, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
 
-export type SidebarIconName = "activity" | "book" | "dashboard" | "image" | "mail" | "package" | "shield" | "userCog" | "users";
-export type SidebarActiveKey = "books" | "customers" | "dashboard" | "media" | "orders" | "privacy" | "subscribers" | "system" | "users";
+export type SidebarIconName = "activity" | "book" | "dashboard" | "image" | "mail" | "package" | "shield" | "ticket" | "userCog" | "users";
+export type SidebarActiveKey = "books" | "customers" | "dashboard" | "media" | "orders" | "privacy" | "promotions" | "subscribers" | "system" | "users";
 
 const iconMap: Record<SidebarIconName, LucideIcon> = {
   activity: Activity,
@@ -16,6 +16,7 @@ const iconMap: Record<SidebarIconName, LucideIcon> = {
   mail: Mail,
   package: Package,
   shield: ShieldAlert,
+  ticket: Ticket,
   userCog: UserCog,
   users: Users
 };
@@ -42,6 +43,7 @@ function isLinkActive(activeKey: SidebarActiveKey, pathname: string) {
   if (activeKey === "media") return isBasePath(pathname, "/admin/collections/downloads");
   if (activeKey === "subscribers") return isBasePath(pathname, "/admin/collections/subscribers");
   if (activeKey === "privacy") return isBasePath(pathname, "/admin/collections/privacy-requests");
+  if (activeKey === "promotions") return isBasePath(pathname, "/admin/collections/promotions");
   return false;
 }
 

@@ -10,6 +10,7 @@ import { Downloads } from "./collections/Downloads.ts";
 import { OrderItems } from "./collections/OrderItems.ts";
 import { Orders } from "./collections/Orders.ts";
 import { PrivacyRequests } from "./collections/PrivacyRequests.ts";
+import { Promotions } from "./collections/Promotions.ts";
 import { Subscribers } from "./collections/Subscribers.ts";
 import { SupportMessages } from "./collections/SupportMessages.ts";
 import { SupportTickets } from "./collections/SupportTickets.ts";
@@ -55,7 +56,8 @@ export default buildConfig({
     Downloads,
     SupportMessages,
     AccessGrants,
-    AuditLogs
+    AuditLogs,
+    Promotions
   ],
   db: postgresAdapter({
     pool: {
