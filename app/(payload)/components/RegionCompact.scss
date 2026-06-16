@@ -24,21 +24,28 @@
 .bp-dashboard__intro {
   display: grid !important;
   gap: 0.82rem !important;
-  max-width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  width: 100% !important;
 }
 
 .bp-dashboard__intro h1 {
+  display: block !important;
   font-size: clamp(1.75rem, 6vw, 2.15rem) !important;
   letter-spacing: -0.02em !important;
   line-height: 1.12 !important;
-  max-width: 26rem !important;
+  max-width: none !important;
+  text-wrap: balance;
+  width: 100% !important;
 }
 
 .bp-dashboard__intro p {
+  display: block !important;
   font-size: 0.94rem !important;
   line-height: 1.58 !important;
   margin-top: 0 !important;
-  max-width: 25rem !important;
+  max-width: none !important;
+  width: 100% !important;
 }
 
 .bp-dashboard__topbar > div,
