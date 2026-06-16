@@ -1,7 +1,21 @@
 /* Final mobile dashboard row overrides.
-   Loaded last from the Payload admin layout so table-like data rows do not collapse into stacked cards. */
+   Loaded last from the Payload admin layout so mobile dashboard fixes win the cascade. */
 
 @media (max-width: 900px) {
+  .template-default .bp-dashboard__intro p {
+    display: block !important;
+    font-size: clamp(0.74rem, 2.75vw, 0.84rem) !important;
+    font-weight: 900 !important;
+    letter-spacing: -0.015em !important;
+    line-height: 1.35 !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+    text-wrap: nowrap !important;
+    white-space: nowrap !important;
+    width: 100% !important;
+    word-break: normal !important;
+  }
+
   .template-default .bp-dashboard__cardHeader {
     align-items: flex-start !important;
     flex-direction: row !important;
@@ -83,9 +97,75 @@
     font-size: 0.66rem !important;
     white-space: nowrap !important;
   }
+
+  .template-default .nav > button,
+  .template-default aside > button,
+  .template-default .nav button[aria-label*='Collapse'],
+  .template-default .nav button[aria-label*='collapse'],
+  .template-default .nav button[aria-label*='Open'],
+  .template-default .nav button[aria-label*='open'],
+  .template-default aside button[aria-label*='Collapse'],
+  .template-default aside button[aria-label*='collapse'],
+  .template-default aside button[aria-label*='Open'],
+  .template-default aside button[aria-label*='open'] {
+    align-items: center !important;
+    background: #ffffff !important;
+    border: 1px solid rgba(235, 99, 115, 0.34) !important;
+    border-radius: 999px !important;
+    box-shadow: 0 10px 24px rgba(4, 63, 73, 0.16) !important;
+    color: #eb6373 !important;
+    display: inline-flex !important;
+    height: 2.85rem !important;
+    justify-content: center !important;
+    left: 0.75rem !important;
+    min-height: 2.85rem !important;
+    min-width: 2.85rem !important;
+    opacity: 1 !important;
+    padding: 0 !important;
+    position: fixed !important;
+    top: calc(env(safe-area-inset-top, 0px) + 0.75rem) !important;
+    transform: none !important;
+    visibility: visible !important;
+    width: 2.85rem !important;
+    z-index: 7000 !important;
+  }
+
+  .template-default .nav > button::before,
+  .template-default aside > button::before,
+  .template-default .nav button[aria-label*='Collapse']::before,
+  .template-default .nav button[aria-label*='collapse']::before,
+  .template-default .nav button[aria-label*='Open']::before,
+  .template-default .nav button[aria-label*='open']::before,
+  .template-default aside button[aria-label*='Collapse']::before,
+  .template-default aside button[aria-label*='collapse']::before,
+  .template-default aside button[aria-label*='Open']::before,
+  .template-default aside button[aria-label*='open']::before {
+    content: '♥' !important;
+    display: block !important;
+    font-size: 1.25rem !important;
+    font-weight: 950 !important;
+    line-height: 1 !important;
+  }
+
+  .template-default .nav > button svg,
+  .template-default aside > button svg,
+  .template-default .nav button[aria-label*='Collapse'] svg,
+  .template-default .nav button[aria-label*='collapse'] svg,
+  .template-default .nav button[aria-label*='Open'] svg,
+  .template-default .nav button[aria-label*='open'] svg,
+  .template-default aside button[aria-label*='Collapse'] svg,
+  .template-default aside button[aria-label*='collapse'] svg,
+  .template-default aside button[aria-label*='Open'] svg,
+  .template-default aside button[aria-label*='open'] svg {
+    display: none !important;
+  }
 }
 
 @media (max-width: 420px) {
+  .template-default .bp-dashboard__intro p {
+    font-size: clamp(0.68rem, 2.55vw, 0.76rem) !important;
+  }
+
   .template-default .bp-dashboard__orderRow {
     gap: 0.35rem !important;
     grid-template-columns: minmax(0, 1.05fr) minmax(4.8rem, 0.8fr) auto auto !important;
