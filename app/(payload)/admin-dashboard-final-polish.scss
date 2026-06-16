@@ -25,89 +25,100 @@
     display: none !important;
   }
 
-  /* Only style the actual Payload nav/sidebar trigger. Do not target generic toggle/menu/filter buttons. */
-  .template-default .nav > button,
-  .template-default aside > button,
-  .template-default .nav button[aria-label*='Open'],
-  .template-default .nav button[aria-label*='open'],
-  .template-default .nav button[aria-label*='Close'],
-  .template-default .nav button[aria-label*='close'],
-  .template-default .nav button[aria-label*='Collapse'],
-  .template-default .nav button[aria-label*='collapse'],
-  .template-default aside button[aria-label*='Open'],
-  .template-default aside button[aria-label*='open'],
-  .template-default aside button[aria-label*='Close'],
-  .template-default aside button[aria-label*='close'],
-  .template-default aside button[aria-label*='Collapse'],
-  .template-default aside button[aria-label*='collapse'] {
+  /* Exact Payload nav toggler only. Do not target generic toggle/menu/filter buttons. */
+  .template-default .nav-toggler,
+  .template-default .template-default__nav-toggler,
+  .template-default button.nav-toggler,
+  .template-default button.template-default__nav-toggler {
+    align-items: center !important;
+    background: #eb6373 !important;
+    background-color: #eb6373 !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    box-shadow: 0 10px 24px rgba(4, 63, 73, 0.16) !important;
+    color: transparent !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    font-size: 0 !important;
+    height: 2.85rem !important;
+    justify-content: center !important;
     left: 0.9rem !important;
+    line-height: 1 !important;
+    min-height: 2.85rem !important;
+    min-width: 2.85rem !important;
+    opacity: 1 !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    pointer-events: auto !important;
     position: absolute !important;
+    text-indent: 0 !important;
     top: calc(env(safe-area-inset-top, 0px) + 0.95rem) !important;
+    transform: none !important;
+    visibility: visible !important;
+    width: 2.85rem !important;
+    z-index: 7000 !important;
   }
 
-  .template-default .nav > button::before,
-  .template-default aside > button::before,
-  .template-default .nav button[aria-label*='Open']::before,
-  .template-default .nav button[aria-label*='open']::before,
-  .template-default .nav button[aria-label*='Close']::before,
-  .template-default .nav button[aria-label*='close']::before,
-  .template-default .nav button[aria-label*='Collapse']::before,
-  .template-default .nav button[aria-label*='collapse']::before,
-  .template-default aside button[aria-label*='Open']::before,
-  .template-default aside button[aria-label*='open']::before,
-  .template-default aside button[aria-label*='Close']::before,
-  .template-default aside button[aria-label*='close']::before,
-  .template-default aside button[aria-label*='Collapse']::before,
-  .template-default aside button[aria-label*='collapse']::before {
+  .template-default .nav-toggler::before,
+  .template-default .template-default__nav-toggler::before,
+  .template-default button.nav-toggler::before,
+  .template-default button.template-default__nav-toggler::before {
     align-items: center !important;
+    color: #ffffff !important;
+    content: '♥' !important;
     display: flex !important;
+    font-size: 1.35rem !important;
+    font-weight: 950 !important;
     height: 100% !important;
     justify-content: center !important;
     left: 0 !important;
     line-height: 1 !important;
     position: absolute !important;
+    text-indent: 0 !important;
     top: 0 !important;
     transform: translateY(-1px) !important;
     width: 100% !important;
   }
 
-  /* Open-sidebar close control: dark heart so it is visible against the pale blue panel. */
-  .template-default .nav button[aria-label*='Close'],
-  .template-default .nav button[aria-label*='close'],
-  .template-default aside button[aria-label*='Close'],
-  .template-default aside button[aria-label*='close'] {
+  .template-default .nav-toggler > *,
+  .template-default .template-default__nav-toggler > *,
+  .template-default button.nav-toggler > *,
+  .template-default button.template-default__nav-toggler > *,
+  .template-default .nav-toggler svg,
+  .template-default .template-default__nav-toggler svg,
+  .template-default .nav-toggler .hamburger,
+  .template-default .template-default__nav-toggler .hamburger,
+  .template-default .nav-toggler .hamburger__close-icon,
+  .template-default .template-default__nav-toggler .hamburger__close-icon,
+  .template-default .nav-toggler .hamburger__open-icon,
+  .template-default .template-default__nav-toggler .hamburger__open-icon {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+  }
+
+  /* When Payload exposes a close state, keep the heart dark for contrast on the pale blue sidebar. */
+  .template-default .nav-toggler[aria-label*='Close'],
+  .template-default .nav-toggler[aria-label*='close'],
+  .template-default .template-default__nav-toggler[aria-label*='Close'],
+  .template-default .template-default__nav-toggler[aria-label*='close'],
+  .template-default button.nav-toggler[aria-label*='Close'],
+  .template-default button.nav-toggler[aria-label*='close'],
+  .template-default button.template-default__nav-toggler[aria-label*='Close'],
+  .template-default button.template-default__nav-toggler[aria-label*='close'] {
     background: transparent !important;
+    background-color: transparent !important;
     box-shadow: none !important;
   }
 
-  .template-default .nav button[aria-label*='Close']::before,
-  .template-default .nav button[aria-label*='close']::before,
-  .template-default aside button[aria-label*='Close']::before,
-  .template-default aside button[aria-label*='close']::before {
+  .template-default .nav-toggler[aria-label*='Close']::before,
+  .template-default .nav-toggler[aria-label*='close']::before,
+  .template-default .template-default__nav-toggler[aria-label*='Close']::before,
+  .template-default .template-default__nav-toggler[aria-label*='close']::before,
+  .template-default button.nav-toggler[aria-label*='Close']::before,
+  .template-default button.nav-toggler[aria-label*='close']::before,
+  .template-default button.template-default__nav-toggler[aria-label*='Close']::before,
+  .template-default button.template-default__nav-toggler[aria-label*='close']::before {
     color: #043f49 !important;
-  }
-
-  /* Collapsed/sidebar-open trigger stays branded: red circle with a white heart. */
-  .template-default .nav button[aria-label*='Open'],
-  .template-default .nav button[aria-label*='open'],
-  .template-default aside button[aria-label*='Open'],
-  .template-default aside button[aria-label*='open'],
-  .template-default .nav button[aria-label*='Collapse'],
-  .template-default .nav button[aria-label*='collapse'],
-  .template-default aside button[aria-label*='Collapse'],
-  .template-default aside button[aria-label*='collapse'] {
-    background: #eb6373 !important;
-    box-shadow: 0 10px 24px rgba(4, 63, 73, 0.16) !important;
-  }
-
-  .template-default .nav button[aria-label*='Open']::before,
-  .template-default .nav button[aria-label*='open']::before,
-  .template-default aside button[aria-label*='Open']::before,
-  .template-default aside button[aria-label*='open']::before,
-  .template-default .nav button[aria-label*='Collapse']::before,
-  .template-default .nav button[aria-label*='collapse']::before,
-  .template-default aside button[aria-label*='Collapse']::before,
-  .template-default aside button[aria-label*='collapse']::before {
-    color: #ffffff !important;
   }
 }
