@@ -1,20 +1,55 @@
 # Benny & Penny's Adventures Website
 
-Deployable Next.js starter site for the Benny & Penny's Adventures children's medical book series.
+Production website and customer portal for **Benny & Penny's Adventures**, a children's medical book series and digital-product business.
 
-## What's included
+The site is built with **Next.js App Router**, **Payload CMS**, **Neon Postgres**, **Stripe Checkout**, **Cloudflare R2 signed digital delivery**, and **Sequenzy transactional email**.
 
-- Next.js App Router + TypeScript + Tailwind CSS
-- Home page based on the approved homepage sample
-- Books catalog with all 9 planned titles
-- Product detail pages at `/books/[slug]`
-- Working browser cart using `localStorage`
-- For Parents page with guide, printable, glossary, and support sections
-- Contact page with mailto fallback
-- Thank-you page for newsletter signup redirects
-- Placeholder Privacy and Terms pages
-- Image and download drop-zone folders
-- Original HTML samples copied into `docs/wireframes/`
+## Current status
+
+This repo is no longer a starter site. It now includes the public marketing site, product catalog, checkout flow, Payload Admin backend, customer portal, private digital delivery foundation, promotions/gifting, privacy/compliance pages, SEO/AI metadata, and transactional email helpers.
+
+### Built and active
+
+- Public homepage and brand site.
+- Books catalog with 9 planned titles.
+- Product detail pages at `/books/[slug]`.
+- Cart and Stripe Checkout flow.
+- Payload CMS Admin at `/admin`.
+- Neon Postgres database integration.
+- Orders, order items, customers/users, customer addresses, downloads/media, subscribers, support tickets, privacy requests, consent logs, gifts, promotions, password tokens, and access grants collections.
+- Customer Portal routes: `/portal`, `/portal/login`, `/portal/orders`, `/portal/addresses`, `/portal/library`.
+- Account/password routes: `/forgot-password` and `/account/set-password`.
+- Gift redemption flow.
+- Cloudflare R2 signed-link digital delivery support.
+- Sequenzy transactional email support.
+- Privacy, Terms, Messaging Terms, California Notice, State Rights, and Privacy Requests pages.
+- Sitemap, robots, JSON-LD, `llms.txt`, OG image, favicon, and baseline security headers.
+
+### Still in progress / launch cleanup
+
+- Live verification of Payload access-control lockdown.
+- Bot/spam protection on public forms, preferably honeypot + Cloudflare Turnstile + rate limiting.
+- Sequenzy environment verification and email delivery testing.
+- Full end-to-end tests for register/setup link, forgot password, order receipt, gift email, gift redemption, and returning-customer flows.
+- Customer support portal workflow.
+- POD/Lulu print fulfillment automation.
+- Admin actions such as refund, resend receipt, and regenerate download access.
+- Admin CSS consolidation.
+- Final business/legal readiness: business mailing address or PO Box, DBA, bank account, Stripe live readiness, and attorney review.
+
+## Tech stack
+
+- Next.js 15 App Router
+- React 19
+- TypeScript
+- Tailwind CSS
+- Payload CMS 3
+- Neon Postgres
+- Stripe Checkout and webhooks
+- Cloudflare R2 via S3-compatible SDK
+- Sequenzy transactional email
+- Vercel hosting
+- Cloudflare DNS
 
 ## Local setup
 
@@ -23,57 +58,210 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:3000.
+Open:
 
-## GitHub setup
-
-From this folder:
-
-```bash
-git init
-git add .
-git commit -m "Initial Benny and Penny website"
-git branch -M main
-git remote add origin https://github.com/hpintojr/bennyandpennyadventures.git
-git push -u origin main
+```txt
+http://localhost:3000
 ```
 
-## Vercel setup
+Build locally:
 
-1. Import the GitHub repo into Vercel.
-2. Framework preset: **Next.js**.
-3. Build command: `npm run build`.
-4. Output directory: leave blank / default.
-5. Add environment variables from `.env.example` as needed.
-6. Deploy on Hobby while testing. Move to Pro when it becomes a live commercial store.
+```bash
+npm run build
+```
 
-## Image loading
+Start production build locally:
 
-Drop images into `public/images/` using the filenames listed in `public/images/README.md`.
-The site shows soft placeholders until matching files exist.
+```bash
+npm run start
+```
 
-## PDF / EPUB loading
+Payload CLI:
 
-For local testing, drop files into `public/downloads/` using the names listed in `public/downloads/README.md`.
+```bash
+npm run payload
+```
 
-Important: for launch, paid ebooks should move to private Cloudflare R2 storage and be delivered through signed, time-limited links after Stripe payment.
+## Configuration
+
+Use `.env.example` as the starting point for local configuration. Do not commit real secrets.
+
+Configuration groups include:
+
+- Site URL.
+- Payload and database connection.
+- Stripe checkout and webhook settings.
+- Cloudflare R2 storage settings.
+- Sequenzy email sender/API settings.
+
+Email sending is designed to fail soft. If Sequenzy is not configured, email helper calls return a non-fatal result instead of breaking checkout, password reset, gift, or account flows.
+
+## Sequenzy automation status
+
+The email layer lives in:
+
+```txt
+lib/email.ts
+```
+
+Current supported email/helper functions:
+
+- `sendEmail()` — low-level Sequenzy transactional send.
+- `sendGiftEmail()` — sends a gift redemption link/code.
+- `sendOrderReceiptEmail()` — sends order receipt and account setup link.
+- `sendGiftRedeemedEmail()` — notifies the gifter that a gift was claimed.
+- `upsertSubscriber()` — creates/updates a Sequenzy subscriber for lead tracking.
+- `sendPasswordLinkEmail()` — sends setup/reset password links.
+
+Password token logic lives in:
+
+```txt
+lib/authTokens.ts
+```
+
+Relevant routes/pages:
+
+```txt
+/api/auth/forgot-password
+/api/auth/set-password
+/forgot-password
+/account/set-password
+```
+
+Security notes:
+
+- Password tokens are stored hashed.
+- Raw tokens are only used in the email link.
+- Tokens are single-use.
+- Links expire after 48 hours by default.
+- Forgot-password responses are intentionally generic to avoid email enumeration.
 
 ## Stripe / checkout status
 
-The cart works for testing selections, quantities, and pricing. Stripe Checkout is intentionally left disabled until the Stripe account and products/prices are created.
+Stripe Checkout is implemented.
 
-Future checkout integration target:
+Current behavior:
 
-- Create Stripe products/prices for each format.
-- POST cart line items to an API route.
-- Create Stripe Checkout session.
-- On webhook success, grant ebook access.
-- Send signed Cloudflare R2 links for PDF/EPUB downloads.
+- Server validates cart items before creating a Checkout Session.
+- Promotion codes are allowed.
+- Automatic tax is off unless explicitly enabled in deployment settings.
+- Saved customer addresses can prefill Stripe Checkout when a signed-in customer selects saved addresses.
+- Checkout metadata can include customer and selected address IDs.
+- Successful checkout returns customers to `/thank-you` with a Stripe Checkout Session reference.
 
-## Main content files
+Primary checkout route:
 
-- Book catalog: `lib/books.ts`
-- Global styling: `app/globals.css`
-- Header/cart count: `app/components/Header.tsx`
-- Product add-to-cart: `app/components/ProductActions.tsx`
-- Cart page client: `app/components/CartPageClient.tsx`
+```txt
+app/(frontend)/api/checkout/route.ts
+```
+
+## Customer Portal
+
+Portal source-of-truth model:
+
+```txt
+users = customer accounts and auth
+orders = receipt/order history
+order-items = purchased book formats
+customer-addresses = billing/shipping address book
+downloads = digital/audiobook delivery records
+access-grants = gifted/admin access
+```
+
+Customer-facing portal routes:
+
+```txt
+/portal
+/portal/login
+/portal/orders
+/portal/addresses
+/portal/library
+```
+
+Portal APIs:
+
+```txt
+/api/portal/me
+/api/portal/logout
+/api/portal/orders
+/api/portal/addresses
+/api/portal/library
+/api/portal/downloads
+```
+
+## Digital delivery
+
+Paid PDF, EPUB, and audiobook files should not be public files.
+
+Digital delivery direction:
+
+```txt
+Stripe purchase or access grant
+→ Payload download/access record
+→ signed-in customer requests download
+→ app verifies ownership
+→ app creates short-lived R2 signed URL
+→ app tracks usage
+```
+
+Important rule: never expose permanent public ebook, EPUB, audiobook, or raw R2 object URLs in the customer portal.
+
+## Privacy and compliance pages
+
+Current legal/compliance pages:
+
+```txt
+/privacy
+/terms
+/sms-terms
+/privacy/california
+/privacy/state-rights
+/privacy/requests
+```
+
+Before broad launch or marketing campaigns:
+
+- Add the official business mailing address or PO Box where required.
+- Confirm unsubscribe and consent-log behavior.
+- Add bot/spam protection to public forms.
+- Have legal/compliance language reviewed by an attorney.
+
+## Important project docs
+
+The main workspace context is maintained in:
+
+```txt
+hpintojr/My-Workspace
+```
+
+Start there for current project state:
+
+```txt
+CLAUDE.md
+01 Daily Logs/[C] 2026-06-15.md
+02 Projects/Benny & Penny's Adventures/Benny & Penny's Adventures Overview.md
+02 Projects/Benny & Penny's Adventures/[C] Backlog & Launch Checklist.md
+02 Projects/Benny & Penny's Adventures/[C] Site Assessment 2026-06-15.md
+02 Projects/Benny & Penny's Adventures/[C] Portal and Digital Delivery Implementation Notes.md
+02 Projects/Benny & Penny's Adventures/[C] Promotions, Gifting & Access Grants Plan.md
+```
+
+## Common working commands
+
+```bash
+npm install
+npm run dev
+npm run build
+npm run start
+```
+
+## Deployment
+
+The site deploys through Vercel from GitHub `main`.
+
+Deployment reminders:
+
+- Batch related fixes instead of deploying every tiny edit.
+- Confirm required Neon SQL patches are applied before deploying code that depends on new columns/tables.
+- Keep setup/debug routes disabled in production.
+- Do not commit secrets, API keys, database URLs, passwords, or private tokens.
