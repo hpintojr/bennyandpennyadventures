@@ -1,8 +1,15 @@
 import crypto from "node:crypto";
 
+type PasswordTokenRecord = {
+  id: string | number;
+  expiresAt?: unknown;
+  user?: unknown;
+  [key: string]: unknown;
+};
+
 type PayloadLike = {
   create: (args: any) => Promise<any>;
-  find: (args: any) => Promise<{ docs?: { id: string | number; [k: string]: unknown }[] }>;
+  find: (args: any) => Promise<any>;
   update: (args: any) => Promise<any>;
 };
 
@@ -44,11 +51,11 @@ export async function consumePasswordToken(
 ): Promise<{ userId: string | number } | null> {
   if (!raw || raw.length < 16) return null;
   const tokenHash = hashToken(raw);
-  const res = await payload.find({
+  const res = (await payload.find({
     collection: "password-tokens",
     limit: 1,
     where: { and: [{ tokenHash: { equals: tokenHash } }, { usedAt: { exists: false } }] }
-  });
+  })) as { docs?: PasswordTokenRecord[] };
   const rec = res.docs?.[0];
   if (!rec) return null;
 
