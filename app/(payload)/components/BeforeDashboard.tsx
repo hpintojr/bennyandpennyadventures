@@ -218,7 +218,7 @@ async function getDashboardData() {
   };
 }
 
-async function BeforeDashboard() {
+export async function BeforeDashboard() {
   const dashboard = await getDashboardData();
 
   return (
