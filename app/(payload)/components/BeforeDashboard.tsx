@@ -1,5 +1,5 @@
 import config from "@payload-config";
-import { BookCopy, CheckCircle2, Mail, Package, Wallet, type LucideIcon } from "lucide-react";
+import { BookCopy, Mail, Package, Wallet, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { getPayload } from "payload";
 import React from "react";
@@ -12,9 +12,19 @@ type PayloadDoc = { id?: string | number; createdAt?: string; [key: string]: unk
 type PayloadListResult = { docs: PayloadDoc[]; totalDocs: number; ok: boolean };
 type RecentOrder = { id: string; href: string; orderId: string; customerName: string; status: string; tone: string; total: string; created: string };
 type RecentSubscriber = { id: string; href: string; name: string; email: string; dateJoined: string; status: string };
-type StatusItem = { label: string; detail: string; active: boolean };
+type StatusItem = { label: string; detail: string; logoUrl: string; active: boolean };
 type FunnelItem = { label: string; value: number; width: number };
 type StatCard = { label: string; value: string; note: string; trend: string; Icon: LucideIcon };
+
+const serviceLogos = {
+  payload: "https://cdn.jsdelivr.net/gh/selfhst/icons/svg/payload.svg",
+  neon: "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/neon-tech.svg",
+  stripe: "https://cdn.jsdelivr.net/gh/selfhst/icons/svg/stripe.svg",
+  r2: "https://cdn.jsdelivr.net/gh/selfhst/icons/svg/cloudflare-zero-trust.svg",
+  sequenzy: "https://media.theresanaiforthat.com/icons/sequenzy.svg",
+  mailjet: "https://cdn.jsdelivr.net/gh/selfhst/icons/svg/mailjet.svg",
+  lulu: "https://cdn.brandfetch.io/idICJd57ED/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1778052093073"
+};
 
 function getString(value: unknown, fallback = "") {
   return typeof value === "string" && value.trim() ? value.trim() : fallback;
@@ -188,13 +198,13 @@ async function getDashboardData() {
   });
 
   const systemStatus: StatusItem[] = [
-    { label: "Payload CMS/API", detail: orders.ok ? "CONNECTED/ACTIVE" : "CHECK LOGS", active: orders.ok },
-    { label: "Neon Database", detail: orders.ok && users.ok ? "CONNECTED/ACTIVE" : "CHECK CONNECTION", active: orders.ok && users.ok },
-    { label: "Stripe API", detail: hasStripeRecords ? "CONNECTED/ACTIVE" : "READY TO VERIFY", active: hasStripeRecords },
-    { label: "R2 Fulfillment", detail: downloads.ok ? "CONNECTED/ACTIVE" : "CHECK FULFILLMENT", active: downloads.ok },
-    { label: "Sequenzy API", detail: subscribers.ok ? "CONNECTED/ACTIVE" : "CHECK EMAIL", active: subscribers.ok },
-    { label: "Mailjet API", detail: subscribers.ok ? "CONNECTED/ACTIVE" : "CHECK EMAIL", active: subscribers.ok },
-    { label: "LuLu Press API", detail: orderItems.ok ? "CONNECTED/ACTIVE" : "READY TO VERIFY", active: orderItems.ok }
+    { label: "Payload CMS/API", detail: orders.ok ? "CONNECTED/ACTIVE" : "CHECK LOGS", logoUrl: serviceLogos.payload, active: orders.ok },
+    { label: "Neon Database", detail: orders.ok && users.ok ? "CONNECTED/ACTIVE" : "CHECK CONNECTION", logoUrl: serviceLogos.neon, active: orders.ok && users.ok },
+    { label: "Stripe API", detail: hasStripeRecords ? "CONNECTED/ACTIVE" : "READY TO VERIFY", logoUrl: serviceLogos.stripe, active: hasStripeRecords },
+    { label: "R2 Fulfillment", detail: downloads.ok ? "CONNECTED/ACTIVE" : "CHECK FULFILLMENT", logoUrl: serviceLogos.r2, active: downloads.ok },
+    { label: "Sequenzy API", detail: subscribers.ok ? "CONNECTED/ACTIVE" : "CHECK EMAIL", logoUrl: serviceLogos.sequenzy, active: subscribers.ok },
+    { label: "Mailjet API", detail: subscribers.ok ? "CONNECTED/ACTIVE" : "CHECK EMAIL", logoUrl: serviceLogos.mailjet, active: subscribers.ok },
+    { label: "LuLu Press API", detail: orderItems.ok ? "CONNECTED/ACTIVE" : "READY TO VERIFY", logoUrl: serviceLogos.lulu, active: orderItems.ok }
   ];
 
   return {
@@ -248,7 +258,7 @@ export async function BeforeDashboard() {
             <div className="bp-dashboard__systemList">
               {dashboard.systemStatus.map((item) => (
                 <div className="bp-dashboard__systemItem" key={item.label}>
-                  <span className="bp-dashboard__serviceIcon" aria-hidden="true"><CheckCircle2 size={18} strokeWidth={2.8} /></span>
+                  <span className="bp-dashboard__serviceIcon" aria-hidden="true"><img alt="" height={20} src={item.logoUrl} width={20} /></span>
                   <div><strong>{item.label}</strong><small>{item.detail}</small></div>
                   <em className={item.active ? "is-active" : "is-pending"}>{item.active ? "ONLINE" : "CHECK"}</em>
                 </div>
