@@ -68,8 +68,8 @@ function FormatCard({ format }: { format: LibraryFormat }) {
 
   return (
     <div className="rounded-2xl border border-tan bg-cream/60 p-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <span className={`rounded-full px-3 py-1 text-xs font-extrabold uppercase tracking-[0.1em] ${badgeClass(format.format)}`}>{format.label}</span>
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
+        <span className={`w-fit rounded-full px-3 py-1 text-xs font-extrabold uppercase tracking-[0.1em] ${badgeClass(format.format)}`}>{format.label}</span>
         <span className="text-sm font-bold text-teal">Qty {format.quantity}</span>
       </div>
       <p className="mt-3 text-sm leading-6 text-ink">{format.status}</p>
@@ -94,7 +94,7 @@ function FormatCard({ format }: { format: LibraryFormat }) {
       )}
 
       {error && <p className="mt-2 text-xs font-bold text-coral">{error}</p>}
-      <p className="mt-2 text-xs leading-5 text-ink/65">Orders: {format.orderNumbers.join(", ")}</p>
+      <p className="mt-2 break-words text-xs leading-5 text-ink/65">Orders: {format.orderNumbers.join(", ")}</p>
     </div>
   );
 }
@@ -150,20 +150,20 @@ export default function PortalLibraryClient() {
     <div className="mx-auto mt-8 max-w-5xl space-y-3">
       {books.map((book, index) => (
         <details key={`${book.bookId || book.title}`} open={index === 0} className="group overflow-hidden rounded-[1.5rem] border border-tan bg-white/75 shadow-soft">
-          <summary className="flex cursor-pointer list-none flex-col gap-3 px-5 py-4 transition hover:bg-cream/60 sm:flex-row sm:items-center sm:justify-between">
+          <summary className="flex cursor-pointer list-none flex-col gap-3 px-4 py-4 transition hover:bg-cream/60 sm:px-5 md:flex-row md:items-center md:justify-between">
             <div className="min-w-0">
               <p className="text-xs font-extrabold uppercase tracking-[0.14em] text-coral">Purchased Book</p>
-              <h2 className="mt-1 font-serif text-2xl font-bold leading-tight text-teal">{book.title}</h2>
-              <p className="mt-1 text-sm text-ink/70">{summary(book)}</p>
+              <h2 className="mt-1 break-words font-serif text-2xl font-bold leading-tight text-teal">{book.title}</h2>
+              <p className="mt-1 text-sm leading-6 text-ink/70">{summary(book)}</p>
             </div>
-            <div className="flex shrink-0 items-center gap-4">
+            <div className="flex shrink-0 flex-wrap items-center gap-3 md:justify-end">
               <span className="text-sm text-ink/65">Latest: {formatDate(book.latestPurchaseAt)}</span>
               <span className="text-sm font-extrabold text-coral group-open:hidden">View</span>
               <span className="hidden text-sm font-extrabold text-coral group-open:inline">Hide</span>
             </div>
           </summary>
 
-          <div className="grid gap-3 border-t border-tan px-5 pb-5 pt-4 md:grid-cols-2">
+          <div className="grid gap-3 border-t border-tan px-4 pb-5 pt-4 sm:px-5 lg:grid-cols-2">
             {(book.formats || []).map((format) => (
               <FormatCard key={format.format} format={format} />
             ))}
