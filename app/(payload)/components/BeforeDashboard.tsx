@@ -224,15 +224,16 @@ export async function BeforeDashboard() {
   return (
     <section className="bp-dashboard" aria-label="Benny and Penny admin dashboard">
       <header className="bp-dashboard__topbar">
-        <div>
+        <div className="bp-dashboard__intro">
           <h1>Welcome, <AdminWelcomeName />!</h1>
           <p>Live order, fulfillment, customer, and compliance command center.</p>
         </div>
-        <form className="bp-dashboard__search" action="/admin/collections/orders" method="get">
-          <label className="bp-dashboard__searchIcon" htmlFor="bp-admin-search">⌕</label>
-          <input id="bp-admin-search" name="q" placeholder="Search for an order, customer, or title..." type="search" />
-        </form>
       </header>
+
+      <form className="bp-dashboard__search bp-dashboard__search--standalone" action="/admin/collections/orders" method="get">
+        <label className="bp-dashboard__searchIcon" htmlFor="bp-admin-search">⌕</label>
+        <input id="bp-admin-search" name="q" placeholder="Search for an order, customer, or title..." type="search" />
+      </form>
 
       <div className="bp-dashboard__stats" aria-label="Dashboard key performance indicators">
         {dashboard.stats.map(({ Icon, ...stat }) => (
