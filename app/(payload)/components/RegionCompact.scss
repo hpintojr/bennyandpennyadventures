@@ -78,17 +78,22 @@
   max-height: 2.5rem !important;
   max-width: 2.5rem !important;
   overflow: hidden !important;
-  padding: 0.42rem !important;
+  padding: 0 !important;
+  position: relative !important;
   width: 2.5rem !important;
 }
 
 .bp-dashboard__serviceIcon img {
+  display: none !important;
+}
+
+.bp-dashboard__serviceIcon::after {
+  color: #0f6170 !important;
+  content: '✓' !important;
   display: block !important;
-  height: auto !important;
-  max-height: 1.65rem !important;
-  max-width: 1.65rem !important;
-  object-fit: contain !important;
-  width: auto !important;
+  font-size: 1rem !important;
+  font-weight: 950 !important;
+  line-height: 1 !important;
 }
 
 @media (max-width: 760px) {
@@ -108,9 +113,5 @@
     max-height: 2.35rem !important;
     max-width: 2.35rem !important;
     width: 2.35rem !important;
-  }
-  .bp-dashboard__serviceIcon img {
-    max-height: 1.55rem !important;
-    max-width: 1.55rem !important;
   }
 }
