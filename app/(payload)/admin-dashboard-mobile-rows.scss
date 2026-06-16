@@ -2,6 +2,39 @@
    Loaded last from the Payload admin layout so mobile dashboard fixes win the cascade. */
 
 @media (max-width: 900px) {
+  html,
+  body,
+  .template-default,
+  .template-default main,
+  .template-default .payload-admin,
+  .template-default .app {
+    background: #fbfffc !important;
+    min-height: 100dvh !important;
+  }
+
+  .template-default {
+    overflow-x: hidden !important;
+  }
+
+  .template-default .bp-dashboard {
+    background: #fbfffc !important;
+    min-height: 100dvh !important;
+    padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .template-default::after {
+    background: #fbfffc !important;
+    bottom: 0 !important;
+    content: '' !important;
+    display: block !important;
+    height: calc(4rem + env(safe-area-inset-bottom, 0px)) !important;
+    left: 0 !important;
+    pointer-events: none !important;
+    position: fixed !important;
+    right: 0 !important;
+    z-index: 0 !important;
+  }
+
   .template-default .bp-dashboard__intro p {
     display: block !important;
     font-size: clamp(0.74rem, 2.75vw, 0.84rem) !important;
@@ -104,25 +137,41 @@
   .template-default .nav button[aria-label*='collapse'],
   .template-default .nav button[aria-label*='Open'],
   .template-default .nav button[aria-label*='open'],
+  .template-default .nav button[aria-label*='Close'],
+  .template-default .nav button[aria-label*='close'],
+  .template-default .nav button[aria-label*='Menu'],
+  .template-default .nav button[aria-label*='menu'],
+  .template-default .nav button[aria-label*='Toggle'],
+  .template-default .nav button[aria-label*='toggle'],
   .template-default aside button[aria-label*='Collapse'],
   .template-default aside button[aria-label*='collapse'],
   .template-default aside button[aria-label*='Open'],
-  .template-default aside button[aria-label*='open'] {
+  .template-default aside button[aria-label*='open'],
+  .template-default aside button[aria-label*='Close'],
+  .template-default aside button[aria-label*='close'],
+  .template-default aside button[aria-label*='Menu'],
+  .template-default aside button[aria-label*='menu'],
+  .template-default aside button[aria-label*='Toggle'],
+  .template-default aside button[aria-label*='toggle'] {
     align-items: center !important;
-    background: #ffffff !important;
-    border: 1px solid rgba(235, 99, 115, 0.34) !important;
+    background: #eb6373 !important;
+    border: 0 !important;
     border-radius: 999px !important;
     box-shadow: 0 10px 24px rgba(4, 63, 73, 0.16) !important;
-    color: #eb6373 !important;
+    color: transparent !important;
     display: inline-flex !important;
+    font-size: 0 !important;
     height: 2.85rem !important;
     justify-content: center !important;
     left: 0.75rem !important;
+    line-height: 1 !important;
     min-height: 2.85rem !important;
     min-width: 2.85rem !important;
     opacity: 1 !important;
+    overflow: hidden !important;
     padding: 0 !important;
     position: fixed !important;
+    text-indent: 0 !important;
     top: calc(env(safe-area-inset-top, 0px) + 0.75rem) !important;
     transform: none !important;
     visibility: visible !important;
@@ -136,27 +185,53 @@
   .template-default .nav button[aria-label*='collapse']::before,
   .template-default .nav button[aria-label*='Open']::before,
   .template-default .nav button[aria-label*='open']::before,
+  .template-default .nav button[aria-label*='Close']::before,
+  .template-default .nav button[aria-label*='close']::before,
+  .template-default .nav button[aria-label*='Menu']::before,
+  .template-default .nav button[aria-label*='menu']::before,
+  .template-default .nav button[aria-label*='Toggle']::before,
+  .template-default .nav button[aria-label*='toggle']::before,
   .template-default aside button[aria-label*='Collapse']::before,
   .template-default aside button[aria-label*='collapse']::before,
   .template-default aside button[aria-label*='Open']::before,
-  .template-default aside button[aria-label*='open']::before {
+  .template-default aside button[aria-label*='open']::before,
+  .template-default aside button[aria-label*='Close']::before,
+  .template-default aside button[aria-label*='close']::before,
+  .template-default aside button[aria-label*='Menu']::before,
+  .template-default aside button[aria-label*='menu']::before,
+  .template-default aside button[aria-label*='Toggle']::before,
+  .template-default aside button[aria-label*='toggle']::before {
+    color: #ffffff !important;
     content: '♥' !important;
     display: block !important;
-    font-size: 1.25rem !important;
+    font-size: 1.35rem !important;
     font-weight: 950 !important;
     line-height: 1 !important;
+    text-indent: 0 !important;
   }
 
-  .template-default .nav > button svg,
-  .template-default aside > button svg,
-  .template-default .nav button[aria-label*='Collapse'] svg,
-  .template-default .nav button[aria-label*='collapse'] svg,
-  .template-default .nav button[aria-label*='Open'] svg,
-  .template-default .nav button[aria-label*='open'] svg,
-  .template-default aside button[aria-label*='Collapse'] svg,
-  .template-default aside button[aria-label*='collapse'] svg,
-  .template-default aside button[aria-label*='Open'] svg,
-  .template-default aside button[aria-label*='open'] svg {
+  .template-default .nav > button > *,
+  .template-default aside > button > *,
+  .template-default .nav button[aria-label*='Collapse'] > *,
+  .template-default .nav button[aria-label*='collapse'] > *,
+  .template-default .nav button[aria-label*='Open'] > *,
+  .template-default .nav button[aria-label*='open'] > *,
+  .template-default .nav button[aria-label*='Close'] > *,
+  .template-default .nav button[aria-label*='close'] > *,
+  .template-default .nav button[aria-label*='Menu'] > *,
+  .template-default .nav button[aria-label*='menu'] > *,
+  .template-default .nav button[aria-label*='Toggle'] > *,
+  .template-default .nav button[aria-label*='toggle'] > *,
+  .template-default aside button[aria-label*='Collapse'] > *,
+  .template-default aside button[aria-label*='collapse'] > *,
+  .template-default aside button[aria-label*='Open'] > *,
+  .template-default aside button[aria-label*='open'] > *,
+  .template-default aside button[aria-label*='Close'] > *,
+  .template-default aside button[aria-label*='close'] > *,
+  .template-default aside button[aria-label*='Menu'] > *,
+  .template-default aside button[aria-label*='menu'] > *,
+  .template-default aside button[aria-label*='Toggle'] > *,
+  .template-default aside button[aria-label*='toggle'] > * {
     display: none !important;
   }
 }
