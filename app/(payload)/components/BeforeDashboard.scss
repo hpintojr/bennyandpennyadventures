@@ -198,7 +198,8 @@
 }
 
 .bp-dashboard__row--half { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.bp-dashboard__row--full { grid-template-columns: minmax(0, 1fr); }
+.bp-dashboard__row--full,
+.bp-dashboard__row--wide { grid-template-columns: minmax(0, 1fr); }
 .bp-dashboard__row--subscribers { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); }
 
 .bp-dashboard__card {
