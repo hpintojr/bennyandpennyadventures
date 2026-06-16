@@ -22,6 +22,40 @@ function normalizeEmail(value: unknown): string | null {
   return email;
 }
 
+// Status check used by the thank-you card: does this paid order already have an
+// activated account? Lets us show existing members a "sign in" prompt instead of
+// the create-password form. Never returns the email.
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const sessionId = (searchParams.get("session_id") || "").trim();
+  if (!sessionId.startsWith("cs_")) {
+    return NextResponse.json({ accountExists: false, passwordSet: false });
+  }
+  try {
+    const stripe = getStripe();
+    const session = await stripe.checkout.sessions.retrieve(sessionId);
+    if (session.payment_status !== "paid") {
+      return NextResponse.json({ accountExists: false, passwordSet: false });
+    }
+    const email = normalizeEmail(session.customer_details?.email) || normalizeEmail(session.customer_email);
+    if (!email) return NextResponse.json({ accountExists: false, passwordSet: false });
+
+    const payload = await getPayloadClient();
+    const found = (await payload.find({
+      collection: "users",
+      limit: 1,
+      where: { email: { equals: email } }
+    })) as PayloadFindResult;
+    const user = found.docs?.[0];
+    return NextResponse.json({
+      accountExists: Boolean(user),
+      passwordSet: user?.passwordSetByCustomer === true
+    });
+  } catch {
+    return NextResponse.json({ accountExists: false, passwordSet: false });
+  }
+}
+
 export async function POST(request: Request) {
   let body: { sessionId?: unknown; password?: unknown };
   try {

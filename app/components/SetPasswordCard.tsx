@@ -1,16 +1,37 @@
 "use client";
 
 import type { FormEvent } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
-type State = "idle" | "loading" | "done" | "already" | "error";
+type State = "checking" | "idle" | "loading" | "done" | "already" | "error";
 
 export default function SetPasswordCard({ sessionId }: { sessionId: string }) {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
-  const [state, setState] = useState<State>("idle");
+  const [state, setState] = useState<State>("checking");
   const [message, setMessage] = useState<string | null>(null);
+
+  // On load, check whether this paid order already has an activated account.
+  // Existing members get a "welcome back, sign in" prompt — never the create-password form.
+  useEffect(() => {
+    let active = true;
+    async function checkStatus() {
+      try {
+        const response = await fetch(`/api/portal/set-password?session_id=${encodeURIComponent(sessionId)}`);
+        const raw = await response.text();
+        const data = (raw ? JSON.parse(raw) : {}) as { accountExists?: boolean; passwordSet?: boolean };
+        if (!active) return;
+        setState(data.passwordSet ? "already" : "idle");
+      } catch {
+        if (active) setState("idle");
+      }
+    }
+    checkStatus();
+    return () => {
+      active = false;
+    };
+  }, [sessionId]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -51,6 +72,14 @@ export default function SetPasswordCard({ sessionId }: { sessionId: string }) {
     }
   }
 
+  if (state === "checking") {
+    return (
+      <div className="mx-auto mt-6 max-w-xl rounded-3xl border border-tan bg-white/70 p-6 text-center shadow-soft">
+        <p className="font-bold text-teal">Checking your account…</p>
+      </div>
+    );
+  }
+
   if (state === "done") {
     return (
       <div className="mx-auto mt-6 max-w-xl rounded-3xl border border-teal/30 bg-teal/5 p-6 text-center shadow-soft">
@@ -64,8 +93,8 @@ export default function SetPasswordCard({ sessionId }: { sessionId: string }) {
   if (state === "already") {
     return (
       <div className="mx-auto mt-6 max-w-xl rounded-3xl border border-tan bg-white/80 p-6 text-center shadow-soft">
-        <h2 className="font-serif text-2xl font-bold text-teal">You already have an account</h2>
-        <p className="mt-2 text-sm text-ink">This email already has a password. Sign in to access your portal.</p>
+        <h2 className="font-serif text-2xl font-bold text-teal">Welcome back ♥</h2>
+        <p className="mt-2 text-sm text-ink">You already have an account with this email — no need to create a new password. Sign in to find this order and your books.</p>
         <Link href="/portal/login" className="btn mt-5">Sign In</Link>
       </div>
     );
