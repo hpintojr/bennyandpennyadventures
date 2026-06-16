@@ -2,9 +2,14 @@
    Loaded after all other admin styles so it only corrects the remaining iPhone admin details. */
 
 @media (max-width: 900px) {
-  /* Give the mobile heart/menu toggle room so it does not sit on top of the greeting. */
+  /* Give mobile admin headers clear room below the heart/menu toggle. */
+  .template-default main {
+    padding-top: clamp(3.75rem, 12vw, 4.75rem) !important;
+  }
+
+  /* Dashboard has its own header spacing so it clears the top-of-page heart. */
   .template-default .bp-dashboard__topbar {
-    margin-top: clamp(4.35rem, 16vw, 5.45rem) !important;
+    margin-top: clamp(1.2rem, 5vw, 2rem) !important;
   }
 
   /* Force the greeting into the approved two-line mobile treatment:
@@ -20,7 +25,7 @@
     display: none !important;
   }
 
-  /* Center the generated heart precisely inside the collapsed red circle. */
+  /* Keep the mobile heart/menu control at the top of the page instead of floating while scrolling. */
   .template-default .nav > button,
   .template-default aside > button,
   .template-default button[class*='close'],
@@ -49,7 +54,9 @@
   .template-default aside button[aria-label*='menu'],
   .template-default aside button[aria-label*='Toggle'],
   .template-default aside button[aria-label*='toggle'] {
-    position: fixed !important;
+    left: 0.9rem !important;
+    position: absolute !important;
+    top: calc(env(safe-area-inset-top, 0px) + 0.95rem) !important;
   }
 
   .template-default .nav > button::before,
