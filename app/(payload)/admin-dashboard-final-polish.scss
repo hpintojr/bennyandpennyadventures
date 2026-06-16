@@ -185,4 +185,81 @@
   .template-default button.template-default__nav-toggler[aria-label*='close']::before {
     color: #043f49 !important;
   }
+
+  /* Hard sidebar close override: hide the actual X layer and draw a dark heart on the close button. */
+  .template-default .nav button:has(.hamburger__close-icon),
+  .template-default aside button:has(.hamburger__close-icon),
+  .template-default [class*='nav'] button:has(.hamburger__close-icon),
+  .template-default [class*='Nav'] button:has(.hamburger__close-icon) {
+    align-items: center !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    color: transparent !important;
+    display: inline-flex !important;
+    font-size: 0 !important;
+    height: 2.85rem !important;
+    justify-content: center !important;
+    min-height: 2.85rem !important;
+    min-width: 2.85rem !important;
+    overflow: hidden !important;
+    position: absolute !important;
+    text-indent: 0 !important;
+    width: 2.85rem !important;
+    z-index: 7001 !important;
+  }
+
+  .template-default .nav button:has(.hamburger__close-icon)::before,
+  .template-default aside button:has(.hamburger__close-icon)::before,
+  .template-default [class*='nav'] button:has(.hamburger__close-icon)::before,
+  .template-default [class*='Nav'] button:has(.hamburger__close-icon)::before {
+    align-items: center !important;
+    color: #043f49 !important;
+    content: '♥' !important;
+    display: flex !important;
+    font-size: 1.35rem !important;
+    font-weight: 950 !important;
+    height: 100% !important;
+    justify-content: center !important;
+    left: 0 !important;
+    line-height: 1 !important;
+    position: absolute !important;
+    text-indent: 0 !important;
+    top: 0 !important;
+    transform: translateY(-1px) !important;
+    width: 100% !important;
+  }
+
+  .template-default .nav button:has(.hamburger__close-icon)::after,
+  .template-default aside button:has(.hamburger__close-icon)::after,
+  .template-default [class*='nav'] button:has(.hamburger__close-icon)::after,
+  .template-default [class*='Nav'] button:has(.hamburger__close-icon)::after,
+  .template-default .nav button:has(.hamburger__close-icon) *,
+  .template-default aside button:has(.hamburger__close-icon) *,
+  .template-default [class*='nav'] button:has(.hamburger__close-icon) *,
+  .template-default [class*='Nav'] button:has(.hamburger__close-icon) * {
+    content: none !important;
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+  }
+
+  .template-default .nav .hamburger__close-icon,
+  .template-default aside .hamburger__close-icon,
+  .template-default [class*='nav'] .hamburger__close-icon,
+  .template-default [class*='Nav'] .hamburger__close-icon,
+  .template-default .nav .hamburger__close-icon::before,
+  .template-default .nav .hamburger__close-icon::after,
+  .template-default aside .hamburger__close-icon::before,
+  .template-default aside .hamburger__close-icon::after,
+  .template-default [class*='nav'] .hamburger__close-icon::before,
+  .template-default [class*='nav'] .hamburger__close-icon::after,
+  .template-default [class*='Nav'] .hamburger__close-icon::before,
+  .template-default [class*='Nav'] .hamburger__close-icon::after {
+    content: none !important;
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+  }
 }
