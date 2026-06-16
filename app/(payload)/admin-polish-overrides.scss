@@ -192,3 +192,132 @@
   text-align: center !important;
   text-align-last: center !important;
 }
+
+/* Mobile admin shell isolation: fixes drawer/content overlap and prevents desktop widths from leaking into phones. */
+@media (max-width: 900px) {
+  html,
+  body,
+  .template-default {
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+  }
+
+  .template-default main,
+  .template-default .payload-admin,
+  .template-default .app,
+  .template-default .gutter--left,
+  .template-default .gutter--right {
+    max-width: 100vw !important;
+    min-width: 0 !important;
+    overflow-x: hidden !important;
+  }
+
+  .template-default .nav,
+  .template-default aside {
+    max-width: min(82vw, 22rem) !important;
+    width: min(82vw, 22rem) !important;
+    z-index: 1000 !important;
+  }
+
+  .template-default .nav::before,
+  .template-default aside::before {
+    font-size: 1.05rem !important;
+    min-height: 4.4rem !important;
+    padding: 1.1rem 1rem 0.9rem 3.75rem !important;
+  }
+
+  .bp-admin-nav-extra {
+    padding: 0 0.65rem !important;
+  }
+
+  .bp-admin-nav-extra--top {
+    margin-top: -2.2rem !important;
+  }
+
+  .bp-admin-nav-extra__link {
+    border-radius: 0.72rem !important;
+    font-size: 0.92rem !important;
+    min-height: 2.25rem !important;
+    padding: 0.48rem 0.62rem !important;
+  }
+
+  .bp-admin-nav-extra--bottom {
+    left: 0.65rem !important;
+    width: calc(min(82vw, 22rem) - 1.3rem) !important;
+  }
+
+  .bp-dashboard {
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+    padding: 0.35rem 0 2rem !important;
+    width: 100% !important;
+  }
+
+  .bp-dashboard__topbar {
+    align-items: start !important;
+    display: grid !important;
+    gap: 0.9rem !important;
+    grid-template-columns: 1fr !important;
+    margin-bottom: 1rem !important;
+    width: 100% !important;
+  }
+
+  .bp-dashboard h1 {
+    font-size: clamp(2rem, 9vw, 2.65rem) !important;
+    line-height: 0.98 !important;
+    max-width: 18rem !important;
+  }
+
+  .bp-dashboard p {
+    font-size: 0.9rem !important;
+    line-height: 1.45 !important;
+    max-width: 21rem !important;
+  }
+
+  .bp-dashboard__search {
+    border-radius: 1rem !important;
+    box-shadow: 0 10px 22px rgba(20, 36, 42, 0.08) !important;
+    display: grid !important;
+    grid-template-columns: 2.6rem minmax(0, 1fr) !important;
+    max-width: 100% !important;
+    min-height: 3rem !important;
+    padding: 0 0.5rem !important;
+    width: 100% !important;
+  }
+
+  .bp-dashboard__searchIcon {
+    align-items: center !important;
+    display: inline-flex !important;
+    font-size: 1.35rem !important;
+    justify-content: center !important;
+  }
+
+  .bp-dashboard__search input {
+    font-size: 0.95rem !important;
+    min-height: 2.35rem !important;
+    min-width: 0 !important;
+    padding: 0.35rem 0.45rem !important;
+    width: 100% !important;
+  }
+
+  .bp-dashboard__stats,
+  .bp-dashboard__row--half,
+  .bp-dashboard__row--wide,
+  .bp-dashboard__row--subscribers,
+  .bp-dashboard__systemList,
+  .bp-dashboard__statusGrid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .bp-dashboard__stat,
+  .bp-dashboard__card,
+  .bp-dashboard__mockGrid {
+    max-width: 100% !important;
+    overflow: hidden !important;
+  }
+
+  .bp-dashboard__mockGrid {
+    border-radius: 1.6rem !important;
+    padding: 0.9rem !important;
+  }
+}
