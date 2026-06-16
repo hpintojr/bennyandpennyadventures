@@ -47,10 +47,22 @@ export async function GET(request: Request) {
       where: { email: { equals: email } }
     })) as PayloadFindResult;
     const user = found.docs?.[0];
-    return NextResponse.json({
-      accountExists: Boolean(user),
-      passwordSet: user?.passwordSetByCustomer === true
-    });
+
+    // Treat as a returning member (show "sign in" instead of the create-password form)
+    // if they have set a password before OR they have more than one order — a brand-new
+    // buyer has exactly one order from this checkout.
+    let priorOrders = 0;
+    if (user) {
+      const ordersRes = (await payload.find({
+        collection: "orders",
+        limit: 2,
+        where: { customer: { equals: user.id } }
+      })) as PayloadFindResult & { totalDocs?: number };
+      priorOrders = typeof ordersRes.totalDocs === "number" ? ordersRes.totalDocs : (ordersRes.docs?.length ?? 0);
+    }
+
+    const returning = Boolean(user) && (user?.passwordSetByCustomer === true || priorOrders >= 2);
+    return NextResponse.json({ accountExists: Boolean(user), passwordSet: returning });
   } catch {
     return NextResponse.json({ accountExists: false, passwordSet: false });
   }

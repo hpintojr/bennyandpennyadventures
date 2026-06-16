@@ -86,10 +86,10 @@ export default function PortalGiftsClient() {
         body: JSON.stringify({ downloadId, recipientEmail, message })
       });
       const raw = await response.text();
-      const data = (raw ? JSON.parse(raw) : {}) as { gift?: { code?: string }; error?: string };
+      const data = (raw ? JSON.parse(raw) : {}) as { gift?: { code?: string }; emailed?: boolean; error?: string };
       if (!response.ok || !data.gift?.code) throw new Error(data.error || "Could not create the gift.");
       setNewCode(data.gift.code);
-      setNotice("Gift code created. Share it with your recipient (email coming once our mail system is live).");
+      setNotice(data.emailed ? "Gift code created and emailed to your recipient. You can also copy/share it below." : "Gift code created. Copy and share it with your recipient below.");
       setRecipientEmail("");
       setMessage("");
       setDownloadId("");

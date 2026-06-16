@@ -2,6 +2,7 @@ import { headers as getHeaders } from "next/headers";
 import { NextResponse } from "next/server";
 import { getPayload } from "payload";
 import { digitalValueForFormat, generateGiftCode } from "@/lib/gifts";
+import { sendGiftEmail } from "@/lib/email";
 
 export const runtime = "nodejs";
 
@@ -181,7 +182,31 @@ export async function POST(request: Request) {
     data: { giftsIssued: num(download.giftsIssued) + 1 }
   });
 
+  // Email the recipient (best-effort; the code is also shown on-screen for manual sharing).
+  let emailed = false;
+  try {
+    const fn = typeof user.firstName === "string" ? user.firstName.trim() : "";
+    const ln = typeof user.lastName === "string" ? user.lastName.trim() : "";
+    const gifterName = [fn, ln].filter(Boolean).join(" ") || undefined;
+    const result = await sendGiftEmail({
+      to: recipientEmail,
+      code,
+      bookTitle: relTitle(download.book) || undefined,
+      formatLabel: formatLabel(giftFormat),
+      gifterName,
+      message,
+      expiresAt
+    });
+    emailed = result.ok;
+    if (!result.ok && result.error !== "email-not-configured") {
+      console.error("Gift email send failed", result.error);
+    }
+  } catch (error) {
+    console.error("Gift email send threw", error);
+  }
+
   return NextResponse.json({
+    emailed,
     gift: { id: gift.id, code, recipientEmail, format: giftFormat, expiresAt },
     // Until Mailjet is live, the UI shows this code for manual sharing.
     redeemUrl: `/gift/redeem?code=${encodeURIComponent(code)}`

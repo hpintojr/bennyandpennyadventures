@@ -422,3 +422,28 @@
 .react-datepicker__time-list-item:hover {
   background: #e9f3f2 !important;
 }
+
+/* --- Admin form field readability ---
+   The custom theme rendered input/select/textarea text and borders too light,
+   making fields (e.g. Gifts) hard to see. Restore readable contrast. */
+.field-type input,
+.field-type textarea,
+.field-type select {
+  color: #2b2b2b !important;
+}
+.field-type input::placeholder,
+.field-type textarea::placeholder {
+  color: #9aa0a0 !important;
+}
+.field-type .rs__control {
+  background: #ffffff !important;
+  border-color: #d9cdb8 !important;
+}
+.field-type .rs__single-value,
+.field-type .rs__input,
+.field-type .rs__input-container {
+  color: #2b2b2b !important;
+}
+.field-type .rs__placeholder {
+  color: #9aa0a0 !important;
+}

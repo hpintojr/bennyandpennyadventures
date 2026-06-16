@@ -478,8 +478,12 @@ async function createDownloadsForOrder(
   order: PayloadDoc,
   items: FulfillmentLineItem[]
 ): Promise<number> {
-  if (!autoCreateDownloadsEnabled() || !customer?.id) return 0;
+  if (!customer?.id) return 0;
 
+  // Raising the allowance on existing download records always runs (customers get what
+  // they paid for as they buy more). Creating NEW records stays gated by the flag,
+  // since new records point at files that must already be uploaded to R2.
+  const canCreate = autoCreateDownloadsEnabled();
   const prefix = (process.env.R2_KEY_PREFIX || "books").replace(/\/+$/g, "");
   const perLicense =
     Number(process.env.R2_DOWNLOADS_PER_LICENSE) > 0
@@ -508,6 +512,7 @@ async function createDownloadsForOrder(
           }
           continue;
         }
+        if (!canCreate) continue;
         await payload.create({
           collection: "downloads",
           data: {
