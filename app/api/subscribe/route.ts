@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getPayload } from "payload";
+import { checkBotProtection, getRequestIp } from "@/lib/botProtection";
 
 function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -14,12 +15,6 @@ function getBoolean(value: unknown) {
   return value === true || value === "true";
 }
 
-function getRequestIp(request: Request) {
-  const forwarded = request.headers.get("x-forwarded-for");
-  if (forwarded) return forwarded.split(",")[0]?.trim() || "";
-  return request.headers.get("x-real-ip") || "";
-}
-
 async function getPayloadClient() {
   const { default: config } = await import("@payload-config");
   return getPayload({ config });
@@ -28,6 +23,9 @@ async function getPayloadClient() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
+    const botResponse = await checkBotProtection({ body, request, routeName: "subscribe", maxRequests: 6 });
+    if (botResponse) return botResponse;
+
     const email = String(body.email || "").trim().toLowerCase();
     const source = String(body.source || "website").trim();
     const emailOptIn = getBoolean(body.emailOptIn);
