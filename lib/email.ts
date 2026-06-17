@@ -61,12 +61,12 @@ function escapeHtml(value: string): string {
 }
 
 function layout(bodyInner: string): string {
-  return `<!doctype html><html><body style="margin:0;background:#fdf6ec;font-family:Arial,Helvetica,sans-serif;color:#3c3c3c;">
+  return `<!doctype html><html><head><meta name="viewport" content="width=device-width, initial-scale=1"><style>img.an1,.an1{height:.75em!important;width:.75em!important;vertical-align:middle!important;}</style></head><body style="margin:0;background:#fdf6ec;font-family:Arial,Helvetica,sans-serif;color:#3c3c3c;">
   <div style="max-width:560px;margin:0 auto;padding:24px;">
     <div style="text-align:center;padding:10px 0 18px;line-height:1.1;">
       <div style="font-family:Georgia,'Times New Roman',serif;font-size:34px;font-weight:700;letter-spacing:.2px;color:#1f5c5f;">Benny &amp; Penny</div>
-      <div style="font-family:Georgia,'Times New Roman',serif;font-size:24px;font-weight:700;color:#e86e6e;margin-top:4px;">♥ Adventures ♥</div>
-      <div style="font-size:12px;letter-spacing:2.4px;color:#9C7E5E;text-transform:uppercase;margin-top:9px;">Medical books for brave little hearts</div>
+      <div style="font-family:Georgia,'Times New Roman',serif;font-size:24px;font-weight:700;color:#e86e6e;margin-top:4px;"><span style="display:inline-block;font-size:.75em;line-height:1;vertical-align:middle;">♥</span> Adventures <span style="display:inline-block;font-size:.75em;line-height:1;vertical-align:middle;">♥</span></div>
+      <div style="font-size:11px;letter-spacing:1.8px;color:#9C7E5E;text-transform:uppercase;margin-top:9px;white-space:nowrap;">Medical&nbsp;books&nbsp;for&nbsp;brave&nbsp;little&nbsp;hearts</div>
     </div>
     <div style="background:#ffffff;border:1px solid #e6d9c4;border-radius:18px;padding:24px;">
       ${bodyInner}
