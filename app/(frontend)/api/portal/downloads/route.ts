@@ -10,6 +10,10 @@ type PayloadDoc = {
   [key: string]: unknown;
 };
 
+type PayloadFindResult = {
+  docs?: PayloadDoc[];
+};
+
 async function getPayloadClient() {
   const { default: config } = await import("@payload-config");
   return getPayload({ config });
@@ -28,10 +32,55 @@ function getString(value: unknown) {
   return typeof value === "string" && value.trim() ? value.trim() : undefined;
 }
 
+function getNumber(value: unknown, fallback = 0) {
+  return typeof value === "number" && Number.isFinite(value) ? value : fallback;
+}
+
 function isExpired(value: unknown) {
   const dateValue = getString(value);
   if (!dateValue) return false;
   return new Date(dateValue).getTime() < Date.now();
+}
+
+function isReadableFormat(format: string) {
+  return format === "pdf" || format === "epub";
+}
+
+async function getReadablePool(payload: Awaited<ReturnType<typeof getPayload>>, customerId: string | number, bookId: string | number) {
+  const result = (await payload.find({
+    collection: "downloads",
+    depth: 0,
+    limit: 20,
+    where: {
+      and: [
+        { customer: { equals: customerId } },
+        { book: { equals: bookId } },
+        { format: { in: ["pdf", "epub"] } }
+      ]
+    }
+  })) as PayloadFindResult;
+
+  const docs = result.docs || [];
+  const maxDownloads = Math.max(...docs.map((doc) => getNumber(doc.maxDownloads, 0)), 0) || null;
+  const downloadsUsed = docs.reduce((total, doc) => total + getNumber(doc.downloadsUsed, 0), 0);
+  const giftsIssued = docs.reduce((total, doc) => total + getNumber(doc.giftsIssued, 0), 0);
+
+  return { maxDownloads, downloadsUsed, giftsIssued };
+}
+
+async function getAccessPool(payload: Awaited<ReturnType<typeof getPayload>>, download: PayloadDoc, customerId: string | number) {
+  const format = getString(download.format) || "";
+  const bookId = getRelationId(download.book);
+
+  if (bookId && isReadableFormat(format)) {
+    return getReadablePool(payload, customerId, bookId);
+  }
+
+  return {
+    maxDownloads: typeof download.maxDownloads === "number" ? download.maxDownloads : null,
+    downloadsUsed: getNumber(download.downloadsUsed, 0),
+    giftsIssued: getNumber(download.giftsIssued, 0)
+  };
 }
 
 export async function GET(request: Request) {
@@ -80,12 +129,11 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "This file has not been uploaded yet." }, { status: 503 });
   }
 
-  const maxDownloads = typeof download.maxDownloads === "number" ? download.maxDownloads : null;
-  const downloadsUsed = typeof download.downloadsUsed === "number" ? download.downloadsUsed : 0;
-  const giftsIssued = typeof download.giftsIssued === "number" ? download.giftsIssued : 0;
-  // Gifts consume slots from the same pool, so personal downloads stop at maxDownloads − giftsIssued.
-  if (maxDownloads !== null && downloadsUsed + giftsIssued >= maxDownloads) {
-    return NextResponse.json({ error: "You have reached the download limit for this item." }, { status: 403 });
+  const accessPool = await getAccessPool(payload, download, customerId || user.id);
+  const slotsUsed = accessPool.downloadsUsed + accessPool.giftsIssued;
+
+  if (accessPool.maxDownloads !== null && slotsUsed >= accessPool.maxDownloads) {
+    return NextResponse.json({ error: "You have reached the access limit for this title." }, { status: 403 });
   }
 
   if (!isR2Configured()) {
@@ -102,13 +150,12 @@ export async function GET(request: Request) {
     const expiresInSeconds = getDefaultExpirySeconds();
     const signedUrl = await getR2DownloadUrl(r2ObjectKey, { expiresInSeconds, downloadFilename });
 
-    // Count the download and stamp the time. Best-effort: if this update fails we
-    // still return the link the customer is entitled to.
     try {
+      const currentFileDownloadsUsed = getNumber(download.downloadsUsed, 0);
       await payload.update({
         collection: "downloads",
         id: download.id,
-        data: { downloadsUsed: downloadsUsed + 1, lastDownloadedAt: new Date().toISOString() }
+        data: { downloadsUsed: currentFileDownloadsUsed + 1, lastDownloadedAt: new Date().toISOString() }
       });
     } catch (countError) {
       console.error("Download count update failed; link still issued", countError);
@@ -118,7 +165,7 @@ export async function GET(request: Request) {
       url: signedUrl,
       filename: downloadFilename,
       expiresInSeconds,
-      downloadsRemaining: maxDownloads !== null ? Math.max(0, maxDownloads - giftsIssued - (downloadsUsed + 1)) : null
+      downloadsRemaining: accessPool.maxDownloads !== null ? Math.max(0, accessPool.maxDownloads - (slotsUsed + 1)) : null
     });
   } catch (error) {
     console.error("R2 signed download URL generation failed", error);
