@@ -1,0 +1,126 @@
+/* Desktop-only Payload nav toggle branding.
+   This targets the exact desktop toggles and explicitly ignores the mobile app-header toggle. */
+
+@media (min-width: 901px) {
+  /* The mobile header toggle still exists in the desktop DOM. Do not let it display, hover, or receive clicks on desktop. */
+  .template-default button.app-header__mobile-nav-toggler,
+  .template-default .app-header__mobile-nav-toggler {
+    display: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+  }
+
+  /* Remove Payload's grey/teal hover square from the desktop toggle wrapper/container. */
+  .template-default .template-default__nav-toggler-wrapper,
+  .template-default .template-default__nav-toggler-container,
+  .template-default .template-default__nav-toggler-wrapper:hover,
+  .template-default .template-default__nav-toggler-container:hover,
+  .template-default .template-default__nav-toggler-wrapper:focus-within,
+  .template-default .template-default__nav-toggler-container:focus-within,
+  .template-default #nav-toggler.template-default__nav-toggler-wrapper,
+  .template-default #nav-toggler.template-default__nav-toggler-container,
+  .template-default #nav-toggler.template-default__nav-toggler-wrapper:hover,
+  .template-default #nav-toggler.template-default__nav-toggler-container:hover,
+  .template-default #nav-toggler.template-default__nav-toggler-wrapper:focus-within,
+  .template-default #nav-toggler.template-default__nav-toggler-container:focus-within {
+    background: transparent !important;
+    background-color: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    outline: 0 !important;
+  }
+
+  /* Exact desktop Payload sidebar button. */
+  .template-default .template-default__nav-toggler-container > button.template-default__nav-toggler:not(.app-header__mobile-nav-toggler),
+  .template-default button.nav-toggler.template-default__nav-toggler:not(.app-header__mobile-nav-toggler) {
+    align-items: center !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    color: transparent !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    font-size: 0 !important;
+    height: 2.65rem !important;
+    justify-content: center !important;
+    line-height: 1 !important;
+    min-height: 2.65rem !important;
+    min-width: 2.65rem !important;
+    outline: 0 !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    position: relative !important;
+    text-indent: 0 !important;
+    transform: none !important;
+    width: 2.65rem !important;
+  }
+
+  /* Desktop collapsed/closed sidebar button: red circle with white heart. */
+  .template-default .template-default__nav-toggler-container > button.template-default__nav-toggler:not(.nav-toggler--is-open):not(.app-header__mobile-nav-toggler),
+  .template-default button.nav-toggler.template-default__nav-toggler:not(.nav-toggler--is-open):not(.app-header__mobile-nav-toggler),
+  .template-default .template-default__nav-toggler-container > button.template-default__nav-toggler:not(.nav-toggler--is-open):not(.app-header__mobile-nav-toggler):hover,
+  .template-default button.nav-toggler.template-default__nav-toggler:not(.nav-toggler--is-open):not(.app-header__mobile-nav-toggler):hover,
+  .template-default .template-default__nav-toggler-container > button.template-default__nav-toggler:not(.nav-toggler--is-open):not(.app-header__mobile-nav-toggler):focus-visible,
+  .template-default button.nav-toggler.template-default__nav-toggler:not(.nav-toggler--is-open):not(.app-header__mobile-nav-toggler):focus-visible {
+    background: #eb6373 !important;
+    background-color: #eb6373 !important;
+    box-shadow: 0 10px 24px rgba(4, 63, 73, 0.16) !important;
+  }
+
+  /* Desktop open sidebar close button: dark heart only, no grey/teal hover square. */
+  .template-default .template-default__nav-toggler-container > button.template-default__nav-toggler.nav-toggler--is-open:not(.app-header__mobile-nav-toggler),
+  .template-default button.nav-toggler.nav-toggler--is-open.template-default__nav-toggler:not(.app-header__mobile-nav-toggler),
+  .template-default .template-default__nav-toggler-container > button.template-default__nav-toggler.nav-toggler--is-open:not(.app-header__mobile-nav-toggler):hover,
+  .template-default button.nav-toggler.nav-toggler--is-open.template-default__nav-toggler:not(.app-header__mobile-nav-toggler):hover,
+  .template-default .template-default__nav-toggler-container > button.template-default__nav-toggler.nav-toggler--is-open:not(.app-header__mobile-nav-toggler):focus-visible,
+  .template-default button.nav-toggler.nav-toggler--is-open.template-default__nav-toggler:not(.app-header__mobile-nav-toggler):focus-visible {
+    background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .template-default .template-default__nav-toggler-container > button.template-default__nav-toggler:not(.app-header__mobile-nav-toggler)::before,
+  .template-default button.nav-toggler.template-default__nav-toggler:not(.app-header__mobile-nav-toggler)::before {
+    align-items: center !important;
+    content: '♥' !important;
+    display: flex !important;
+    font-size: 1.25rem !important;
+    font-weight: 950 !important;
+    height: 100% !important;
+    justify-content: center !important;
+    left: 0 !important;
+    line-height: 1 !important;
+    position: absolute !important;
+    text-indent: 0 !important;
+    top: 0 !important;
+    transform: translateY(-1px) !important;
+    width: 100% !important;
+  }
+
+  .template-default .template-default__nav-toggler-container > button.template-default__nav-toggler:not(.nav-toggler--is-open):not(.app-header__mobile-nav-toggler)::before,
+  .template-default button.nav-toggler.template-default__nav-toggler:not(.nav-toggler--is-open):not(.app-header__mobile-nav-toggler)::before {
+    color: #ffffff !important;
+  }
+
+  .template-default .template-default__nav-toggler-container > button.template-default__nav-toggler.nav-toggler--is-open:not(.app-header__mobile-nav-toggler)::before,
+  .template-default button.nav-toggler.nav-toggler--is-open.template-default__nav-toggler:not(.app-header__mobile-nav-toggler)::before {
+    color: #043f49 !important;
+  }
+
+  .template-default .template-default__nav-toggler-container > button.template-default__nav-toggler:not(.app-header__mobile-nav-toggler) > *,
+  .template-default button.nav-toggler.template-default__nav-toggler:not(.app-header__mobile-nav-toggler) > *,
+  .template-default .template-default__nav-toggler-container > button.template-default__nav-toggler:not(.app-header__mobile-nav-toggler) svg,
+  .template-default button.nav-toggler.template-default__nav-toggler:not(.app-header__mobile-nav-toggler) svg,
+  .template-default .template-default__nav-toggler-container > button.template-default__nav-toggler:not(.app-header__mobile-nav-toggler) .hamburger,
+  .template-default button.nav-toggler.template-default__nav-toggler:not(.app-header__mobile-nav-toggler) .hamburger,
+  .template-default .template-default__nav-toggler-container > button.template-default__nav-toggler:not(.app-header__mobile-nav-toggler) .hamburger__close-icon,
+  .template-default button.nav-toggler.template-default__nav-toggler:not(.app-header__mobile-nav-toggler) .hamburger__close-icon,
+  .template-default .template-default__nav-toggler-container > button.template-default__nav-toggler:not(.app-header__mobile-nav-toggler) .hamburger__open-icon,
+  .template-default button.nav-toggler.template-default__nav-toggler:not(.app-header__mobile-nav-toggler) .hamburger__open-icon,
+  .template-default .template-default__nav-toggler-container > button.template-default__nav-toggler:not(.app-header__mobile-nav-toggler) .icon,
+  .template-default button.nav-toggler.template-default__nav-toggler:not(.app-header__mobile-nav-toggler) .icon {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+  }
+}
