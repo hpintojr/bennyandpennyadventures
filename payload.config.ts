@@ -66,6 +66,7 @@ export default buildConfig({
     PasswordTokens
   ],
   db: postgresAdapter({
+    push: true,
     pool: {
       connectionString: databaseUri
     }
