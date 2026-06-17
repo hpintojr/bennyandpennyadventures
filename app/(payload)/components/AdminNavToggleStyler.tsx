@@ -25,6 +25,7 @@ function isVisibleButton(element: Element): element is HTMLElement {
 function looksLikePayloadToggle(element: HTMLElement) {
   const label = `${element.getAttribute("aria-label") || ""} ${element.getAttribute("title") || ""}`.toLowerCase();
   const text = (element.textContent || "").trim();
+  const className = element.className.toString().toLowerCase();
 
   return (
     label.includes("nav") ||
@@ -33,8 +34,8 @@ function looksLikePayloadToggle(element: HTMLElement) {
     label.includes("collapse") ||
     label.includes("open") ||
     label.includes("close") ||
-    element.className.toString().toLowerCase().includes("nav") ||
-    element.className.toString().toLowerCase().includes("hamburger") ||
+    className.includes("nav") ||
+    className.includes("hamburger") ||
     Boolean(element.querySelector("svg, .hamburger, [class*='hamburger'], [class*='chevron'], [class*='toggler'], [class*='toggle']")) ||
     text === "<" ||
     text === "‹" ||
@@ -43,13 +44,25 @@ function looksLikePayloadToggle(element: HTMLElement) {
   );
 }
 
-function markAdminNavToggles() {
-  const previous = document.querySelectorAll(`.${OPEN_CLASS}, .${CLOSE_CLASS}`);
-  previous.forEach((element) => {
-    element.classList.remove(OPEN_CLASS, CLOSE_CLASS);
-  });
+function setMarker(element: HTMLElement | undefined, className: string, shouldHaveClass: boolean) {
+  if (!element) return;
 
-  if (window.innerWidth < 901) return;
+  if (shouldHaveClass && !element.classList.contains(className)) {
+    element.classList.add(className);
+  }
+
+  if (!shouldHaveClass && element.classList.contains(className)) {
+    element.classList.remove(className);
+  }
+}
+
+function markAdminNavToggles() {
+  if (window.innerWidth < 901) {
+    document.querySelectorAll(`.${OPEN_CLASS}, .${CLOSE_CLASS}`).forEach((element) => {
+      element.classList.remove(OPEN_CLASS, CLOSE_CLASS);
+    });
+    return;
+  }
 
   const buttons = Array.from(document.querySelectorAll("button, [role='button']"))
     .filter(isVisibleButton)
@@ -57,7 +70,7 @@ function markAdminNavToggles() {
     .filter((element) => !element.closest(".bp-dashboard"))
     .filter((element) => looksLikePayloadToggle(element));
 
-  const sidebarButtons = buttons
+  const sidebarButton = buttons
     .filter((element) => Boolean(element.closest(".template-default .nav, .template-default aside")))
     .filter((element) => {
       const rect = element.getBoundingClientRect();
@@ -67,9 +80,9 @@ function markAdminNavToggles() {
       const aRect = a.getBoundingClientRect();
       const bRect = b.getBoundingClientRect();
       return aRect.top + aRect.left - (bRect.top + bRect.left);
-    });
+    })[0];
 
-  const collapsedButtons = buttons
+  const collapsedButton = buttons
     .filter((element) => !element.closest(".template-default .nav, .template-default aside"))
     .filter((element) => {
       const rect = element.getBoundingClientRect();
@@ -79,10 +92,17 @@ function markAdminNavToggles() {
       const aRect = a.getBoundingClientRect();
       const bRect = b.getBoundingClientRect();
       return aRect.top + aRect.left - (bRect.top + bRect.left);
-    });
+    })[0];
 
-  sidebarButtons[0]?.classList.add(CLOSE_CLASS);
-  collapsedButtons[0]?.classList.add(OPEN_CLASS);
+  document.querySelectorAll(`.${OPEN_CLASS}`).forEach((element) => {
+    setMarker(element as HTMLElement, OPEN_CLASS, element === collapsedButton);
+  });
+  document.querySelectorAll(`.${CLOSE_CLASS}`).forEach((element) => {
+    setMarker(element as HTMLElement, CLOSE_CLASS, element === sidebarButton);
+  });
+
+  setMarker(collapsedButton, OPEN_CLASS, true);
+  setMarker(sidebarButton, CLOSE_CLASS, true);
 }
 
 export function AdminNavToggleStyler() {
