@@ -15,6 +15,7 @@ import "./admin-orders-cleanup.scss";
 import "./admin-dashboard-mobile-rows.scss";
 import "./admin-dashboard-final-polish.scss";
 import "./admin-desktop-nav-toggle.scss";
+import "./admin-portal-theme.scss";
 
 type Args = {
   children: React.ReactNode;

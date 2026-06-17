@@ -239,6 +239,51 @@ export async function GET() {
     downloadsByBook.get(k)!.push(dl);
   }
 
+  // Self-heal: a digital readable license covers BOTH PDF and EPUB. Older orders
+  // may only have one record. If a book has at least one readable record but is
+  // missing the sibling format, create it by mirroring the existing R2 key
+  // (extension swapped) or the book's configured object key. Idempotent.
+  for (const [bookKey, list] of Array.from(downloadsByBook.entries())) {
+    if (!bookKey) continue;
+    const readable = list.filter((dl) => ["pdf", "epub"].includes(getString(dl.format) || ""));
+    if (!readable.length) continue;
+    const present = new Set(readable.map((dl) => getString(dl.format)));
+    const template = readable[0];
+    const bookObj = template.book && typeof template.book === "object" ? (template.book as PayloadDoc) : null;
+    const poolMax = Math.max(...readable.map((dl) => getNumber(dl.maxDownloads, 0)), 0) || 3;
+
+    for (const fmt of ["pdf", "epub"] as const) {
+      if (present.has(fmt)) continue;
+      const fromBook = bookObj ? getString(bookObj[`${fmt}ObjectKey`]) : undefined;
+      const templateKey = getString(template.r2ObjectKey);
+      const swapped = templateKey ? templateKey.replace(/\.(pdf|epub)$/i, `.${fmt}`) : undefined;
+      const objectKey = fromBook || (swapped && swapped !== templateKey ? swapped : undefined);
+      if (!objectKey) continue;
+      try {
+        const titleStr = (bookObj && getString(bookObj.title)) || "Benny & Penny Book";
+        const createdDoc = (await payload.create({
+          collection: "downloads",
+          data: {
+            customer: user.id,
+            order: getRelationId(template.order) || undefined,
+            book: getRelationId(template.book) || undefined,
+            fileLabel: `${titleStr} — ${fmt.toUpperCase()}`,
+            format: fmt,
+            r2ObjectKey: objectKey,
+            maxDownloads: poolMax,
+            downloadsUsed: 0,
+            giftsIssued: 0,
+            isActive: true
+          }
+        })) as PayloadDoc;
+        list.push(createdDoc);
+        present.add(fmt);
+      } catch (error) {
+        console.error("Library self-heal: could not create missing readable record", { bookKey, format: fmt, error });
+      }
+    }
+  }
+
   function readableOptions(bookKey: string): DownloadOption[] {
     const readable = (downloadsByBook.get(bookKey) || []).filter((dl) => ["pdf", "epub"].includes(getString(dl.format) || ""));
     if (!readable.length) return [];

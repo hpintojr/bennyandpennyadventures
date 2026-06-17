@@ -249,6 +249,18 @@ export default function PortalOrdersClient() {
                       <p>{order.shippingAddressCountry}</p>
                     </div>
                   )}
+
+                  <a
+                    href={`/invoice/${order.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-5 flex w-full items-center justify-center gap-2 rounded-full border border-tan bg-white px-5 py-2.5 text-sm font-extrabold text-teal transition hover:border-coral hover:text-coral"
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4" aria-hidden>
+                      <path d="M7 8V4h10v4M7 16h10v4H7zM5 8h14a2 2 0 0 1 2 2v5H3v-5a2 2 0 0 1 2-2Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+                    </svg>
+                    Print invoice / Save PDF
+                  </a>
                 </div>
               </div>
             </div>

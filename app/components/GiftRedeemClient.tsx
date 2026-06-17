@@ -18,6 +18,8 @@ export default function GiftRedeemClient({ initialCode, bookOptions }: { initial
   const [consent, setConsent] = useState(true);
   const [state, setState] = useState<"idle" | "loading" | "done" | "error">("idle");
   const [message, setMessage] = useState<string | null>(null);
+  const [createdAccount, setCreatedAccount] = useState(false);
+  const [redeemedEmail, setRedeemedEmail] = useState("");
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -37,6 +39,8 @@ export default function GiftRedeemClient({ initialCode, bookOptions }: { initial
       const raw = await response.text();
       const data = (raw ? JSON.parse(raw) : {}) as { ok?: boolean; error?: string; createdAccount?: boolean };
       if (!response.ok || !data.ok) throw new Error(data.error || "We could not redeem this code.");
+      setCreatedAccount(Boolean(data.createdAccount));
+      setRedeemedEmail(email);
       setState("done");
     } catch (e) {
       setState("error");
@@ -47,9 +51,24 @@ export default function GiftRedeemClient({ initialCode, bookOptions }: { initial
   if (state === "done") {
     return (
       <div className="mx-auto mt-4 max-w-xl rounded-[2rem] border border-teal/30 bg-teal/5 p-8 text-center shadow-soft">
-        <h2 className="font-serif text-3xl font-bold text-teal">Your book is ready ♥</h2>
-        <p className="mt-3 text-ink">Sign in to your library to read it any time.</p>
-        <Link href="/portal/login" className="btn mt-6">Go to Sign In</Link>
+        <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-coral/15 text-3xl">🎉</div>
+        <h2 className="mt-4 font-serif text-3xl font-bold text-teal">
+          {createdAccount ? "Congratulations — your account is set up! ♥" : "Your gift has been added! ♥"}
+        </h2>
+        <p className="mt-3 text-ink">
+          {createdAccount
+            ? "Your new account is ready and your free book is waiting in your library. Please log in to start reading."
+            : "We added this book to your existing account. Log in to start reading it any time."}
+        </p>
+        {redeemedEmail && (
+          <p className="mt-4 rounded-2xl border border-tan bg-white/70 px-4 py-3 text-sm text-ink">
+            Sign in with: <span className="font-extrabold text-teal">{redeemedEmail}</span>
+          </p>
+        )}
+        <Link href="/portal/login" className="btn mt-6 w-full sm:w-auto">Log in to my account</Link>
+        <p className="mt-4 text-xs text-ink/60">
+          Trouble signing in? <Link href="/forgot-password" className="font-bold text-teal underline decoration-coral/40 underline-offset-4">Reset your password</Link>
+        </p>
       </div>
     );
   }
