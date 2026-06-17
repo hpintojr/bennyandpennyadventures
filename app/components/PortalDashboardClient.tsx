@@ -113,7 +113,7 @@ export default function PortalDashboardClient() {
 
       <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
         {/* Left column */}
-        <div className="space-y-6">
+        <div className="min-w-0 space-y-6">
           {/* Ready to read */}
           <section className="rounded-3xl border border-tan bg-white/70 p-5 shadow-sm sm:p-6">
             <div className="flex items-center justify-between gap-3">
@@ -181,7 +181,7 @@ export default function PortalDashboardClient() {
         </div>
 
         {/* Right column */}
-        <div className="space-y-6">
+        <div className="min-w-0 space-y-6">
           {/* Reading slots */}
           <section className="rounded-3xl border border-tan bg-white/70 p-5 shadow-sm sm:p-6">
             <h2 className="font-serif text-2xl font-bold text-teal">Your reading slots</h2>
