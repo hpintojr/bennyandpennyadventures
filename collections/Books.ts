@@ -15,7 +15,7 @@ export const Books: CollectionConfig = {
   },
   admin: {
     useAsTitle: "title",
-    description: "Manage Benny & Penny books, product page content, formats, pricing, Stripe IDs, and private R2 file keys.",
+    description: "Manage Benny & Penny books, product page content, formats, pricing, Stripe IDs, private R2 file keys, and LuLu print setup.",
     defaultColumns: ["number", "title", "status", "priceDigital", "priceAudiobook", "pricePaperback", "priceHardcover"]
   },
   fields: [
@@ -62,6 +62,15 @@ export const Books: CollectionConfig = {
     { name: "stripeDigitalPriceId", type: "text", label: "Stripe PDF / EPUB price ID" },
     { name: "stripeAudiobookPriceId", type: "text", label: "Stripe audiobook price ID" },
     { name: "stripePaperbackPriceId", type: "text", label: "Stripe paperback price ID" },
-    { name: "stripeHardcoverPriceId", type: "text", label: "Stripe hardcover price ID" }
+    { name: "stripeHardcoverPriceId", type: "text", label: "Stripe hardcover price ID" },
+    { name: "luluProjectId", type: "text", label: "LuLu project ID", admin: { description: "LuLu project or book reference used for print fulfillment." } },
+    { name: "luluPaperbackSku", type: "text", label: "LuLu paperback SKU" },
+    { name: "luluHardcoverSku", type: "text", label: "LuLu hardcover SKU" },
+    { name: "trimSize", type: "text", label: "Trim size", admin: { description: "Example: 8.5 x 8.5 in." } },
+    { name: "printInteriorFileKey", type: "text", label: "Print interior file key or URL" },
+    { name: "printCoverFileKey", type: "text", label: "Print cover file key or URL" },
+    { name: "paperbackPrintReady", type: "checkbox", label: "Paperback print ready", defaultValue: false },
+    { name: "hardcoverPrintReady", type: "checkbox", label: "Hardcover print ready", defaultValue: false },
+    { name: "printNotes", type: "textarea", label: "Print notes" }
   ]
 };
