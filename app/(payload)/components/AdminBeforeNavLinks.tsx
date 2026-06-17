@@ -2,6 +2,7 @@ import { ShoppingCart } from "lucide-react";
 import React from "react";
 import { AdminSidebarNavLink } from "./AdminSidebarNavLink";
 import { OrderProfileActions } from "./OrderProfileActions";
+import AdminSidebarIdentity from "./AdminSidebarIdentity";
 import "./AdminSidebarCompliance.scss";
 
 const customersFilterHref = "/admin/collections/users?where%5Brole%5D%5Bequals%5D=customer";
@@ -15,6 +16,8 @@ export async function AdminBeforeNavLinks() {
         <div className="bp-admin-sidebar-brand__title">Benny &amp; Penny&apos;s</div>
         <div className="bp-admin-sidebar-brand__subtitle">Admin Panel</div>
       </div>
+
+      <AdminSidebarIdentity />
 
       <div className="bp-admin-nav-extra__hubLabel">Adventure Hub</div>
 

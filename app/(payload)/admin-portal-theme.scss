@@ -83,6 +83,97 @@ body {
   color: rgba(6, 72, 82, 0.6) !important;
 }
 
+/* ---------- Portal-style sidebar identity card ---------- */
+.bp-admin-identity {
+  align-items: center;
+  background: #ffffff !important;
+  border: 1px solid rgba(232, 207, 174, 0.9) !important;
+  border-radius: 1rem !important;
+  box-shadow: 0 12px 26px rgba(29, 50, 55, 0.06) !important;
+  display: flex !important;
+  gap: 0.6rem !important;
+  margin: 0.2rem 0.75rem 0.55rem !important;
+  padding: 0.6rem 0.7rem !important;
+}
+
+.bp-admin-identity__avatar {
+  background: rgba(231, 100, 108, 0.15) !important;
+  border-radius: 50% !important;
+  color: #e7646c !important;
+  display: grid !important;
+  flex: 0 0 auto !important;
+  font-size: 0.95rem !important;
+  font-weight: 900 !important;
+  height: 2.4rem !important;
+  place-items: center !important;
+  width: 2.4rem !important;
+}
+
+.bp-admin-identity__meta {
+  display: flex !important;
+  flex-direction: column !important;
+  min-width: 0 !important;
+}
+
+.bp-admin-identity__name {
+  color: #064852 !important;
+  font-size: 0.95rem !important;
+  font-weight: 900 !important;
+  line-height: 1.15 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.bp-admin-identity__email {
+  color: rgba(29, 50, 55, 0.55) !important;
+  font-size: 0.72rem !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+/* ---------- Portal-style nav rows: icon tile + clean label ---------- */
+.bp-admin-nav-extra__link {
+  align-items: center !important;
+  gap: 0.6rem !important;
+  min-height: 2.6rem !important;
+}
+
+.bp-admin-nav-extra__iconSvg {
+  background: rgba(6, 72, 82, 0.06) !important;
+  border-radius: 0.6rem !important;
+  box-sizing: content-box !important;
+  color: #064852 !important;
+  flex: 0 0 auto !important;
+  height: 18px !important;
+  padding: 7px !important;
+  width: 18px !important;
+}
+
+.bp-admin-nav-extra__link:hover .bp-admin-nav-extra__iconSvg,
+.bp-admin-nav-extra__link--active .bp-admin-nav-extra__iconSvg {
+  background: #ffffff !important;
+  color: #e7646c !important;
+}
+
+.bp-admin-nav-extra__link em,
+.bp-admin-nav-extra__link small {
+  font-style: normal !important;
+}
+
+.bp-admin-nav-extra__link em {
+  font-size: 0.95rem !important;
+  font-weight: 800 !important;
+}
+
+.bp-admin-nav-extra__link small {
+  color: rgba(29, 50, 55, 0.5) !important;
+  font-size: 0.72rem !important;
+  font-weight: 800 !important;
+  margin-left: auto !important;
+}
+
 /* ---------- Headings ---------- */
 .template-default h1,
 .template-default h2,
