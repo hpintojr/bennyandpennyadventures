@@ -56,10 +56,51 @@ function hasRequiredShipping(order: PayloadDoc) {
   );
 }
 
-function hasBookPrintReady(book: PayloadDoc | null, format: PhysicalFormat) {
-  if (!book) return false;
-  if (format === "paperback") return book.paperbackPrintReady === true;
-  return book.hardcoverPrintReady === true;
+function formatReadyField(format: PhysicalFormat) {
+  return format === "paperback" ? "paperbackPrintReady" : "hardcoverPrintReady";
+}
+
+function formatSkuField(format: PhysicalFormat) {
+  return format === "paperback" ? "luluPaperbackSku" : "luluHardcoverSku";
+}
+
+function getPrintSetupIssues(order: PayloadDoc, book: PayloadDoc | null, format: PhysicalFormat) {
+  const issues: string[] = [];
+
+  if (!hasRequiredShipping(order)) {
+    issues.push("Missing complete shipping snapshot. Keep in draft until the address is corrected.");
+  }
+
+  if (!book) {
+    issues.push("Order detail is not linked to a product catalog record.");
+    return issues;
+  }
+
+  if (book[formatReadyField(format)] !== true) {
+    issues.push(`The book is not marked ${format} print ready.`);
+  }
+
+  if (!getString(book.luluProjectId)) {
+    issues.push("Missing LuLu project ID.");
+  }
+
+  if (!getString(book[formatSkuField(format)])) {
+    issues.push(`Missing LuLu ${format} SKU.`);
+  }
+
+  if (!getString(book.trimSize)) {
+    issues.push("Missing trim size.");
+  }
+
+  if (!getString(book.printInteriorFileKey)) {
+    issues.push("Missing print interior file key or URL.");
+  }
+
+  if (!getString(book.printCoverFileKey)) {
+    issues.push("Missing print cover file key or URL.");
+  }
+
+  return issues;
 }
 
 function printJobTitle(order: PayloadDoc, item: PayloadDoc, format: PhysicalFormat) {
@@ -98,16 +139,14 @@ async function existingPrintJobForOrderItem(payload: PayloadClient, orderItemId:
 }
 
 function notesForJob(order: PayloadDoc, book: PayloadDoc | null, format: PhysicalFormat) {
+  const issues = getPrintSetupIssues(order, book, format);
   const notes = ["Phase 1 dry-run print job. LuLu API was not called."];
 
-  if (!hasRequiredShipping(order)) {
-    notes.push("Missing complete shipping snapshot. Keep in draft until the address is corrected.");
-  }
-
-  if (!book) {
-    notes.push("Order detail is not linked to a product catalog record.");
-  } else if (!hasBookPrintReady(book, format)) {
-    notes.push(`Missing ${format} print-ready metadata on the product catalog record.`);
+  if (issues.length) {
+    notes.push("Setup needed before this job can be submitted:");
+    notes.push(...issues.map((issue) => `- ${issue}`));
+  } else {
+    notes.push("Ready for manual LuLu submission review.");
   }
 
   return notes.join("\n");
@@ -134,7 +173,8 @@ export async function createPrintJobsForOrder(payload: PayloadClient, order: Pay
 
     const book = getRelationObject(item.book);
     const bookId = getRelationId(item.book);
-    const ready = hasRequiredShipping(order) && hasBookPrintReady(book, format);
+    const setupIssues = getPrintSetupIssues(order, book, format);
+    const ready = setupIssues.length === 0;
 
     await payload.create({
       collection: "print-jobs",
