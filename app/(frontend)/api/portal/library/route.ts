@@ -13,6 +13,14 @@ type PayloadFindResult = {
   docs?: PayloadDoc[];
 };
 
+type DownloadOption = {
+  format: string;
+  label: string;
+  downloadId?: string | number | null;
+  downloadable: boolean;
+  status: string;
+};
+
 type LibraryFormat = {
   format: string;
   label: string;
@@ -21,6 +29,7 @@ type LibraryFormat = {
   status: string;
   downloadId?: string | number | null;
   downloadable?: boolean;
+  downloadOptions?: DownloadOption[];
 };
 
 type LibraryBook = {
@@ -87,10 +96,46 @@ function formatLabel(value: string) {
   return value;
 }
 
+function downloadFormatLabel(value: string) {
+  if (value === "pdf") return "PDF";
+  if (value === "epub") return "EPUB";
+  if (value === "audiobook") return "Audiobook";
+  return value;
+}
+
 function accessStatus(format: string) {
-  if (format === "digital" || format === "audiobook") return "Digital access coming soon";
+  if (format === "digital") return "PDF and EPUB access pending";
+  if (format === "audiobook") return "Audio access pending";
   if (format === "paperback" || format === "hardcover") return "Print order recorded";
   return "Purchased";
+}
+
+function isExpired(value: unknown) {
+  const dateValue = getString(value);
+  if (!dateValue) return false;
+  return new Date(dateValue).getTime() < Date.now();
+}
+
+function fileState(dl: PayloadDoc, remaining: number | null): DownloadOption {
+  const format = getString(dl.format) || "file";
+  if (dl.isActive === false) return { format, label: downloadFormatLabel(format), downloadable: false, downloadId: dl.id, status: "Access paused" };
+  if (isExpired(dl.accessExpiresAt)) return { format, label: downloadFormatLabel(format), downloadable: false, downloadId: dl.id, status: "Access expired" };
+  if (remaining !== null && remaining <= 0) return { format, label: downloadFormatLabel(format), downloadable: false, downloadId: dl.id, status: "Access limit reached" };
+  return {
+    format,
+    label: downloadFormatLabel(format),
+    downloadId: dl.id,
+    downloadable: true,
+    status: remaining !== null ? `${remaining} readable slot${remaining === 1 ? "" : "s"} left` : "Ready to download"
+  };
+}
+
+function readablePoolState(list: PayloadDoc[]) {
+  const max = Math.max(...list.map((dl) => getNumber(dl.maxDownloads, 0)), 0) || null;
+  const used = list.reduce((total, dl) => total + getNumber(dl.downloadsUsed, 0), 0);
+  const gifts = list.reduce((total, dl) => total + getNumber(dl.giftsIssued, 0), 0);
+  const remaining = max !== null ? Math.max(0, max - used - gifts) : null;
+  return { max, used, gifts, remaining };
 }
 
 export async function GET() {
@@ -179,11 +224,10 @@ export async function GET() {
     }
   }
 
-  // Attach private R2 download records to digital/audiobook formats.
   const downloadRecords = (await payload.find({
     collection: "downloads",
     depth: 1,
-    limit: 200,
+    limit: 500,
     where: { customer: { equals: user.id } }
   })) as PayloadFindResult;
 
@@ -195,29 +239,23 @@ export async function GET() {
     downloadsByBook.get(k)!.push(dl);
   }
 
-  function pickDownload(bookKey: string, libFormat: string): PayloadDoc | null {
-    const list = downloadsByBook.get(bookKey) || [];
-    const wanted = libFormat === "digital" ? ["pdf", "epub"] : libFormat === "audiobook" ? ["audiobook"] : [];
-    for (const fmt of wanted) {
-      const match = list.find((d) => getString(d.format) === fmt);
-      if (match) return match;
-    }
-    return null;
+  function readableOptions(bookKey: string): DownloadOption[] {
+    const readable = (downloadsByBook.get(bookKey) || []).filter((dl) => ["pdf", "epub"].includes(getString(dl.format) || ""));
+    if (!readable.length) return [];
+    const pool = readablePoolState(readable);
+    return readable
+      .sort((a, b) => (getString(a.format) || "").localeCompare(getString(b.format) || ""))
+      .map((dl) => fileState(dl, pool.remaining));
   }
 
-  function downloadState(dl: PayloadDoc): { downloadable: boolean; status: string; id: string | number | null } {
-    if (dl.isActive === false) return { downloadable: false, status: "Access paused", id: dl.id };
-    const exp = getString(dl.accessExpiresAt);
-    if (exp && new Date(exp).getTime() < Date.now()) return { downloadable: false, status: "Access expired", id: dl.id };
-    const max = typeof dl.maxDownloads === "number" ? dl.maxDownloads : null;
-    const used = getNumber(dl.downloadsUsed, 0);
-    if (max !== null && used >= max) return { downloadable: false, status: "Download limit reached", id: dl.id };
-    const remaining = max !== null ? Math.max(0, max - used) : null;
-    return {
-      downloadable: true,
-      status: remaining !== null ? `Ready to download — ${remaining} left` : "Ready to download",
-      id: dl.id
-    };
+  function audiobookOption(bookKey: string): DownloadOption | null {
+    const audio = (downloadsByBook.get(bookKey) || []).find((dl) => getString(dl.format) === "audiobook");
+    if (!audio) return null;
+    const max = typeof audio.maxDownloads === "number" ? audio.maxDownloads : null;
+    const used = getNumber(audio.downloadsUsed, 0);
+    const gifts = getNumber(audio.giftsIssued, 0);
+    const remaining = max !== null ? Math.max(0, max - used - gifts) : null;
+    return fileState(audio, remaining);
   }
 
   const books = Array.from(library.values()).map((book) => ({
@@ -226,13 +264,21 @@ export async function GET() {
     latestPurchaseAt: book.latestPurchaseAt,
     orderNumbers: Array.from(book.orderNumbers),
     formats: Array.from(book.formats.values()).map((f): LibraryFormat => {
-      if (f.format !== "digital" && f.format !== "audiobook") {
-        return { ...f, downloadId: null, downloadable: false };
+      if (f.format === "digital") {
+        const options = readableOptions(`${book.bookId ?? ""}`);
+        if (!options.length) return { ...f, downloadId: null, downloadable: false, status: "Digital files pending", downloadOptions: [] };
+        const anyDownloadable = options.some((option) => option.downloadable);
+        const readyStatus = anyDownloadable ? options[0]?.status || "Ready to download" : options[0]?.status || "Access unavailable";
+        return { ...f, downloadId: options[0]?.downloadId || null, downloadable: anyDownloadable, status: readyStatus, downloadOptions: options };
       }
-      const dl = pickDownload(`${book.bookId ?? ""}`, f.format);
-      if (!dl) return { ...f, downloadId: null, downloadable: false, status: "Digital file pending" };
-      const st = downloadState(dl);
-      return { ...f, downloadId: st.id, downloadable: st.downloadable, status: st.status };
+
+      if (f.format === "audiobook") {
+        const option = audiobookOption(`${book.bookId ?? ""}`);
+        if (!option) return { ...f, downloadId: null, downloadable: false, status: "Audio file pending", downloadOptions: [] };
+        return { ...f, downloadId: option.downloadId || null, downloadable: option.downloadable, status: option.status, downloadOptions: [option] };
+      }
+
+      return { ...f, downloadId: null, downloadable: false };
     })
   }));
 
