@@ -77,7 +77,7 @@ export async function GET() {
   let giftSlots = 0;
   let remainingSlots = 0;
   const perBook: { title: string; total: number; remaining: number }[] = [];
-  for (const [, list] of readableByBook) {
+  for (const list of Array.from(readableByBook.values())) {
     const pool = readablePool(list);
     if (pool.total === null) continue;
     totalSlots += pool.total;
@@ -94,7 +94,7 @@ export async function GET() {
 
   // Ready-to-read items (active, with remaining access)
   const quickReads: { downloadId: string | number; bookTitle: string; format: string; label: string }[] = [];
-  for (const list of readableByBook.values()) {
+  for (const list of Array.from(readableByBook.values())) {
     const pool = readablePool(list);
     if ((pool.remaining ?? 0) <= 0) continue;
     for (const dl of list) {
@@ -129,7 +129,7 @@ export async function GET() {
   const shipMap = await shipmentsByOrder(payload, orderIds);
   let inTransit = 0;
   let delivered = 0;
-  for (const list of shipMap.values()) {
+  for (const list of Array.from(shipMap.values())) {
     for (const s of list) {
       if (s.stage === "shipped") inTransit += 1;
       if (s.stage === "delivered") delivered += 1;
