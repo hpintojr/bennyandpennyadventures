@@ -225,7 +225,7 @@ export async function BeforeDashboard() {
     <section className="bp-dashboard" aria-label="Benny and Penny admin dashboard">
       <header className="bp-dashboard__topbar">
         <div className="bp-dashboard__intro">
-          <h1>Welcome,<AdminWelcomeName /></h1>
+          <h1>Welcome, <AdminWelcomeName /></h1>
           <p>Live order, fulfillment, customer, and compliance command center.</p>
         </div>
       </header>
