@@ -3,6 +3,14 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
+type DownloadOption = {
+  format: string;
+  label: string;
+  downloadId?: string | number | null;
+  downloadable: boolean;
+  status: string;
+};
+
 type LibraryFormat = {
   format: string;
   label: string;
@@ -11,6 +19,7 @@ type LibraryFormat = {
   status: string;
   downloadId?: string | number | null;
   downloadable?: boolean;
+  downloadOptions?: DownloadOption[];
 };
 type LibraryBook = { title: string; bookId?: string | number | null; latestPurchaseAt?: string; formats?: LibraryFormat[] };
 type PortalLibraryResponse = { books?: LibraryBook[]; error?: string };
@@ -29,7 +38,7 @@ function isDigital(format: string) {
 }
 
 function fallbackButtonLabel(format: string) {
-  if (format === "digital") return "Digital file pending";
+  if (format === "digital") return "Digital files pending";
   if (format === "audiobook") return "Audio file pending";
   if (format === "paperback") return "Paperback recorded";
   if (format === "hardcover") return "Hardcover recorded";
@@ -42,18 +51,16 @@ function summary(book: LibraryBook) {
   return formats.map((format) => `${format.label} x${format.quantity}`).join(" · ");
 }
 
-function FormatCard({ format }: { format: LibraryFormat }) {
+function DownloadButton({ option }: { option: DownloadOption }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const canDownload = Boolean(format.downloadable && format.downloadId);
-
   async function handleDownload() {
-    if (!format.downloadId) return;
+    if (!option.downloadId || !option.downloadable) return;
     setBusy(true);
     setError(null);
     try {
-      const response = await fetch(`/api/portal/downloads?download_id=${encodeURIComponent(String(format.downloadId))}`, {
+      const response = await fetch(`/api/portal/downloads?download_id=${encodeURIComponent(String(option.downloadId))}`, {
         credentials: "include"
       });
       const data = (await response.json()) as { url?: string; error?: string };
@@ -67,6 +74,26 @@ function FormatCard({ format }: { format: LibraryFormat }) {
   }
 
   return (
+    <div>
+      <button
+        type="button"
+        onClick={handleDownload}
+        disabled={busy || !option.downloadable}
+        className="mt-3 w-full rounded-full bg-coral px-5 py-3 text-sm font-extrabold text-white transition hover:bg-coral/90 disabled:cursor-not-allowed disabled:bg-coral/20 disabled:text-coral disabled:opacity-100"
+      >
+        {busy ? "Preparing…" : option.downloadable ? `Download ${option.label}` : `${option.label} unavailable`}
+      </button>
+      <p className="mt-1 text-xs font-bold text-ink/65">{option.status}</p>
+      {error && <p className="mt-2 text-xs font-bold text-coral">{error}</p>}
+    </div>
+  );
+}
+
+function FormatCard({ format }: { format: LibraryFormat }) {
+  const options = format.downloadOptions || [];
+  const canDownload = Boolean(format.downloadable && format.downloadId);
+
+  return (
     <div className="min-w-0 rounded-2xl border border-tan bg-cream/60 p-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <span className={`rounded-full px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.1em] sm:text-xs ${badgeClass(format.format)}`}>{format.label}</span>
@@ -74,15 +101,12 @@ function FormatCard({ format }: { format: LibraryFormat }) {
       </div>
       <p className="mt-3 break-words text-sm leading-6 text-ink">{format.status}</p>
 
-      {canDownload ? (
-        <button
-          type="button"
-          onClick={handleDownload}
-          disabled={busy}
-          className="mt-4 w-full rounded-full bg-coral px-5 py-3 text-sm font-extrabold text-white transition hover:bg-coral/90 disabled:cursor-not-allowed disabled:opacity-70"
-        >
-          {busy ? "Preparing…" : isDigital(format.format) ? "Download" : "View"}
-        </button>
+      {options.length ? (
+        <div className="mt-1 grid gap-2 sm:grid-cols-2">
+          {options.map((option) => <DownloadButton key={`${option.format}-${option.downloadId || "pending"}`} option={option} />)}
+        </div>
+      ) : canDownload && format.downloadId ? (
+        <DownloadButton option={{ format: format.format, label: format.label, downloadId: format.downloadId, downloadable: true, status: format.status }} />
       ) : (
         <button
           type="button"
@@ -93,7 +117,6 @@ function FormatCard({ format }: { format: LibraryFormat }) {
         </button>
       )}
 
-      {error && <p className="mt-2 text-xs font-bold text-coral">{error}</p>}
       <p className="mt-2 break-words text-xs leading-5 text-ink/65">Orders: {format.orderNumbers.join(", ")}</p>
     </div>
   );
