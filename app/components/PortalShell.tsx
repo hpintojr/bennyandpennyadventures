@@ -151,7 +151,10 @@ export default function PortalShell({ children }: { children: React.ReactNode })
     return () => {
       alive = false;
     };
-  }, []);
+    // Re-validate the session on every portal navigation. The portal layout
+    // persists across client-side nav, so without this the shell would keep a
+    // stale "signed out" state after login and loop back to the gate.
+  }, [pathname]);
 
   async function handleLogout() {
     await fetch("/api/portal/logout", { method: "POST", credentials: "include" });

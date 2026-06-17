@@ -2,13 +2,11 @@
 
 import type { FormEvent } from "react";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 type LoginState = "idle" | "loading" | "success" | "error";
 
 export default function PortalLoginForm() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [state, setState] = useState<LoginState>("idle");
@@ -37,11 +35,11 @@ export default function PortalLoginForm() {
 
       setState("success");
       setMessage("Signed in successfully. Taking you to your portal...");
-      // Refresh so server components pick up the new auth cookie, then redirect.
-      router.refresh();
+      // Full page load so the new auth cookie is applied across the whole
+      // portal shell (avoids the persisted-layout stale-session loop).
       setTimeout(() => {
-        router.push("/portal");
-      }, 700);
+        window.location.assign("/portal");
+      }, 600);
     } catch (error) {
       setState("error");
       setMessage(error instanceof Error ? error.message : "We could not sign you in. Please try again.");
