@@ -6,7 +6,6 @@ import { handleServerFunctions, RootLayout } from "@payloadcms/next/layouts";
 import React from "react";
 
 import { importMap } from "./admin/importMap";
-import { AdminNavToggleStyler } from "./components/AdminNavToggleStyler";
 import "./custom.scss";
 import "./admin-polish-overrides.scss";
 import "./admin-final-fixes.scss";
@@ -32,7 +31,6 @@ const serverFunction: ServerFunctionClient = async function (args) {
 
 const Layout = ({ children }: Args) => (
   <RootLayout config={config} importMap={importMap} serverFunction={serverFunction}>
-    <AdminNavToggleStyler />
     {children}
   </RootLayout>
 );
