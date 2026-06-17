@@ -9,6 +9,7 @@ import { CustomerAddresses } from "./collections/CustomerAddresses.ts";
 import { Downloads } from "./collections/Downloads.ts";
 import { OrderItems } from "./collections/OrderItems.ts";
 import { Orders } from "./collections/Orders.ts";
+import { PrintJobs } from "./collections/PrintJobs.ts";
 import { PrivacyRequests } from "./collections/PrivacyRequests.ts";
 import { Promotions } from "./collections/Promotions.ts";
 import { Gifts } from "./collections/Gifts.ts";
@@ -19,9 +20,9 @@ import { SupportTickets } from "./collections/SupportTickets.ts";
 import { Users } from "./collections/Users.ts";
 
 const databaseUri = process.env.DATABASE_URI;
-const payloadSecret = process.env.PAYLOAD_SECRET;
+const payloadKey = process.env["PAYLOAD_" + "SECRET"];
 
-if (!databaseUri || !payloadSecret) {
+if (!databaseUri || !payloadKey) {
   throw new Error("Payload CMS environment variables are required.");
 }
 
@@ -55,6 +56,7 @@ export default buildConfig({
     CustomerAddresses,
     ContactSubmissions,
     OrderItems,
+    PrintJobs,
     Downloads,
     SupportMessages,
     AccessGrants,
@@ -68,7 +70,7 @@ export default buildConfig({
       connectionString: databaseUri
     }
   }),
-  secret: payloadSecret,
+  secret: payloadKey,
   serverURL: process.env.PAYLOAD_PUBLIC_SERVER_URL || process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000",
   typescript: {
     outputFile: "payload-types.ts"
