@@ -2,12 +2,20 @@
    Loaded after all other admin styles so it only corrects the remaining admin details. */
 
 @media (min-width: 901px) {
-  /* Desktop collapsed sidebar trigger: match the accepted mobile branded heart button.
-     Exact Payload nav toggler only. Do not target generic toggle/menu/filter buttons. */
-  .template-default .nav-toggler,
-  .template-default .template-default__nav-toggler,
-  .template-default button.nav-toggler,
-  .template-default button.template-default__nav-toggler {
+  /* Desktop collapsed Payload sidebar/menu trigger.
+     This changes the existing visible hamburger button only; it does not force hidden controls to appear. */
+  .template-default button[aria-label*='open' i][aria-label*='nav' i],
+  .template-default button[aria-label*='open' i][aria-label*='menu' i],
+  .template-default button[aria-label*='open' i][aria-label*='sidebar' i],
+  .template-default button[aria-label*='toggle' i][aria-label*='nav' i],
+  .template-default button[aria-label*='toggle' i][aria-label*='menu' i],
+  .template-default button[aria-label*='toggle' i][aria-label*='sidebar' i],
+  .template-default button[title*='open' i][title*='nav' i],
+  .template-default button[title*='open' i][title*='menu' i],
+  .template-default button[title*='open' i][title*='sidebar' i],
+  .template-default button[title*='toggle' i][title*='nav' i],
+  .template-default button[title*='toggle' i][title*='menu' i],
+  .template-default button[title*='toggle' i][title*='sidebar' i] {
     align-items: center !important;
     background: #eb6373 !important;
     background-color: #eb6373 !important;
@@ -16,43 +24,61 @@
     box-shadow: 0 10px 24px rgba(4, 63, 73, 0.16) !important;
     color: transparent !important;
     cursor: pointer !important;
-    display: inline-flex !important;
     font-size: 0 !important;
     height: 2.65rem !important;
     justify-content: center !important;
     line-height: 1 !important;
     min-height: 2.65rem !important;
     min-width: 2.65rem !important;
-    opacity: 1 !important;
     overflow: hidden !important;
     padding: 0 !important;
-    pointer-events: auto !important;
     position: relative !important;
     text-indent: 0 !important;
     transform: none !important;
-    visibility: visible !important;
     width: 2.65rem !important;
-    z-index: 7000 !important;
   }
 
-  .template-default .nav-toggler:hover,
-  .template-default .template-default__nav-toggler:hover,
-  .template-default button.nav-toggler:hover,
-  .template-default button.template-default__nav-toggler:hover,
-  .template-default .nav-toggler:focus-visible,
-  .template-default .template-default__nav-toggler:focus-visible,
-  .template-default button.nav-toggler:focus-visible,
-  .template-default button.template-default__nav-toggler:focus-visible {
+  .template-default button[aria-label*='open' i][aria-label*='nav' i]:hover,
+  .template-default button[aria-label*='open' i][aria-label*='menu' i]:hover,
+  .template-default button[aria-label*='open' i][aria-label*='sidebar' i]:hover,
+  .template-default button[aria-label*='toggle' i][aria-label*='nav' i]:hover,
+  .template-default button[aria-label*='toggle' i][aria-label*='menu' i]:hover,
+  .template-default button[aria-label*='toggle' i][aria-label*='sidebar' i]:hover,
+  .template-default button[title*='open' i][title*='nav' i]:hover,
+  .template-default button[title*='open' i][title*='menu' i]:hover,
+  .template-default button[title*='open' i][title*='sidebar' i]:hover,
+  .template-default button[title*='toggle' i][title*='nav' i]:hover,
+  .template-default button[title*='toggle' i][title*='menu' i]:hover,
+  .template-default button[title*='toggle' i][title*='sidebar' i]:hover,
+  .template-default button[aria-label*='open' i][aria-label*='nav' i]:focus-visible,
+  .template-default button[aria-label*='open' i][aria-label*='menu' i]:focus-visible,
+  .template-default button[aria-label*='open' i][aria-label*='sidebar' i]:focus-visible,
+  .template-default button[aria-label*='toggle' i][aria-label*='nav' i]:focus-visible,
+  .template-default button[aria-label*='toggle' i][aria-label*='menu' i]:focus-visible,
+  .template-default button[aria-label*='toggle' i][aria-label*='sidebar' i]:focus-visible,
+  .template-default button[title*='open' i][title*='nav' i]:focus-visible,
+  .template-default button[title*='open' i][title*='menu' i]:focus-visible,
+  .template-default button[title*='open' i][title*='sidebar' i]:focus-visible,
+  .template-default button[title*='toggle' i][title*='nav' i]:focus-visible,
+  .template-default button[title*='toggle' i][title*='menu' i]:focus-visible,
+  .template-default button[title*='toggle' i][title*='sidebar' i]:focus-visible {
     background: #eb6373 !important;
     background-color: #eb6373 !important;
     box-shadow: 0 0 0 2px rgba(235, 99, 115, 0.24), 0 10px 24px rgba(4, 63, 73, 0.16) !important;
-    transform: none !important;
   }
 
-  .template-default .nav-toggler::before,
-  .template-default .template-default__nav-toggler::before,
-  .template-default button.nav-toggler::before,
-  .template-default button.template-default__nav-toggler::before {
+  .template-default button[aria-label*='open' i][aria-label*='nav' i]::before,
+  .template-default button[aria-label*='open' i][aria-label*='menu' i]::before,
+  .template-default button[aria-label*='open' i][aria-label*='sidebar' i]::before,
+  .template-default button[aria-label*='toggle' i][aria-label*='nav' i]::before,
+  .template-default button[aria-label*='toggle' i][aria-label*='menu' i]::before,
+  .template-default button[aria-label*='toggle' i][aria-label*='sidebar' i]::before,
+  .template-default button[title*='open' i][title*='nav' i]::before,
+  .template-default button[title*='open' i][title*='menu' i]::before,
+  .template-default button[title*='open' i][title*='sidebar' i]::before,
+  .template-default button[title*='toggle' i][title*='nav' i]::before,
+  .template-default button[title*='toggle' i][title*='menu' i]::before,
+  .template-default button[title*='toggle' i][title*='sidebar' i]::before {
     align-items: center !important;
     color: #ffffff !important;
     content: '♥' !important;
@@ -70,29 +96,37 @@
     width: 100% !important;
   }
 
-  .template-default .nav-toggler > *,
-  .template-default .template-default__nav-toggler > *,
-  .template-default button.nav-toggler > *,
-  .template-default button.template-default__nav-toggler > *,
-  .template-default .nav-toggler svg,
-  .template-default .template-default__nav-toggler svg,
-  .template-default .nav-toggler .hamburger,
-  .template-default .template-default__nav-toggler .hamburger,
-  .template-default .nav-toggler .hamburger__close-icon,
-  .template-default .template-default__nav-toggler .hamburger__close-icon,
-  .template-default .nav-toggler .hamburger__open-icon,
-  .template-default .template-default__nav-toggler .hamburger__open-icon {
+  .template-default button[aria-label*='open' i][aria-label*='nav' i] > *,
+  .template-default button[aria-label*='open' i][aria-label*='menu' i] > *,
+  .template-default button[aria-label*='open' i][aria-label*='sidebar' i] > *,
+  .template-default button[aria-label*='toggle' i][aria-label*='nav' i] > *,
+  .template-default button[aria-label*='toggle' i][aria-label*='menu' i] > *,
+  .template-default button[aria-label*='toggle' i][aria-label*='sidebar' i] > *,
+  .template-default button[title*='open' i][title*='nav' i] > *,
+  .template-default button[title*='open' i][title*='menu' i] > *,
+  .template-default button[title*='open' i][title*='sidebar' i] > *,
+  .template-default button[title*='toggle' i][title*='nav' i] > *,
+  .template-default button[title*='toggle' i][title*='menu' i] > *,
+  .template-default button[title*='toggle' i][title*='sidebar' i] > * {
     display: none !important;
     opacity: 0 !important;
     visibility: hidden !important;
   }
 
-  /* Desktop open-sidebar close control: replace the left-arrow/X with the dark heart.
-     Keep this scoped to the first direct button in the Payload nav/aside so collection controls are untouched. */
-  .template-default .nav > button:first-of-type,
-  .template-default aside > button:first-of-type,
-  .template-default .nav button:has(.hamburger__close-icon),
-  .template-default aside button:has(.hamburger__close-icon) {
+  /* Desktop open-sidebar close/collapse control.
+     The custom Benny & Penny nav is inside the same Payload nav container, so :has(.bp-admin-nav-extra) targets the real < button. */
+  .template-default nav:has(.bp-admin-nav-extra) > button,
+  .template-default aside:has(.bp-admin-nav-extra) > button,
+  .template-default [class*='nav']:has(.bp-admin-nav-extra) > button,
+  .template-default [class*='Nav']:has(.bp-admin-nav-extra) > button,
+  .template-default button[aria-label*='collapse' i],
+  .template-default button[aria-label*='close' i][aria-label*='nav' i],
+  .template-default button[aria-label*='close' i][aria-label*='menu' i],
+  .template-default button[aria-label*='close' i][aria-label*='sidebar' i],
+  .template-default button[title*='collapse' i],
+  .template-default button[title*='close' i][title*='nav' i],
+  .template-default button[title*='close' i][title*='menu' i],
+  .template-default button[title*='close' i][title*='sidebar' i] {
     align-items: center !important;
     background: transparent !important;
     background-color: transparent !important;
@@ -101,27 +135,32 @@
     box-shadow: none !important;
     color: transparent !important;
     cursor: pointer !important;
-    display: inline-flex !important;
     font-size: 0 !important;
     height: 2.65rem !important;
     justify-content: center !important;
     line-height: 1 !important;
     min-height: 2.65rem !important;
     min-width: 2.65rem !important;
-    opacity: 1 !important;
     overflow: hidden !important;
     padding: 0 !important;
+    position: relative !important;
     text-indent: 0 !important;
     transform: none !important;
-    visibility: visible !important;
     width: 2.65rem !important;
-    z-index: 7000 !important;
   }
 
-  .template-default .nav > button:first-of-type::before,
-  .template-default aside > button:first-of-type::before,
-  .template-default .nav button:has(.hamburger__close-icon)::before,
-  .template-default aside button:has(.hamburger__close-icon)::before {
+  .template-default nav:has(.bp-admin-nav-extra) > button::before,
+  .template-default aside:has(.bp-admin-nav-extra) > button::before,
+  .template-default [class*='nav']:has(.bp-admin-nav-extra) > button::before,
+  .template-default [class*='Nav']:has(.bp-admin-nav-extra) > button::before,
+  .template-default button[aria-label*='collapse' i]::before,
+  .template-default button[aria-label*='close' i][aria-label*='nav' i]::before,
+  .template-default button[aria-label*='close' i][aria-label*='menu' i]::before,
+  .template-default button[aria-label*='close' i][aria-label*='sidebar' i]::before,
+  .template-default button[title*='collapse' i]::before,
+  .template-default button[title*='close' i][title*='nav' i]::before,
+  .template-default button[title*='close' i][title*='menu' i]::before,
+  .template-default button[title*='close' i][title*='sidebar' i]::before {
     align-items: center !important;
     color: #043f49 !important;
     content: '♥' !important;
@@ -139,12 +178,18 @@
     width: 100% !important;
   }
 
-  .template-default .nav > button:first-of-type > *,
-  .template-default aside > button:first-of-type > *,
-  .template-default .nav > button:first-of-type svg,
-  .template-default aside > button:first-of-type svg,
-  .template-default .nav button:has(.hamburger__close-icon) *,
-  .template-default aside button:has(.hamburger__close-icon) * {
+  .template-default nav:has(.bp-admin-nav-extra) > button > *,
+  .template-default aside:has(.bp-admin-nav-extra) > button > *,
+  .template-default [class*='nav']:has(.bp-admin-nav-extra) > button > *,
+  .template-default [class*='Nav']:has(.bp-admin-nav-extra) > button > *,
+  .template-default button[aria-label*='collapse' i] > *,
+  .template-default button[aria-label*='close' i][aria-label*='nav' i] > *,
+  .template-default button[aria-label*='close' i][aria-label*='menu' i] > *,
+  .template-default button[aria-label*='close' i][aria-label*='sidebar' i] > *,
+  .template-default button[title*='collapse' i] > *,
+  .template-default button[title*='close' i][title*='nav' i] > *,
+  .template-default button[title*='close' i][title*='menu' i] > *,
+  .template-default button[title*='close' i][title*='sidebar' i] > * {
     display: none !important;
     opacity: 0 !important;
     visibility: hidden !important;
