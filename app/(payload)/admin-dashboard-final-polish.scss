@@ -1,5 +1,94 @@
-/* Final tiny mobile polish layer.
-   Loaded after all other admin styles so it only corrects the remaining iPhone admin details. */
+/* Final tiny polish layer.
+   Loaded after all other admin styles so it only corrects the remaining admin details. */
+
+@media (min-width: 901px) {
+  /* Desktop Payload sidebar toggles only.
+     Do not target app-header__mobile-nav-toggler; it exists in desktop DOM but belongs to mobile. */
+  .template-default button.template-default__nav-toggler:not(.app-header__mobile-nav-toggler) {
+    align-items: center !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    color: transparent !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    font-size: 0 !important;
+    height: 2.65rem !important;
+    justify-content: center !important;
+    line-height: 1 !important;
+    min-height: 2.65rem !important;
+    min-width: 2.65rem !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    position: relative !important;
+    text-indent: 0 !important;
+    transform: none !important;
+    width: 2.65rem !important;
+  }
+
+  /* Closed desktop sidebar state: red circle with white heart. */
+  .template-default button.template-default__nav-toggler:not(.app-header__mobile-nav-toggler):not(.nav-toggler--is-open) {
+    background: #eb6373 !important;
+    background-color: #eb6373 !important;
+    box-shadow: 0 10px 24px rgba(4, 63, 73, 0.16) !important;
+  }
+
+  .template-default button.template-default__nav-toggler:not(.app-header__mobile-nav-toggler):not(.nav-toggler--is-open):hover,
+  .template-default button.template-default__nav-toggler:not(.app-header__mobile-nav-toggler):not(.nav-toggler--is-open):focus-visible {
+    background: #eb6373 !important;
+    background-color: #eb6373 !important;
+    box-shadow: 0 0 0 2px rgba(235, 99, 115, 0.24), 0 10px 24px rgba(4, 63, 73, 0.16) !important;
+  }
+
+  /* Open desktop sidebar state: dark heart, no teal button background. */
+  .template-default button.template-default__nav-toggler.nav-toggler--is-open:not(.app-header__mobile-nav-toggler) {
+    background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .template-default button.template-default__nav-toggler.nav-toggler--is-open:not(.app-header__mobile-nav-toggler):hover,
+  .template-default button.template-default__nav-toggler.nav-toggler--is-open:not(.app-header__mobile-nav-toggler):focus-visible {
+    background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .template-default button.template-default__nav-toggler:not(.app-header__mobile-nav-toggler)::before {
+    align-items: center !important;
+    content: '♥' !important;
+    display: flex !important;
+    font-size: 1.25rem !important;
+    font-weight: 950 !important;
+    height: 100% !important;
+    justify-content: center !important;
+    left: 0 !important;
+    line-height: 1 !important;
+    position: absolute !important;
+    text-indent: 0 !important;
+    top: 0 !important;
+    transform: translateY(-1px) !important;
+    width: 100% !important;
+  }
+
+  .template-default button.template-default__nav-toggler:not(.app-header__mobile-nav-toggler):not(.nav-toggler--is-open)::before {
+    color: #ffffff !important;
+  }
+
+  .template-default button.template-default__nav-toggler.nav-toggler--is-open:not(.app-header__mobile-nav-toggler)::before {
+    color: #043f49 !important;
+  }
+
+  .template-default button.template-default__nav-toggler:not(.app-header__mobile-nav-toggler) > *,
+  .template-default button.template-default__nav-toggler:not(.app-header__mobile-nav-toggler) svg,
+  .template-default button.template-default__nav-toggler:not(.app-header__mobile-nav-toggler) .hamburger,
+  .template-default button.template-default__nav-toggler:not(.app-header__mobile-nav-toggler) .hamburger__close-icon,
+  .template-default button.template-default__nav-toggler:not(.app-header__mobile-nav-toggler) .hamburger__open-icon,
+  .template-default button.template-default__nav-toggler:not(.app-header__mobile-nav-toggler) .icon {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+  }
+}
 
 @media (max-width: 900px) {
   /* Give mobile admin headers clear room below the top-of-page heart/menu toggle. */
