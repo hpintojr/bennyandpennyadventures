@@ -15,8 +15,8 @@ export const Downloads: CollectionConfig = {
   },
   admin: {
     useAsTitle: "fileLabel",
-    description: "Manage digital download records, audiobook files, R2 object keys, access limits, and expiration windows.",
-    defaultColumns: ["fileLabel", "customer", "format", "downloadsUsed", "maxDownloads", "accessExpiresAt", "isActive"]
+    description: "Manage digital file records, audiobook files, R2 object keys, shared readable-license limits, and expiration windows.",
+    defaultColumns: ["fileLabel", "customer", "format", "downloadsUsed", "maxDownloads", "giftsIssued", "accessExpiresAt", "isActive"]
   },
   fields: [
     { name: "customer", type: "relationship", relationTo: "users", required: true },
@@ -34,9 +34,9 @@ export const Downloads: CollectionConfig = {
       ]
     },
     { name: "r2ObjectKey", type: "text", required: true },
-    { name: "maxDownloads", type: "number", required: true, defaultValue: 3 },
-    { name: "downloadsUsed", type: "number", required: true, defaultValue: 0 },
-    { name: "giftsIssued", type: "number", required: true, defaultValue: 0, admin: { description: "Download slots spent on gifts. Personal downloads remaining = maxDownloads − downloadsUsed − giftsIssued." } },
+    { name: "maxDownloads", type: "number", required: true, defaultValue: 3, admin: { description: "For PDF/EPUB, this is the shared readable-license slot pool for the title, not a separate limit per file format." } },
+    { name: "downloadsUsed", type: "number", required: true, defaultValue: 0, admin: { description: "Counts downloads for this specific file record. PDF and EPUB are summed together at runtime for the shared readable-license pool." } },
+    { name: "giftsIssued", type: "number", required: true, defaultValue: 0, admin: { description: "Gift slots spent from this title license. PDF and EPUB gift/download usage is summed together for the readable pool." } },
     { name: "accessExpiresAt", type: "date" },
     { name: "lastDownloadedAt", type: "date" },
     { name: "isActive", type: "checkbox", defaultValue: true },
