@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import React from "react";
 
 export type SidebarIconName = "activity" | "book" | "dashboard" | "image" | "mail" | "package" | "gift" | "shield" | "ticket" | "userCog" | "users";
-export type SidebarActiveKey = "books" | "customers" | "dashboard" | "media" | "orders" | "printJobs" | "gifts" | "privacy" | "promotions" | "subscribers" | "system" | "users";
+export type SidebarActiveKey = "books" | "customers" | "dashboard" | "luluSubmit" | "media" | "orders" | "printJobs" | "gifts" | "privacy" | "promotions" | "subscribers" | "system" | "users";
 
 const iconMap: Record<SidebarIconName, LucideIcon> = {
   activity: Activity,
@@ -43,6 +43,7 @@ function isLinkActive(activeKey: SidebarActiveKey, pathname: string) {
   if (activeKey === "books") return isBasePath(pathname, "/admin/collections/books");
   if (activeKey === "media") return isBasePath(pathname, "/admin/collections/downloads");
   if (activeKey === "printJobs") return isBasePath(pathname, "/admin/collections/print-jobs");
+  if (activeKey === "luluSubmit") return isBasePath(pathname, "/admin/lulu-submit");
   if (activeKey === "subscribers") return isBasePath(pathname, "/admin/collections/subscribers");
   if (activeKey === "privacy") return isBasePath(pathname, "/admin/collections/privacy-requests");
   if (activeKey === "promotions") return isBasePath(pathname, "/admin/collections/promotions");
