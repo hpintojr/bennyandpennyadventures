@@ -36,6 +36,7 @@ export async function AdminBeforeNavLinks() {
         <AdminSidebarNavLink activeKey="books" href="/admin/collections/books" iconName="book" label="Books" />
         <AdminSidebarNavLink activeKey="media" href="/admin/collections/downloads" iconName="image" label="Media" />
         <AdminSidebarNavLink activeKey="printJobs" href="/admin/collections/print-jobs" iconName="package" label="Print Jobs" />
+        <AdminSidebarNavLink activeKey="luluSubmit" href="/admin/lulu-submit" iconName="activity" label="Submit to LuLu" />
       </div>
 
       <div className="bp-admin-nav-extra__section">
