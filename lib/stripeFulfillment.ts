@@ -31,6 +31,12 @@ type FulfillmentLineItem = {
   stripePriceId: string | null;
 };
 
+type DownloadDefinition = {
+  format: "pdf" | "epub" | "audiobook";
+  label: string;
+  objectKey: string;
+};
+
 type StripeShippingDetails = {
   name?: string | null;
   address?: Stripe.Address | null;
@@ -73,6 +79,10 @@ function formatFromStripeLabel(value: string | null | undefined): FulfillmentLin
 
 function getString(value: unknown): string | null {
   return typeof value === "string" && value.trim() ? value.trim() : null;
+}
+
+function getNumber(value: unknown, fallback = 0) {
+  return typeof value === "number" && Number.isFinite(value) ? value : fallback;
 }
 
 function normalizeEmail(value: unknown): string | null {
@@ -412,16 +422,50 @@ async function createOrderItem(
   });
 }
 
-// --- Digital delivery: optionally auto-create R2 download records on purchase ---
-// Gated by R2_AUTO_CREATE_DOWNLOADS=true so it stays off until files + a key
-// convention exist. Keys follow `${R2_KEY_PREFIX|books}/<slug>/<format>.<ext>`.
 function autoCreateDownloadsEnabled() {
   return process.env.R2_AUTO_CREATE_DOWNLOADS === "true";
 }
 
-function downloadDefsForItem(item: FulfillmentLineItem): { format: "pdf" | "audiobook"; ext: string }[] {
-  if (item.format === "digital") return [{ format: "pdf", ext: "pdf" }];
-  if (item.format === "audiobook") return [{ format: "audiobook", ext: "mp3" }];
+function configuredDownloadsPerLicense() {
+  const value = Number(process.env.R2_DOWNLOADS_PER_LICENSE || process.env.R2_MAX_DOWNLOADS);
+  return Number.isFinite(value) && value > 0 ? value : 3;
+}
+
+function r2Prefix() {
+  return (process.env.R2_KEY_PREFIX || "books").replace(/^\/+|\/+$/g, "");
+}
+
+function fallbackBookNumber(book: PayloadDoc | null, item: FulfillmentLineItem) {
+  const number = getNumber(book?.number, 0);
+  if (number > 0) return String(number);
+  const slugMatch = item.slug?.match(/(?:book[-_]?|^)(\d+)/i);
+  if (slugMatch?.[1]) return slugMatch[1];
+  return null;
+}
+
+function fallbackR2Key(book: PayloadDoc | null, item: FulfillmentLineItem, format: DownloadDefinition["format"]) {
+  const bookNumber = fallbackBookNumber(book, item);
+  const prefix = r2Prefix();
+  if (!bookNumber) return null;
+  if (format === "audiobook") return `${prefix}/book-${bookNumber}-audiobook.mp3`;
+  return `${prefix}/book-${bookNumber}.${format}`;
+}
+
+function downloadDefsForItem(book: PayloadDoc | null, item: FulfillmentLineItem): DownloadDefinition[] {
+  if (item.format === "digital") {
+    const pdfKey = getString(book?.pdfObjectKey) || fallbackR2Key(book, item, "pdf");
+    const epubKey = getString(book?.epubObjectKey) || fallbackR2Key(book, item, "epub");
+    return [
+      pdfKey ? { format: "pdf", label: "PDF", objectKey: pdfKey } : null,
+      epubKey ? { format: "epub", label: "EPUB", objectKey: epubKey } : null
+    ].filter(Boolean) as DownloadDefinition[];
+  }
+
+  if (item.format === "audiobook") {
+    const audioKey = getString(book?.audiobookObjectKey) || fallbackR2Key(book, item, "audiobook");
+    return audioKey ? [{ format: "audiobook", label: "Audiobook", objectKey: audioKey }] : [];
+  }
+
   return [];
 }
 
@@ -441,8 +485,6 @@ async function findExistingDownload(
   return result.docs?.[0] || null;
 }
 
-// Total licenses (summed quantity) this customer has bought of a given format for a book,
-// across ALL their orders. Drives how many downloads the access record grants.
 async function totalLicensedQuantity(
   payload: PayloadClient,
   customerId: string | number,
@@ -485,13 +527,7 @@ async function createDownloadsForOrder(
   if (!customer?.id) return 0;
 
   const canCreate = autoCreateDownloadsEnabled();
-  const prefix = (process.env.R2_KEY_PREFIX || "books").replace(/\/+$/g, "");
-  const perLicense =
-    Number(process.env.R2_DOWNLOADS_PER_LICENSE) > 0
-      ? Number(process.env.R2_DOWNLOADS_PER_LICENSE)
-      : Number(process.env.R2_MAX_DOWNLOADS) > 0
-        ? Number(process.env.R2_MAX_DOWNLOADS)
-        : 5;
+  const perLicense = configuredDownloadsPerLicense();
   let created = 0;
 
   for (const item of items) {
@@ -499,30 +535,39 @@ async function createDownloadsForOrder(
     const book = await findBookBySlug(payload, item.slug);
     if (!book?.id) continue;
 
+    const definitions = downloadDefsForItem(book, item);
+    if (!definitions.length) continue;
+
     const licenses = Math.max(1, await totalLicensedQuantity(payload, customer.id, book.id, item.format));
     const grantedMax = perLicense * licenses;
 
-    for (const def of downloadDefsForItem(item)) {
+    for (const def of definitions) {
       try {
         const existing = await findExistingDownload(payload, customer.id, book.id, def.format);
         if (existing) {
           const existingMax = typeof existing.maxDownloads === "number" ? existing.maxDownloads : 0;
           const newMax = Math.max(grantedMax, existingMax);
-          if (newMax !== existingMax) {
-            await payload.update({ collection: "downloads", id: existing.id, data: { maxDownloads: newMax } });
+          const existingKey = getString(existing.r2ObjectKey);
+          const updateData: Record<string, unknown> = {};
+          if (newMax !== existingMax) updateData.maxDownloads = newMax;
+          if (!existingKey && def.objectKey) updateData.r2ObjectKey = def.objectKey;
+          if (Object.keys(updateData).length) {
+            await payload.update({ collection: "downloads", id: existing.id, data: updateData });
           }
           continue;
         }
+
         if (!canCreate) continue;
+
         await payload.create({
           collection: "downloads",
           data: {
             customer: customer.id,
             order: order.id,
             book: book.id,
-            fileLabel: `${getString(book.title) || item.title} — ${def.format.toUpperCase()}`,
+            fileLabel: `${getString(book.title) || item.title} — ${def.label}`,
             format: def.format,
-            r2ObjectKey: `${prefix}/${item.slug}/${def.format}.${def.ext}`,
+            r2ObjectKey: def.objectKey,
             maxDownloads: grantedMax,
             downloadsUsed: 0,
             isActive: true
@@ -537,8 +582,6 @@ async function createDownloadsForOrder(
   return created;
 }
 
-// Stamps lastUsedAt on the saved addresses the customer chose at checkout.
-// Address ids ride along in the Stripe session metadata; ownership is re-checked here.
 async function stampChosenAddressesLastUsed(payload: PayloadClient, session: Stripe.Checkout.Session, customer: PayloadDoc | null) {
   if (!customer?.id) return;
   const metadata = (session.metadata || {}) as Record<string, string | undefined>;
@@ -670,7 +713,13 @@ export async function fulfillCheckoutSession(session: Stripe.Checkout.Session): 
     console.error("Create print jobs (new order) failed; order is unaffected", error);
   }
 
-  // Order receipt + set-password link (best-effort). New orders only.
+  let downloadsCreated = 0;
+  try {
+    downloadsCreated = await createDownloadsForOrder(payload, customer, order, items);
+  } catch (error) {
+    console.error("Auto-create downloads (new order) failed; order was still created", error);
+  }
+
   try {
     if (customerEmail) {
       await sendOrderReceiptEmail({
@@ -691,7 +740,6 @@ export async function fulfillCheckoutSession(session: Stripe.Checkout.Session): 
         customAttributes: { acquiredVia: "purchase" }
       });
 
-      // New/unactivated account → email a tokenized "finish setting up your account" link.
       if (customer?.id && customer.passwordSetByCustomer !== true) {
         try {
           const raw = await createPasswordToken(payload, customer.id, customerEmail, "setup");
@@ -703,13 +751,6 @@ export async function fulfillCheckoutSession(session: Stripe.Checkout.Session): 
     }
   } catch (error) {
     console.error("Order receipt email failed (non-fatal)", error);
-  }
-
-  let downloadsCreated = 0;
-  try {
-    downloadsCreated = await createDownloadsForOrder(payload, customer, order, items);
-  } catch (error) {
-    console.error("Auto-create downloads (new order) failed; order was still created", error);
   }
 
   return {
