@@ -1,0 +1,258 @@
+.bp-lulu-submit {
+  color: #064653;
+  margin: 0 auto;
+  max-width: 1180px;
+  padding: 2rem;
+}
+
+.bp-lulu-submit__hero {
+  background: linear-gradient(135deg, rgba(214, 250, 251, 0.98), rgba(255, 255, 255, 0.96));
+  border: 1px solid rgba(4, 70, 83, 0.12);
+  border-radius: 24px;
+  box-shadow: 0 18px 44px rgba(4, 70, 83, 0.12);
+  padding: 2rem;
+}
+
+.bp-lulu-submit__hero p {
+  color: #ef4f7a;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  margin: 0 0 0.45rem;
+  text-transform: uppercase;
+}
+
+.bp-lulu-submit__hero h1 {
+  color: #064653;
+  font-family: Georgia, serif;
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  line-height: 1.04;
+  margin: 0;
+}
+
+.bp-lulu-submit__hero span {
+  color: rgba(6, 70, 83, 0.72);
+  display: block;
+  font-weight: 700;
+  margin-top: 0.8rem;
+}
+
+.bp-lulu-submit__summary {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 1.25rem 0;
+}
+
+.bp-lulu-submit__summary article,
+.bp-lulu-submit__notice,
+.bp-lulu-submit__job {
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(4, 70, 83, 0.12);
+  border-radius: 20px;
+  box-shadow: 0 14px 36px rgba(4, 70, 83, 0.08);
+}
+
+.bp-lulu-submit__summary article {
+  padding: 1.25rem;
+}
+
+.bp-lulu-submit__summary strong {
+  color: #ef4f7a;
+  display: block;
+  font-family: Georgia, serif;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.bp-lulu-submit__summary span,
+.bp-lulu-submit__notice p,
+.bp-lulu-submit__meta dd,
+.bp-lulu-submit__job p {
+  color: rgba(6, 70, 83, 0.72);
+}
+
+.bp-lulu-submit__notice {
+  margin-bottom: 1.25rem;
+  padding: 1.2rem 1.35rem;
+}
+
+.bp-lulu-submit__notice h2 {
+  font-family: Georgia, serif;
+  margin: 0 0 0.35rem;
+}
+
+.bp-lulu-submit__notice p {
+  margin: 0;
+}
+
+.bp-lulu-submit__list {
+  display: grid;
+  gap: 1rem;
+}
+
+.bp-lulu-submit__job {
+  padding: 1.25rem;
+}
+
+.bp-lulu-submit__jobMain {
+  align-items: flex-start;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.bp-lulu-submit__status {
+  border-radius: 999px;
+  display: inline-flex;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.55rem;
+  padding: 0.38rem 0.7rem;
+  text-transform: uppercase;
+}
+
+.bp-lulu-submit__status.is-ready {
+  background: rgba(30, 168, 126, 0.13);
+  color: #117052;
+}
+
+.bp-lulu-submit__status.is-draft {
+  background: rgba(245, 174, 75, 0.16);
+  color: #8a5414;
+}
+
+.bp-lulu-submit__status.is-submitted {
+  background: rgba(29, 130, 210, 0.12);
+  color: #166397;
+}
+
+.bp-lulu-submit__status.is-error {
+  background: rgba(215, 74, 91, 0.12);
+  color: #a31f35;
+}
+
+.bp-lulu-submit__job h2 {
+  color: #064653;
+  font-family: Georgia, serif;
+  font-size: 1.35rem;
+  margin: 0 0 0.35rem;
+}
+
+.bp-lulu-submit__job p {
+  margin: 0;
+}
+
+.bp-lulu-submit__action {
+  min-width: 190px;
+  text-align: right;
+}
+
+.bp-lulu-submit__button {
+  background: #ef4f7a;
+  border: 0;
+  border-radius: 999px;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 900;
+  padding: 0.78rem 1.05rem;
+}
+
+.bp-lulu-submit__button:disabled {
+  background: rgba(6, 70, 83, 0.18);
+  color: rgba(6, 70, 83, 0.55);
+  cursor: not-allowed;
+}
+
+.bp-lulu-submit__message {
+  font-size: 0.82rem;
+  font-weight: 700;
+  margin-top: 0.5rem !important;
+}
+
+.bp-lulu-submit__message--success {
+  color: #117052 !important;
+}
+
+.bp-lulu-submit__message--error {
+  color: #a31f35 !important;
+}
+
+.bp-lulu-submit__meta {
+  display: grid;
+  gap: 0.8rem;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  margin: 1rem 0 0;
+}
+
+.bp-lulu-submit__meta div {
+  background: rgba(214, 250, 251, 0.42);
+  border-radius: 14px;
+  padding: 0.75rem;
+}
+
+.bp-lulu-submit__meta dt {
+  color: rgba(6, 70, 83, 0.55);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.bp-lulu-submit__meta dd {
+  font-weight: 800;
+  margin: 0.2rem 0 0;
+  overflow-wrap: anywhere;
+}
+
+.bp-lulu-submit__error {
+  background: rgba(215, 74, 91, 0.08);
+  border-radius: 14px;
+  color: #a31f35 !important;
+  font-weight: 700;
+  margin-top: 1rem !important;
+  padding: 0.85rem;
+  white-space: pre-wrap;
+}
+
+.bp-lulu-submit__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin-top: 1rem;
+}
+
+.bp-lulu-submit__links a {
+  color: #064653;
+  font-weight: 900;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.bp-lulu-submit__empty {
+  background: rgba(255, 255, 255, 0.94);
+  border-radius: 18px;
+  color: rgba(6, 70, 83, 0.7);
+  padding: 1.5rem;
+}
+
+@media (max-width: 900px) {
+  .bp-lulu-submit {
+    padding: 1rem;
+  }
+
+  .bp-lulu-submit__summary,
+  .bp-lulu-submit__meta {
+    grid-template-columns: 1fr;
+  }
+
+  .bp-lulu-submit__jobMain {
+    display: block;
+  }
+
+  .bp-lulu-submit__action {
+    margin-top: 1rem;
+    text-align: left;
+  }
+}
