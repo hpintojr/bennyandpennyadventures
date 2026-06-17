@@ -4,6 +4,7 @@ import type Stripe from "stripe";
 import { getStripe } from "@/lib/stripe";
 import { sendOrderReceiptEmail, sendPasswordLinkEmail, upsertSubscriber } from "@/lib/email";
 import { createPasswordToken, passwordSetupUrl } from "@/lib/authTokens";
+import { createPrintJobsForOrder } from "@/lib/luluPrintJobs";
 
 type PayloadClient = {
   find: (args: Record<string, unknown>) => Promise<unknown>;
@@ -50,6 +51,7 @@ export type FulfillmentSummary = {
   created: boolean;
   orderItemsCreated: number;
   downloadsCreated: number;
+  printJobsCreated: number;
   accessGrantsCreated: number;
 };
 
@@ -482,9 +484,6 @@ async function createDownloadsForOrder(
 ): Promise<number> {
   if (!customer?.id) return 0;
 
-  // Raising the allowance on existing download records always runs (customers get what
-  // they paid for as they buy more). Creating NEW records stays gated by the flag,
-  // since new records point at files that must already be uploaded to R2.
   const canCreate = autoCreateDownloadsEnabled();
   const prefix = (process.env.R2_KEY_PREFIX || "books").replace(/\/+$/g, "");
   const perLicense =
@@ -599,12 +598,21 @@ export async function fulfillCheckoutSession(session: Stripe.Checkout.Session): 
       console.error("Auto-create downloads (existing order) failed; order is unaffected", error);
     }
 
+    let existingPrintJobsCreated = 0;
+    try {
+      const summary = await createPrintJobsForOrder(payload, existingOrder);
+      existingPrintJobsCreated = summary.created;
+    } catch (error) {
+      console.error("Create print jobs (existing order) failed; order is unaffected", error);
+    }
+
     return {
       orderId: existingOrder.id,
       orderNumber: getString(existingOrder.orderNumber) || String(existingOrder.id),
       created: false,
       orderItemsCreated: 0,
       downloadsCreated: existingDownloadsCreated,
+      printJobsCreated: existingPrintJobsCreated,
       accessGrantsCreated: 0
     };
   }
@@ -652,6 +660,14 @@ export async function fulfillCheckoutSession(session: Stripe.Checkout.Session): 
     } catch (error) {
       console.error("Stripe fulfillment order item creation failed; order was still created", error);
     }
+  }
+
+  let printJobsCreated = 0;
+  try {
+    const summary = await createPrintJobsForOrder(payload, order);
+    printJobsCreated = summary.created;
+  } catch (error) {
+    console.error("Create print jobs (new order) failed; order is unaffected", error);
   }
 
   // Order receipt + set-password link (best-effort). New orders only.
@@ -702,6 +718,7 @@ export async function fulfillCheckoutSession(session: Stripe.Checkout.Session): 
     created: true,
     orderItemsCreated,
     downloadsCreated,
+    printJobsCreated,
     accessGrantsCreated: 0
   };
 }
