@@ -258,11 +258,20 @@ export async function GET() {
     return fileState(audio, remaining);
   }
 
+  function readableSummary(bookKey: string) {
+    const readable = (downloadsByBook.get(bookKey) || []).filter((dl) => ["pdf", "epub"].includes(getString(dl.format) || ""));
+    if (!readable.length) return null;
+    const pool = readablePoolState(readable);
+    if (pool.max === null) return null;
+    return { total: pool.max, used: pool.used, gifts: pool.gifts, remaining: pool.remaining ?? 0 };
+  }
+
   const books = Array.from(library.values()).map((book) => ({
     title: book.title,
     bookId: book.bookId,
     latestPurchaseAt: book.latestPurchaseAt,
     orderNumbers: Array.from(book.orderNumbers),
+    readable: readableSummary(`${book.bookId ?? ""}`),
     formats: Array.from(book.formats.values()).map((f): LibraryFormat => {
       if (f.format === "digital") {
         const options = readableOptions(`${book.bookId ?? ""}`);

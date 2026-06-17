@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import PortalSlotMeter from "./PortalSlotMeter";
+
+type ReadableSummary = { total: number; used: number; gifts: number; remaining: number };
 
 type DownloadOption = {
   format: string;
@@ -21,7 +24,7 @@ type LibraryFormat = {
   downloadable?: boolean;
   downloadOptions?: DownloadOption[];
 };
-type LibraryBook = { title: string; bookId?: string | number | null; latestPurchaseAt?: string; formats?: LibraryFormat[] };
+type LibraryBook = { title: string; bookId?: string | number | null; latestPurchaseAt?: string; readable?: ReadableSummary | null; formats?: LibraryFormat[] };
 type PortalLibraryResponse = { books?: LibraryBook[]; error?: string };
 
 function formatDate(value?: string) {
@@ -186,10 +189,24 @@ export default function PortalLibraryClient() {
             </div>
           </summary>
 
-          <div className="grid gap-3 border-t border-tan px-4 pb-5 pt-4 sm:px-5 md:grid-cols-2">
-            {(book.formats || []).map((format) => (
-              <FormatCard key={format.format} format={format} />
-            ))}
+          <div className="border-t border-tan px-4 pb-5 pt-4 sm:px-5">
+            {book.readable && (
+              <div className="mb-4 rounded-2xl border border-tan bg-cream/50 p-4">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <p className="text-sm font-extrabold text-teal">Reading slots</p>
+                  <p className="text-sm font-bold text-ink/70">{book.readable.remaining} of {book.readable.total} open</p>
+                </div>
+                <div className="mt-3">
+                  <PortalSlotMeter total={book.readable.total} used={book.readable.used} gifts={book.readable.gifts} remaining={book.readable.remaining} />
+                </div>
+                <p className="mt-3 text-xs text-ink/60">Slots are shared across PDF/EPUB downloads and gifts. <Link href="/portal/gifts" className="font-extrabold text-coral">Gift this book →</Link></p>
+              </div>
+            )}
+            <div className="grid gap-3 md:grid-cols-2">
+              {(book.formats || []).map((format) => (
+                <FormatCard key={format.format} format={format} />
+              ))}
+            </div>
           </div>
         </details>
       ))}
