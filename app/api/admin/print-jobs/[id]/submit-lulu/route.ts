@@ -9,18 +9,32 @@ type RouteContext = {
   params: Promise<{ id: string }>;
 };
 
+type PayloadUser = {
+  id?: string | number;
+  role?: string;
+};
+
 function setupSecretName() {
   return ["PAYLOAD", "SETUP", "SECRET"].join("_");
 }
 
-function isAuthorized(request: Request) {
+async function isAuthorized(request: Request, payload: Awaited<ReturnType<typeof getPayload>>) {
   const secret = process.env[setupSecretName()];
-  if (!secret) return false;
-  return request.headers.get("x-setup-secret") === secret;
+  if (secret && request.headers.get("x-setup-secret") === secret) return true;
+
+  try {
+    const auth = await payload.auth({ headers: request.headers });
+    const user = auth.user as PayloadUser | null | undefined;
+    return user?.role === "admin";
+  } catch {
+    return false;
+  }
 }
 
 export async function POST(request: Request, context: RouteContext) {
-  if (!isAuthorized(request)) {
+  const payload = await getPayload({ config });
+
+  if (!(await isAuthorized(request, payload))) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -29,8 +43,6 @@ export async function POST(request: Request, context: RouteContext) {
   if (!id) {
     return NextResponse.json({ error: "Missing print job id" }, { status: 400 });
   }
-
-  const payload = await getPayload({ config });
 
   try {
     const result = await submitPrintJobToLulu(payload as never, id);
