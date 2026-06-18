@@ -1,4 +1,3 @@
-import { ShoppingCart } from "lucide-react";
 import React from "react";
 import { AdminSidebarNavLink } from "./AdminSidebarNavLink";
 import { OrderProfileActions } from "./OrderProfileActions";
@@ -27,11 +26,7 @@ export async function AdminBeforeNavLinks() {
         <div className="bp-admin-nav-extra__heading">Sales</div>
         <AdminSidebarNavLink activeKey="orders" href="/admin/collections/orders" iconName="package" label="Orders" />
         <AdminSidebarNavLink activeKey="customers" href={customersFilterHref} iconName="users" label="Customers" />
-        <span className="bp-admin-nav-extra__link bp-admin-nav-extra__link--disabled" title="Coming soon">
-          <ShoppingCart className="bp-admin-nav-extra__iconSvg" size={18} strokeWidth={2.5} aria-hidden="true" />
-          <em>Abandoned Carts</em>
-          <small>Coming soon</small>
-        </span>
+        <AdminSidebarNavLink activeKey="abandonedCarts" href="/admin/collections/abandoned-carts" iconName="cart" label="Abandoned Carts" />
       </div>
 
       <div className="bp-admin-nav-extra__section">
