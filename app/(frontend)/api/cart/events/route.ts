@@ -59,15 +59,20 @@ function totals(items: ReturnType<typeof normalizeItems>) {
 }
 
 async function findCart(payload: Awaited<ReturnType<typeof getPayloadClient>>, cartToken: string) {
-  const result = (await payload.find({ collection: "abandoned-carts", limit: 1, where: { cartToken: { equals: cartToken } } })) as PayloadFindResult;
+  const result = (await payload.find({
+    collection: "abandoned-carts",
+    overrideAccess: true,
+    limit: 1,
+    where: { cartToken: { equals: cartToken } }
+  })) as PayloadFindResult;
   return result.docs?.[0] || null;
 }
 
 async function findOrCreateSubscriber(payload: Awaited<ReturnType<typeof getPayloadClient>>, subscriberEmail: string) {
-  const result = (await payload.find({ collection: "subscribers", limit: 1, where: { email: { equals: subscriberEmail } } })) as PayloadFindResult;
+  const result = (await payload.find({ collection: "subscribers", overrideAccess: true, limit: 1, where: { email: { equals: subscriberEmail } } })) as PayloadFindResult;
   if (result.docs?.[0]) return result.docs[0];
   try {
-    return (await payload.create({ collection: "subscribers", data: { email: subscriberEmail, marketingOptIn: true, source: "cart-tracking" } })) as PayloadDoc;
+    return (await payload.create({ collection: "subscribers", overrideAccess: true, data: { email: subscriberEmail, marketingOptIn: true, source: "cart-tracking" } })) as PayloadDoc;
   } catch {
     return null;
   }
@@ -78,70 +83,75 @@ function code(value: unknown) {
 }
 
 export async function POST(request: Request) {
-  let body: CartEventBody;
   try {
-    body = (await request.json()) as CartEventBody;
-  } catch {
-    return NextResponse.json({ error: "Invalid cart event." }, { status: 400 });
+    let body: CartEventBody;
+    try {
+      body = (await request.json()) as CartEventBody;
+    } catch {
+      return NextResponse.json({ error: "Invalid cart event." }, { status: 400 });
+    }
+
+    const cartToken = text(body.cartToken);
+    if (!cartToken) return NextResponse.json({ error: "Missing cart token." }, { status: 400 });
+
+    const payload = await getPayloadClient();
+    const auth = await payload.auth({ headers: await getHeaders() }).catch(() => null);
+    const user = auth?.user && (auth.user as PayloadDoc).id ? (auth.user as PayloadDoc) : null;
+    const knownEmail = email(body.email) || email(user?.email);
+    const items = normalizeItems(body.items);
+    const summary = totals(items);
+    const couponCode = code(body.couponCode);
+    const giftCode = code(body.giftCode);
+    const bpgCode = code(body.bpgCode);
+    const consent = body.marketingConsent === true;
+    const existing = await findCart(payload, cartToken);
+    const status = body.event === "cart-cleared" ? "dismissed" : existing?.status === "converted" ? "converted" : "active-cart";
+    const now = new Date().toISOString();
+
+    let subscriber: PayloadDoc | null = null;
+    const syncTags = ["ecommerce.in_cart"];
+    if (couponCode) syncTags.push("coupon-user");
+    if (bpgCode || /^BPG/i.test(giftCode || "")) syncTags.push("bpg-gift-code-user");
+
+    if (knownEmail && consent) {
+      subscriber = await findOrCreateSubscriber(payload, knownEmail);
+      await upsertSubscriber({
+        email: knownEmail,
+        tags: syncTags,
+        customAttributes: { acquiredVia: "cart", cartToken, couponCode, giftCode, bpgCode, itemCount: summary.itemCount, subtotal: summary.subtotal }
+      }).catch(() => null);
+    }
+
+    const data: Record<string, unknown> = {
+      email: knownEmail || existing?.email,
+      customer: user?.id || existing?.customer,
+      subscriber: subscriber?.id || existing?.subscriber,
+      status,
+      cartToken,
+      items,
+      itemCount: summary.itemCount,
+      subtotal: summary.subtotal,
+      requiresShipping: summary.requiresShipping,
+      marketingConsent: consent || existing?.marketingConsent === true,
+      couponCode: couponCode || existing?.couponCode,
+      giftCode: giftCode || existing?.giftCode,
+      bpgCode: bpgCode || existing?.bpgCode,
+      lastActivityAt: now,
+      lastSequenzySyncAt: knownEmail && consent ? now : existing?.lastSequenzySyncAt,
+      sequenzyTags: knownEmail && consent ? syncTags : existing?.sequenzyTags,
+      source: "cart",
+      metadata: { event: text(body.event) || "cart-updated" }
+    };
+
+    if (!existing) data.firstSeenAt = now;
+
+    const cart = existing
+      ? await payload.update({ collection: "abandoned-carts", overrideAccess: true, id: existing.id, data })
+      : await payload.create({ collection: "abandoned-carts", overrideAccess: true, data });
+
+    return NextResponse.json({ ok: true, cartId: (cart as PayloadDoc).id });
+  } catch (error) {
+    console.error("Cart event tracking failed", error);
+    return NextResponse.json({ error: "Cart tracking failed." }, { status: 500 });
   }
-
-  const cartToken = text(body.cartToken);
-  if (!cartToken) return NextResponse.json({ error: "Missing cart token." }, { status: 400 });
-
-  const payload = await getPayloadClient();
-  const auth = await payload.auth({ headers: await getHeaders() }).catch(() => null);
-  const user = auth?.user && (auth.user as PayloadDoc).id ? (auth.user as PayloadDoc) : null;
-  const knownEmail = email(body.email) || email(user?.email);
-  const items = normalizeItems(body.items);
-  const summary = totals(items);
-  const couponCode = code(body.couponCode);
-  const giftCode = code(body.giftCode);
-  const bpgCode = code(body.bpgCode);
-  const consent = body.marketingConsent === true;
-  const existing = await findCart(payload, cartToken);
-  const status = body.event === "cart-cleared" ? "dismissed" : existing?.status === "converted" ? "converted" : "active-cart";
-  const now = new Date().toISOString();
-
-  let subscriber: PayloadDoc | null = null;
-  const syncTags = ["ecommerce.in_cart"];
-  if (couponCode) syncTags.push("coupon-user");
-  if (bpgCode || /^BPG/i.test(giftCode || "")) syncTags.push("bpg-gift-code-user");
-
-  if (knownEmail && consent) {
-    subscriber = await findOrCreateSubscriber(payload, knownEmail);
-    await upsertSubscriber({
-      email: knownEmail,
-      tags: syncTags,
-      customAttributes: { acquiredVia: "cart", cartToken, couponCode, giftCode, bpgCode, itemCount: summary.itemCount, subtotal: summary.subtotal }
-    }).catch(() => null);
-  }
-
-  const data: Record<string, unknown> = {
-    email: knownEmail || existing?.email,
-    customer: user?.id || existing?.customer,
-    subscriber: subscriber?.id || existing?.subscriber,
-    status,
-    cartToken,
-    items,
-    itemCount: summary.itemCount,
-    subtotal: summary.subtotal,
-    requiresShipping: summary.requiresShipping,
-    marketingConsent: consent || existing?.marketingConsent === true,
-    couponCode: couponCode || existing?.couponCode,
-    giftCode: giftCode || existing?.giftCode,
-    bpgCode: bpgCode || existing?.bpgCode,
-    lastActivityAt: now,
-    lastSequenzySyncAt: knownEmail && consent ? now : existing?.lastSequenzySyncAt,
-    sequenzyTags: knownEmail && consent ? syncTags : existing?.sequenzyTags,
-    source: "cart",
-    metadata: { event: text(body.event) || "cart-updated" }
-  };
-
-  if (!existing) data.firstSeenAt = now;
-
-  const cart = existing
-    ? await payload.update({ collection: "abandoned-carts", id: existing.id, data })
-    : await payload.create({ collection: "abandoned-carts", data });
-
-  return NextResponse.json({ ok: true, cartId: (cart as PayloadDoc).id });
 }
