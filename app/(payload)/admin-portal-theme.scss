@@ -138,14 +138,14 @@
   padding: 0 0.6rem !important;
 }
 
-/* Logo sits tight to the user card (minimal gap, no divider between them). */
+/* Logo sits tight to the user card — pull the card up close to "ADMIN PANEL". */
 .bp-admin-sidebar-brand {
   border-bottom: 0 !important;
-  margin: 0 0 0.15rem !important;
+  margin: 0 0 -0.55rem !important;
   padding-bottom: 0 !important;
 }
 
-/* User card: compact. */
+/* User card: compact, snug under the logo. */
 .bp-admin-identity {
   gap: 0.5rem !important;
   margin: 0 0.6rem 0.3rem !important;
