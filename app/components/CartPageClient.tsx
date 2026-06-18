@@ -162,6 +162,7 @@ export default function CartPageClient() {
   }
 
   const showAddressPicker = signedIn && addresses.length > 0;
+  const inGuestEmailStep = guestChoiceStep === "guest-email";
 
   return (
     <div className="page-wrap pb-16 pt-8">
@@ -245,8 +246,12 @@ export default function CartPageClient() {
           <div className="w-full max-w-lg rounded-3xl border border-tan bg-cream p-6 text-left shadow-soft">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="font-serif text-2xl font-semibold text-teal">Before you checkout ♥</p>
-                <p className="mt-2 text-sm leading-6 text-ink">Create an account to save your orders and downloads, or continue as a guest with your email.</p>
+                <p className="font-serif text-2xl font-semibold text-teal">{inGuestEmailStep ? "Guest Checkout ♥" : "Before you checkout ♥"}</p>
+                <p className="mt-2 text-sm leading-6 text-ink">
+                  {inGuestEmailStep
+                    ? "Enter your email to proceed to our secure Stripe checkout. No account creation required."
+                    : "Create an account to save your orders and downloads, or continue as a guest with your email."}
+                </p>
               </div>
               <button type="button" className="rounded-full border border-tan bg-white px-3 py-1 text-sm font-bold text-teal" onClick={() => setGuestChoiceOpen(false)} aria-label="Close checkout options">×</button>
             </div>
@@ -259,7 +264,7 @@ export default function CartPageClient() {
             ) : (
               <div className="mt-6 space-y-4">
                 <label className="block text-sm font-bold text-teal">
-                  Email for guest checkout
+                  Email address
                   <input
                     type="email"
                     value={guestCheckoutEmail}
@@ -274,7 +279,7 @@ export default function CartPageClient() {
                 </label>
                 <label className="flex items-center gap-2 rounded-xl border border-tan bg-white px-3 py-3 text-sm font-bold text-teal">
                   <input type="checkbox" checked={guestCheckoutConsent} onChange={(event) => setGuestCheckoutConsent(event.target.checked)} />
-                  Send me a reminder if I leave this cart
+                  Remind me about this cart if I leave
                 </label>
                 {guestCheckoutError ? <p className="text-sm font-bold text-coral">{guestCheckoutError}</p> : null}
                 <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
