@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getPayload } from "payload";
 import type Stripe from "stripe";
 import { fulfillCheckoutSession } from "@/lib/stripeFulfillment";
+import { syncPurchaseAttribution } from "@/lib/commerceAttribution";
 import { getStripe } from "@/lib/stripe";
 
 export const runtime = "nodejs";
@@ -32,6 +33,10 @@ async function markTrackedCartConverted(sessionId: string, orderId?: string | nu
         status: "converted",
         convertedAt: now,
         lastActivityAt: now,
+        recoveryEligible: false,
+        recoveryState: cart.abandonedAt ? "recovered" : "converted",
+        recoveredAt: cart.abandonedAt ? now : cart.recoveredAt,
+        recoveredOrderNumber: orderNumber || cart.recoveredOrderNumber,
         metadata: { ...metadata, convertedFromWebhook: true, orderId, orderNumber }
       }
     });
@@ -54,15 +59,10 @@ export async function GET() {
 export async function POST(request: Request) {
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
-  if (!webhookSecret) {
-    return NextResponse.json({ error: "Stripe webhook secret is not configured." }, { status: 500 });
-  }
+  if (!webhookSecret) return NextResponse.json({ error: "Stripe webhook secret is not configured." }, { status: 500 });
 
   const signature = request.headers.get("stripe-signature");
-
-  if (!signature) {
-    return NextResponse.json({ error: "Missing Stripe signature." }, { status: 400 });
-  }
+  if (!signature) return NextResponse.json({ error: "Missing Stripe signature." }, { status: 400 });
 
   const rawBody = await request.text();
   const stripe = getStripe();
@@ -75,12 +75,8 @@ export async function POST(request: Request) {
         const session = event.data.object as Stripe.Checkout.Session;
         const summary = await fulfillCheckoutSession(session);
         const cartConverted = await markTrackedCartConverted(session.id, summary.orderId, summary.orderNumber);
-        console.log("Stripe checkout fulfillment completed", {
-          eventId: event.id,
-          sessionId: session.id,
-          cartConverted,
-          ...summary
-        });
+        await syncPurchaseAttribution(session, summary);
+        console.log("Stripe checkout fulfillment completed", { eventId: event.id, sessionId: session.id, cartConverted, ...summary });
         break;
       }
       case "payment_intent.payment_failed": {
