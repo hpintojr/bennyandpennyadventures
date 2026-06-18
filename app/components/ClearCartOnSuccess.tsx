@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 
 const STORAGE_KEY = "bp_cart";
+const CART_TOKEN_KEY = "bp_cart_token";
 
 export default function ClearCartOnSuccess({ shouldClear }: { shouldClear: boolean }) {
   useEffect(() => {
@@ -19,6 +20,7 @@ export default function ClearCartOnSuccess({ shouldClear }: { shouldClear: boole
     }
 
     window.localStorage.removeItem(STORAGE_KEY);
+    window.localStorage.removeItem(CART_TOKEN_KEY);
     window.dispatchEvent(new Event("bp-cart-updated"));
   }, [shouldClear]);
 
