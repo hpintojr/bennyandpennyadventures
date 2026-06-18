@@ -161,12 +161,35 @@ async function retrieveCheckoutSessionForFulfillment(session: Stripe.Checkout.Se
   });
 }
 
+// Stripe Checkout's name field is free text and can't be validated, so customers
+// sometimes type an address into it. Real names don't contain digits — use that
+// as a reliable signal to flag the order and fall back to the account name.
+function nameLooksLikeAddress(name: unknown): boolean {
+  return typeof name === "string" && /\d/.test(name);
+}
+
+function nameReviewNote(session: Stripe.Checkout.Session): string {
+  const billing = session.customer_details?.name;
+  const shippingName = getShippingDetails(session)?.name;
+  const flagged: string[] = [];
+  if (nameLooksLikeAddress(billing)) flagged.push(`billing/customer name "${billing}"`);
+  if (nameLooksLikeAddress(shippingName)) flagged.push(`shipping name "${shippingName}"`);
+  if (!flagged.length) return "";
+  return `⚠ REVIEW: ${flagged.join(" and ")} contains digits and may be a misplaced address. Verify the recipient name and address before fulfilling.`;
+}
+
 function getOrderSessionData(session: Stripe.Checkout.Session, customer: PayloadDoc | null = null) {
   const shipping = getShippingDetails(session);
   const billingAddress = session.customer_details?.address;
   const shippingAddress = shipping?.address;
+
+  const stripeName = session.customer_details?.name || undefined;
+  const accountName = [getString(customer?.firstName), getString(customer?.lastName)].filter(Boolean).join(" ").trim();
+  // Prefer the saved account name when the Stripe name looks like an address.
+  const safeCustomerName = nameLooksLikeAddress(stripeName) && accountName ? accountName : stripeName;
+
   const data: Record<string, unknown> = {
-    customerName: session.customer_details?.name || undefined,
+    customerName: safeCustomerName,
     customerEmail: getCustomerEmail(session) || undefined,
     customerPhone: session.customer_details?.phone || undefined,
     status: "paid",
@@ -179,7 +202,7 @@ function getOrderSessionData(session: Stripe.Checkout.Session, customer: Payload
     discountTotal: centsToDollars(session.total_details?.amount_discount),
     total: centsToDollars(session.amount_total),
     currency: session.currency || "usd",
-    billingAddressName: session.customer_details?.name || undefined,
+    billingAddressName: safeCustomerName,
     billingAddressLine1: billingAddress?.line1 || undefined,
     billingAddressLine2: billingAddress?.line2 || undefined,
     billingAddressCity: billingAddress?.city || undefined,
@@ -681,7 +704,7 @@ export async function fulfillCheckoutSession(session: Stripe.Checkout.Session): 
       customerEmail,
       itemCount,
       itemsSummary,
-      notes: buildInternalOrderNote(items)
+      notes: [buildInternalOrderNote(items), nameReviewNote(fulfillmentSession)].filter(Boolean).join("\n\n")
     }
   })) as PayloadDoc;
 
