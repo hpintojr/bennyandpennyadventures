@@ -58,6 +58,13 @@ function totals(items: ReturnType<typeof normalizeItems>) {
   return { itemCount, subtotal, requiresShipping };
 }
 
+function itemsSummary(items: ReturnType<typeof normalizeItems>) {
+  return items
+    .filter((item) => item.qty > 0)
+    .map((item) => `${item.title} — ${item.format}${item.qty > 1 ? ` × ${item.qty}` : ""}`)
+    .join("\n");
+}
+
 async function findCart(payload: Awaited<ReturnType<typeof getPayloadClient>>, cartToken: string) {
   const result = (await payload.find({
     collection: "abandoned-carts",
@@ -103,8 +110,9 @@ export async function POST(request: Request) {
     const couponCode = code(body.couponCode);
     const giftCode = code(body.giftCode);
     const bpgCode = code(body.bpgCode);
-    const consent = body.marketingConsent === true;
+    const hasConsentUpdate = typeof body.marketingConsent === "boolean";
     const existing = await findCart(payload, cartToken);
+    const consent = hasConsentUpdate ? body.marketingConsent === true : existing?.marketingConsent === true;
     const status = body.event === "cart-cleared" ? "dismissed" : existing?.status === "converted" ? "converted" : "active-cart";
     const now = new Date().toISOString();
 
@@ -118,7 +126,17 @@ export async function POST(request: Request) {
       await upsertSubscriber({
         email: knownEmail,
         tags: syncTags,
-        customAttributes: { acquiredVia: "cart", cartToken, couponCode, giftCode, bpgCode, itemCount: summary.itemCount, subtotal: summary.subtotal }
+        customAttributes: {
+          acquiredVia: "cart",
+          cartToken,
+          cartStatus: status,
+          cartRecoveryEligible: false,
+          couponCode,
+          giftCode,
+          bpgCode,
+          itemCount: summary.itemCount,
+          subtotal: summary.subtotal
+        }
       }).catch(() => null);
     }
 
@@ -129,10 +147,13 @@ export async function POST(request: Request) {
       status,
       cartToken,
       items,
+      itemsSummary: itemsSummary(items),
       itemCount: summary.itemCount,
       subtotal: summary.subtotal,
       requiresShipping: summary.requiresShipping,
-      marketingConsent: consent || existing?.marketingConsent === true,
+      marketingConsent: consent,
+      recoveryEligible: false,
+      recoveryState: status === "converted" ? "converted" : "not-eligible",
       couponCode: couponCode || existing?.couponCode,
       giftCode: giftCode || existing?.giftCode,
       bpgCode: bpgCode || existing?.bpgCode,
@@ -140,7 +161,7 @@ export async function POST(request: Request) {
       lastSequenzySyncAt: knownEmail && consent ? now : existing?.lastSequenzySyncAt,
       sequenzyTags: knownEmail && consent ? syncTags : existing?.sequenzyTags,
       source: "cart",
-      metadata: { event: text(body.event) || "cart-updated" }
+      metadata: { ...(typeof existing?.metadata === "object" && existing.metadata ? (existing.metadata as Record<string, unknown>) : {}), event: text(body.event) || "cart-updated" }
     };
 
     if (!existing) data.firstSeenAt = now;
