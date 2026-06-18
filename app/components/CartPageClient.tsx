@@ -288,6 +288,13 @@ export default function CartPageClient() {
                 </div>
               </div>
             )}
+
+            <p className="mt-5 text-center text-sm text-[#6b7d80]">
+              Already have an account?{" "}
+              <Link href="/portal/login" onClick={() => setGuestChoiceOpen(false)} className="font-bold text-teal underline decoration-coral/40 underline-offset-4 hover:text-coral">
+                Sign in
+              </Link>
+            </p>
           </div>
         </div>
       )}
