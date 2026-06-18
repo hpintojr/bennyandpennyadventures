@@ -8,7 +8,7 @@ export const AbandonedCarts: CollectionConfig = {
   admin: {
     useAsTitle: "email",
     description: "Cart and checkout intent tracking for recovery, Sequenzy sync, coupon attribution, and campaign reporting.",
-    defaultColumns: ["email", "status", "itemCount", "subtotal", "lastActivityAt", "checkoutStartedAt", "convertedAt"]
+    defaultColumns: ["email", "marketingConsent", "status", "itemCount", "subtotal", "lastActivityAt", "checkoutStartedAt", "convertedAt"]
   },
   fields: [
     { name: "email", type: "email" },
@@ -44,7 +44,18 @@ export const AbandonedCarts: CollectionConfig = {
     { name: "itemCount", type: "number", defaultValue: 0, admin: { readOnly: true } },
     { name: "subtotal", type: "number", defaultValue: 0, admin: { readOnly: true } },
     { name: "requiresShipping", type: "checkbox", defaultValue: false },
-    { name: "marketingConsent", type: "checkbox", defaultValue: false },
+    {
+      name: "marketingConsent",
+      label: "Cart Reminder?",
+      type: "checkbox",
+      defaultValue: false,
+      admin: {
+        description: "Whether the guest explicitly opted into cart reminders.",
+        components: {
+          Cell: "/app/(payload)/components/YesNoCell.tsx#YesNoCell"
+        }
+      }
+    },
     { name: "couponCode", type: "text" },
     { name: "giftCode", type: "text" },
     { name: "bpgCode", type: "text" },
