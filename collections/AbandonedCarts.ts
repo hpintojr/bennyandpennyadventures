@@ -1,6 +1,8 @@
 import type { CollectionConfig } from "payload";
 import { adminOnly } from "@/lib/access";
 
+const yesNoCell = "/app/(payload)/components/BooleanYesNoCell.tsx#BooleanYesNoCell";
+
 export const AbandonedCarts: CollectionConfig = {
   slug: "abandoned-carts",
   labels: { singular: "Abandoned Cart", plural: "Abandoned Carts" },
@@ -51,9 +53,7 @@ export const AbandonedCarts: CollectionConfig = {
       defaultValue: false,
       admin: {
         description: "Whether the guest explicitly opted into cart reminders.",
-        components: {
-          Cell: "/app/(payload)/components/YesNoCell.tsx#YesNoCell"
-        }
+        components: { Cell: yesNoCell }
       }
     },
     { name: "couponCode", type: "text" },
