@@ -1,5 +1,6 @@
 import { postgresAdapter } from "@payloadcms/db-postgres";
 import { buildConfig } from "payload";
+import { AbandonedCarts } from "./collections/AbandonedCarts.ts";
 import { AccessGrants } from "./collections/AccessGrants.ts";
 import { AuditLogs } from "./collections/AuditLogs.ts";
 import { Books } from "./collections/Books.ts";
@@ -48,6 +49,7 @@ export default buildConfig({
   collections: [
     Books,
     Orders,
+    AbandonedCarts,
     Subscribers,
     SupportTickets,
     PrivacyRequests,
