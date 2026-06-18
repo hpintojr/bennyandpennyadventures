@@ -6,6 +6,21 @@
    tinted to match the existing teal/mint admin.
    ===================================================================== */
 
+/* ---------- Sidebar order: branding -> identity card -> divider -> nav ----------
+   The section divider was the .nav::before pseudo's border-bottom, which sat
+   ABOVE the identity card. Remove it there and redraw the divider above the
+   "Adventure Hub" label so the identity card sits directly under the branding. */
+.template-default .nav::before,
+.template-default aside::before {
+  border-bottom: 0 !important;
+}
+
+.bp-admin-nav-extra__hubLabel {
+  border-top: 2px solid rgba(6, 87, 102, 0.16) !important;
+  margin-top: 0.55rem !important;
+  padding-top: 0.75rem !important;
+}
+
 /* ---------- Sidebar identity card (teal/mint) ---------- */
 .bp-admin-identity {
   align-items: center;
