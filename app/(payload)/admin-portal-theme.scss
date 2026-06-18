@@ -121,3 +121,89 @@
   font-weight: 800 !important;
   margin-left: auto !important;
 }
+
+/* ============================================================
+   COMPACT SIDEBAR — fit everything with little/no scrolling.
+   These override the spacing rules above (last wins).
+   ============================================================ */
+
+/* Tighten the whole nav column + reclaim space behind the fixed logout. */
+.template-default .nav,
+.template-default aside {
+  padding-bottom: 4.1rem !important;
+}
+
+.bp-admin-nav-extra {
+  gap: 0.12rem !important;
+  padding: 0 0.6rem !important;
+}
+
+/* Logo sits tight to the user card (minimal gap, no divider between them). */
+.bp-admin-sidebar-brand {
+  border-bottom: 0 !important;
+  margin: 0 0 0.15rem !important;
+  padding-bottom: 0 !important;
+}
+
+/* User card: compact. */
+.bp-admin-identity {
+  gap: 0.5rem !important;
+  margin: 0 0.6rem 0.3rem !important;
+  padding: 0.45rem 0.6rem !important;
+}
+
+.bp-admin-identity__avatar {
+  height: 2.05rem !important;
+  width: 2.05rem !important;
+  font-size: 0.85rem !important;
+}
+
+.bp-admin-identity__name {
+  font-size: 0.9rem !important;
+}
+
+/* Single divider below the card, tight. */
+.bp-admin-nav-extra__hubLabel {
+  border-top: 2px solid rgba(6, 87, 102, 0.16) !important;
+  margin: 0.3rem 0.6rem 0.12rem !important;
+  padding-top: 0.5rem !important;
+  font-size: 1.05rem !important;
+}
+
+/* Section headings: smaller and tighter. */
+.bp-admin-nav-extra__heading {
+  font-size: 0.66rem !important;
+  letter-spacing: 0.14em !important;
+  margin: 0.28rem 0 0.04rem !important;
+  padding: 0.08rem 0.6rem !important;
+}
+
+.bp-admin-nav-extra__section {
+  gap: 0.12rem !important;
+  margin-top: 0.16rem !important;
+}
+
+/* Nav rows: shorter and denser. */
+.bp-admin-nav-extra__link {
+  border-radius: 0.7rem !important;
+  gap: 0.5rem !important;
+  margin: 0.04rem 0 !important;
+  min-height: 2.1rem !important;
+  padding: 0.38rem 0.6rem !important;
+}
+
+.bp-admin-nav-extra__iconSvg {
+  border-radius: 0.5rem !important;
+  height: 16px !important;
+  padding: 5px !important;
+  width: 16px !important;
+}
+
+.bp-admin-nav-extra__link em {
+  font-size: 0.9rem !important;
+}
+
+/* Compact the fixed logout pinned at the bottom. */
+.bp-admin-nav-extra--bottom .bp-admin-nav-extra__link {
+  min-height: 2.2rem !important;
+}
