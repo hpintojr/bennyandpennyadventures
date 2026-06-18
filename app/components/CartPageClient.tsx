@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { formatMoney } from "@/lib/books";
 import { useCart } from "./CartProvider";
-import { getCartRecoveryContact, getCartToken } from "./cartTrackingClient";
+import { getCartRecoveryContact, getCartToken, saveCartRecoveryContact, sendCartEvent } from "./cartTrackingClient";
 import GuestCartRecoveryCapture from "./GuestCartRecoveryCapture";
 import ImageSlot from "./ImageSlot";
 
@@ -21,10 +21,16 @@ type SavedAddress = {
   isDefaultBilling?: boolean;
 };
 
+type CheckoutRecovery = { email?: string; marketingConsent?: boolean };
+
 function addressOptionLabel(address: SavedAddress) {
   const name = address.label || address.fullName || "Saved address";
   const place = [address.street1, address.city, address.state].filter(Boolean).join(", ");
   return place ? `${name} — ${place}` : name;
+}
+
+function isValidEmail(value?: string) {
+  return Boolean(value && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim()));
 }
 
 export default function CartPageClient() {
@@ -36,6 +42,11 @@ export default function CartPageClient() {
   const [addresses, setAddresses] = useState<SavedAddress[]>([]);
   const [shippingId, setShippingId] = useState("");
   const [billingId, setBillingId] = useState("");
+  const [guestChoiceOpen, setGuestChoiceOpen] = useState(false);
+  const [guestChoiceStep, setGuestChoiceStep] = useState<"choice" | "guest-email">("choice");
+  const [guestCheckoutEmail, setGuestCheckoutEmail] = useState("");
+  const [guestCheckoutConsent, setGuestCheckoutConsent] = useState(false);
+  const [guestCheckoutError, setGuestCheckoutError] = useState("");
 
   const requiresShipping = useMemo(
     () => items.some((item) => /paperback|hardcover/i.test(item.format || "")),
@@ -72,20 +83,20 @@ export default function CartPageClient() {
     };
   }, []);
 
-  async function startCheckout() {
+  async function continueCheckout(recoveryOverride?: CheckoutRecovery) {
     setCheckoutState("loading");
     setCheckoutError("");
 
     try {
-      const recovery = getCartRecoveryContact();
+      const recovery = recoveryOverride || getCartRecoveryContact();
       const response = await fetch("/api/checkout", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           cartToken: getCartToken(),
-          email: !signedIn && recovery.marketingConsent ? recovery.email : undefined,
-          marketingConsent: !signedIn ? recovery.marketingConsent : undefined,
+          email: !signedIn ? recovery.email : undefined,
+          marketingConsent: !signedIn ? recovery.marketingConsent === true : undefined,
           items: items.map((item) => ({
             slug: item.slug,
             format: item.format,
@@ -107,6 +118,35 @@ export default function CartPageClient() {
       setCheckoutState("error");
       setCheckoutError(error instanceof Error ? error.message : "Stripe checkout is not ready yet.");
     }
+  }
+
+  function startCheckout() {
+    const recovery = getCartRecoveryContact();
+    if (!signedIn && !isValidEmail(recovery.email)) {
+      setGuestCheckoutEmail(recovery.email || "");
+      setGuestCheckoutConsent(recovery.marketingConsent === true);
+      setGuestCheckoutError("");
+      setGuestChoiceStep("choice");
+      setGuestChoiceOpen(true);
+      return;
+    }
+    void continueCheckout(recovery);
+  }
+
+  function goToCreateAccount() {
+    window.location.href = "/register";
+  }
+
+  async function continueAsGuest() {
+    const cleanEmail = guestCheckoutEmail.trim().toLowerCase();
+    if (!isValidEmail(cleanEmail)) {
+      setGuestCheckoutError("Enter a valid email to checkout as guest.");
+      return;
+    }
+    saveCartRecoveryContact(cleanEmail, guestCheckoutConsent);
+    sendCartEvent(items, "cart-email-captured", { email: cleanEmail, marketingConsent: guestCheckoutConsent });
+    setGuestChoiceOpen(false);
+    await continueCheckout({ email: cleanEmail, marketingConsent: guestCheckoutConsent });
   }
 
   if (!items.length) {
@@ -199,6 +239,53 @@ export default function CartPageClient() {
         {checkoutState === "error" ? <p className="max-w-xl text-sm font-bold text-coral">{checkoutError}</p> : null}
         <p className="max-w-xl text-sm text-[#6b7d80]">Stripe sandbox checkout uses test keys only. Paid files stay private in Cloudflare R2 and will deliver through signed links after webhook fulfillment is completed.</p>
       </div>
+
+      {guestChoiceOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#083f43]/50 px-4 py-8" role="dialog" aria-modal="true" aria-label="Guest checkout options">
+          <div className="w-full max-w-lg rounded-3xl border border-tan bg-cream p-6 text-left shadow-soft">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="font-serif text-2xl font-semibold text-teal">Before you checkout ♥</p>
+                <p className="mt-2 text-sm leading-6 text-ink">Create an account to save your orders and downloads, or continue as a guest with your email.</p>
+              </div>
+              <button type="button" className="rounded-full border border-tan bg-white px-3 py-1 text-sm font-bold text-teal" onClick={() => setGuestChoiceOpen(false)} aria-label="Close checkout options">×</button>
+            </div>
+
+            {guestChoiceStep === "choice" ? (
+              <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                <button type="button" onClick={goToCreateAccount} className="rounded-2xl bg-coral px-5 py-4 text-center font-serif text-lg font-bold text-white shadow-soft">Create an account</button>
+                <button type="button" onClick={() => setGuestChoiceStep("guest-email")} className="rounded-2xl border border-tan bg-white px-5 py-4 text-center font-serif text-lg font-bold text-teal shadow-soft">Checkout as guest</button>
+              </div>
+            ) : (
+              <div className="mt-6 space-y-4">
+                <label className="block text-sm font-bold text-teal">
+                  Email for guest checkout
+                  <input
+                    type="email"
+                    value={guestCheckoutEmail}
+                    onChange={(event) => {
+                      setGuestCheckoutEmail(event.target.value);
+                      setGuestCheckoutError("");
+                    }}
+                    className="mt-1 w-full rounded-xl border border-tan bg-white px-3 py-3 text-sm text-ink"
+                    placeholder="you@example.com"
+                    autoComplete="email"
+                  />
+                </label>
+                <label className="flex items-center gap-2 rounded-xl border border-tan bg-white px-3 py-3 text-sm font-bold text-teal">
+                  <input type="checkbox" checked={guestCheckoutConsent} onChange={(event) => setGuestCheckoutConsent(event.target.checked)} />
+                  Send me a reminder if I leave this cart
+                </label>
+                {guestCheckoutError ? <p className="text-sm font-bold text-coral">{guestCheckoutError}</p> : null}
+                <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
+                  <button type="button" onClick={() => setGuestChoiceStep("choice")} className="btn-ghost">Back</button>
+                  <button type="button" onClick={() => void continueAsGuest()} className="btn">Continue to Stripe ♥</button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
