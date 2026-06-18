@@ -8,6 +8,7 @@ type PayloadDoc = { id: string | number; [key: string]: unknown };
 type PayloadFindResult = { docs?: PayloadDoc[] };
 type CartItem = { title?: unknown; format?: unknown; qty?: unknown };
 type PayloadClient = Awaited<ReturnType<typeof getPayloadClient>>;
+type SequenzySyncResult = { ok?: unknown; error?: unknown };
 
 export type CartRecoveryRunOptions = {
   forceCartId?: string | number;
@@ -52,6 +53,10 @@ function bool(value: unknown) {
 
 function number(value: unknown, fallback = 0) {
   return typeof value === "number" && Number.isFinite(value) ? value : fallback;
+}
+
+function errorText(value: unknown, fallback: string) {
+  return typeof value === "string" && value.trim() ? value.trim().slice(0, 240) : fallback;
 }
 
 function cartItems(value: unknown): Array<{ title: string; format?: string; qty?: number }> {
@@ -101,31 +106,50 @@ function emailDeliveryEnabled() {
   return process.env.CART_RECOVERY_SEND_ENABLED === "true";
 }
 
-async function syncAbandonedCartToSequenzy(cart: PayloadDoc, originalStatus: string) {
+async function syncAbandonedCartToSequenzy(payload: PayloadClient, cart: PayloadDoc, originalStatus: string) {
   const email = validEmail(cart.email);
   if (!email) return false;
+
   const tags = ["cart-abandoned", "ecommerce.in_cart"];
   if (originalStatus === "checkout-started") tags.push("ecommerce.in_checkout");
   if (typeof cart.couponCode === "string" && cart.couponCode) tags.push("coupon-user");
   if ((typeof cart.bpgCode === "string" && cart.bpgCode) || (typeof cart.giftCode === "string" && /^BPG/i.test(cart.giftCode))) tags.push("bpg-gift-code-user");
 
-  const result = await upsertSubscriber({
-    email,
-    tags,
-    customAttributes: {
-      acquiredVia: "abandoned-cart",
-      cartId: cart.id,
-      cartToken: cart.cartToken,
-      cartStatus: "abandoned",
-      cartRecoveryEligible: bool(cart.recoveryEligible),
-      cartSubtotal: number(cart.subtotal),
-      cartItemCount: number(cart.itemCount),
-      cartItems: typeof cart.itemsSummary === "string" ? cart.itemsSummary : undefined,
-      abandonedAt: cart.abandonedAt
-    }
-  }).catch(() => ({ ok: false }));
+  let result: SequenzySyncResult;
+  try {
+    result = (await upsertSubscriber({
+      email,
+      tags,
+      customAttributes: {
+        acquiredVia: "abandoned-cart",
+        cartId: cart.id,
+        cartToken: cart.cartToken,
+        cartStatus: "abandoned",
+        cartRecoveryEligible: bool(cart.recoveryEligible),
+        cartSubtotal: number(cart.subtotal),
+        cartItemCount: number(cart.itemCount),
+        cartItems: typeof cart.itemsSummary === "string" ? cart.itemsSummary : undefined,
+        abandonedAt: cart.abandonedAt
+      }
+    })) as SequenzySyncResult;
+  } catch (error) {
+    console.error("Cart recovery Sequenzy sync threw", { cartId: cart.id, error });
+    result = { ok: false, error: error instanceof Error ? error.message : "sequenzy-sync-failed" };
+  }
 
-  return Boolean(result.ok);
+  const ok = Boolean(result.ok);
+  await payload.update({
+    collection: "abandoned-carts",
+    overrideAccess: true,
+    id: cart.id,
+    data: {
+      lastSequenzySyncAt: new Date().toISOString(),
+      sequenzyTags: tags,
+      recoveryEmailError: ok ? undefined : `sequenzy: ${errorText(result.error, "sync-failed")}`
+    }
+  });
+
+  return ok;
 }
 
 async function evaluateRecoveryEligibility(payload: PayloadClient, cart: PayloadDoc) {
@@ -285,7 +309,7 @@ export async function runCartRecoveryAutomation(options: CartRecoveryRunOptions 
 
     if (result.eligible) {
       sequenzySyncsAttempted += 1;
-      await syncAbandonedCartToSequenzy(result.updated, result.originalStatus);
+      await syncAbandonedCartToSequenzy(payload, result.updated, result.originalStatus);
       const reminder = await deliverReminder(payload, result.updated, "first", allowSend);
       if (reminder.sent) firstRemindersSent += 1;
     }
