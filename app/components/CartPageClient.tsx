@@ -4,7 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { formatMoney } from "@/lib/books";
 import { useCart } from "./CartProvider";
-import { getCartToken } from "./cartTrackingClient";
+import { getCartRecoveryContact, getCartToken } from "./cartTrackingClient";
+import GuestCartRecoveryCapture from "./GuestCartRecoveryCapture";
 import ImageSlot from "./ImageSlot";
 
 type SavedAddress = {
@@ -76,12 +77,15 @@ export default function CartPageClient() {
     setCheckoutError("");
 
     try {
+      const recovery = getCartRecoveryContact();
       const response = await fetch("/api/checkout", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           cartToken: getCartToken(),
+          email: !signedIn && recovery.marketingConsent ? recovery.email : undefined,
+          marketingConsent: !signedIn ? recovery.marketingConsent : undefined,
           items: items.map((item) => ({
             slug: item.slug,
             format: item.format,
@@ -178,6 +182,8 @@ export default function CartPageClient() {
           </div>
         </div>
       )}
+
+      <GuestCartRecoveryCapture signedIn={signedIn} />
 
       {!signedIn && (
         <p className="mt-6 text-right text-sm text-[#6b7d80]">
