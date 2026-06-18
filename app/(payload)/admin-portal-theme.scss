@@ -15,6 +15,15 @@
   border-bottom: 0 !important;
 }
 
+/* Remove the divider that sat BETWEEN the branding logo and the identity card,
+   so the user card sits directly under the logo. */
+.bp-admin-sidebar-brand {
+  border-bottom: 0 !important;
+  margin-bottom: 0.35rem !important;
+  padding-bottom: 0 !important;
+}
+
+/* Keep exactly ONE divider line BELOW the identity card (above "Adventure Hub"). */
 .bp-admin-nav-extra__hubLabel {
   border-top: 2px solid rgba(6, 87, 102, 0.16) !important;
   margin-top: 0.55rem !important;
