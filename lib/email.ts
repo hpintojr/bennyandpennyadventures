@@ -81,18 +81,23 @@ export async function sendGiftEmail(opts: {
   bookTitle?: string;
   formatLabel?: string;
   gifterName?: string;
+  gifterEmail?: string;
   message?: string;
   expiresAt?: string;
 }): Promise<{ ok: boolean; error?: string }> {
   const redeemUrl = `${siteUrl()}/gift/redeem?code=${encodeURIComponent(opts.code)}`;
   const expires = opts.expiresAt ? new Date(opts.expiresAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }) : null;
-  const who = opts.gifterName ? `${escapeHtml(opts.gifterName)} sent you a gift!` : "You've been sent a gift!";
+  const gifter = opts.gifterName || opts.gifterEmail || "";
+  const who = gifter ? `${escapeHtml(gifter)} sent you a gift!` : "You've been sent a gift!";
+  const fromContact = [opts.gifterName, opts.gifterEmail].filter(Boolean).map((v) => escapeHtml(v as string)).join(" · ");
+  const fromLine = fromContact ? `<p style="font-size:14px;color:#3c3c3c;margin:0 0 10px;">From <strong>${fromContact}</strong></p>` : "";
   const note = opts.message ? `<p style="background:#fdf6ec;border-radius:12px;padding:12px 14px;font-style:italic;color:#3c3c3c;">“${escapeHtml(opts.message)}”</p>` : "";
   const item = opts.bookTitle ? `<p style="font-size:15px;"><strong>${escapeHtml(opts.bookTitle)}</strong>${opts.formatLabel ? ` — ${escapeHtml(opts.formatLabel)}` : ""}</p>` : "";
 
   const inner = `
     <h1 style="font-size:22px;color:#1f5c5f;margin:0 0 8px;">${who} ♥</h1>
-    <p style="font-size:15px;line-height:1.6;">You've been gifted a free Benny &amp; Penny digital book. Tap below to create your free account and claim it.</p>
+    ${fromLine}
+    <p style="font-size:15px;line-height:1.6;">${gifter ? `${escapeHtml(gifter)} gifted you` : "You've been gifted"} a free Benny &amp; Penny digital book. Tap below to create your free account and claim it.</p>
     ${item}
     ${note}
     <p style="font-size:13px;color:#6b7d80;margin:18px 0 4px;text-transform:uppercase;letter-spacing:1px;">Your gift code</p>
@@ -104,8 +109,8 @@ export async function sendGiftEmail(opts: {
 
   return sendEmail({
     to: opts.to,
-    subject: "🎁 A Benny & Penny book is waiting for you",
-    preview: "You've been gifted a Benny & Penny book — claim your free copy.",
+    subject: opts.gifterName ? `${opts.gifterName} sent you a Benny & Penny book 🎁` : "🎁 A Benny & Penny book is waiting for you",
+    preview: opts.gifterName ? `${opts.gifterName} gifted you a Benny & Penny book — claim your free copy.` : "You've been gifted a Benny & Penny book — claim your free copy.",
     html: layout(inner)
   });
 }

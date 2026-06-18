@@ -38,6 +38,7 @@ type LibraryBook = {
   formats: Map<string, LibraryFormat>;
   orderNumbers: Set<string>;
   latestPurchaseAt?: string;
+  gifted?: boolean;
 };
 
 async function getPayloadClient() {
@@ -284,6 +285,30 @@ export async function GET() {
     }
   }
 
+  // Include gifted/granted books: download records that have no matching
+  // purchase (order-item). Gifts deliver via a downloads record only, so
+  // without this they'd appear on the dashboard but not in the Library.
+  for (const [bookKey, dls] of Array.from(downloadsByBook.entries())) {
+    if (!bookKey || library.has(bookKey)) continue;
+    const tmpl = dls[0];
+    if (!tmpl) continue;
+    const hasReadable = dls.some((d) => ["pdf", "epub"].includes(getString(d.format) || ""));
+    const hasAudio = dls.some((d) => getString(d.format) === "audiobook");
+    const formats = new Map<string, LibraryFormat>();
+    if (hasReadable) formats.set("digital", { format: "digital", label: formatLabel("digital"), quantity: 1, orderNumbers: [], status: accessStatus("digital") });
+    if (hasAudio) formats.set("audiobook", { format: "audiobook", label: formatLabel("audiobook"), quantity: 1, orderNumbers: [], status: accessStatus("audiobook") });
+    if (!formats.size) continue;
+    const title = getRelationTitle(tmpl.book) || (getString(tmpl.fileLabel) || "Benny & Penny Book").replace(/\s+—.*$/, "");
+    library.set(bookKey, {
+      title,
+      bookId: getRelationId(tmpl.book),
+      formats,
+      orderNumbers: new Set<string>(),
+      latestPurchaseAt: getString(tmpl.createdAt),
+      gifted: true
+    });
+  }
+
   function readableOptions(bookKey: string): DownloadOption[] {
     const readable = (downloadsByBook.get(bookKey) || []).filter((dl) => ["pdf", "epub"].includes(getString(dl.format) || ""));
     if (!readable.length) return [];
@@ -316,6 +341,7 @@ export async function GET() {
     bookId: book.bookId,
     latestPurchaseAt: book.latestPurchaseAt,
     orderNumbers: Array.from(book.orderNumbers),
+    gifted: Boolean(book.gifted),
     readable: readableSummary(`${book.bookId ?? ""}`),
     formats: Array.from(book.formats.values()).map((f): LibraryFormat => {
       if (f.format === "digital") {

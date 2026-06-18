@@ -64,6 +64,12 @@ export async function GET() {
   })) as PayloadFindResult;
   const downloadDocs = downloads.docs || [];
 
+  // Count gifted/granted books (download records with no purchase) as owned too.
+  for (const dl of downloadDocs) {
+    const k = String(relId(dl.book) ?? "");
+    if (k) ownedBooks.add(k);
+  }
+
   const readableByBook = new Map<string, PayloadDoc[]>();
   for (const dl of downloadDocs) {
     if (!["pdf", "epub"].includes(str(dl.format) || "")) continue;

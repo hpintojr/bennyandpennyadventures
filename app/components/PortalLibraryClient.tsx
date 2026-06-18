@@ -24,7 +24,7 @@ type LibraryFormat = {
   downloadable?: boolean;
   downloadOptions?: DownloadOption[];
 };
-type LibraryBook = { title: string; bookId?: string | number | null; latestPurchaseAt?: string; readable?: ReadableSummary | null; formats?: LibraryFormat[] };
+type LibraryBook = { title: string; bookId?: string | number | null; latestPurchaseAt?: string; gifted?: boolean; readable?: ReadableSummary | null; formats?: LibraryFormat[] };
 type PortalLibraryResponse = { books?: LibraryBook[]; error?: string };
 
 function formatDate(value?: string) {
@@ -178,7 +178,7 @@ export default function PortalLibraryClient() {
         <details key={`${book.bookId || book.title}`} open={index === 0} className="group overflow-hidden rounded-[1.5rem] border border-tan bg-white/75 shadow-soft">
           <summary className="flex cursor-pointer list-none flex-col gap-3 px-4 py-4 transition hover:bg-cream/60 sm:px-5 md:flex-row md:items-center md:justify-between">
             <div className="min-w-0">
-              <p className="text-xs font-extrabold uppercase tracking-[0.14em] text-coral">Purchased Book</p>
+              <p className="text-xs font-extrabold uppercase tracking-[0.14em] text-coral">{book.gifted ? "Gifted Book ♥" : "Purchased Book"}</p>
               <h2 className="mt-1 break-words font-serif text-2xl font-bold leading-tight text-teal">{book.title}</h2>
               <p className="mt-1 break-words text-sm leading-6 text-ink/70">{summary(book)}</p>
             </div>

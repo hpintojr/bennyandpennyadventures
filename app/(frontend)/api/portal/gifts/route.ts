@@ -188,12 +188,14 @@ export async function POST(request: Request) {
     const fn = typeof user.firstName === "string" ? user.firstName.trim() : "";
     const ln = typeof user.lastName === "string" ? user.lastName.trim() : "";
     const gifterName = [fn, ln].filter(Boolean).join(" ") || undefined;
+    const gifterEmail = typeof user.email === "string" ? user.email.trim() : undefined;
     const result = await sendGiftEmail({
       to: recipientEmail,
       code,
       bookTitle: relTitle(download.book) || undefined,
       formatLabel: formatLabel(giftFormat),
       gifterName,
+      gifterEmail,
       message,
       expiresAt
     });
