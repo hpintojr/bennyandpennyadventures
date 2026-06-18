@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { formatMoney } from "@/lib/books";
 import { useCart } from "./CartProvider";
+import { getCartToken } from "./cartTrackingClient";
 import ImageSlot from "./ImageSlot";
 
 type SavedAddress = {
@@ -80,6 +81,7 @@ export default function CartPageClient() {
         credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          cartToken: getCartToken(),
           items: items.map((item) => ({
             slug: item.slug,
             format: item.format,
