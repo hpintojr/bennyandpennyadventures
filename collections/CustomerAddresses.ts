@@ -41,7 +41,16 @@ export const CustomerAddresses: CollectionConfig = {
     { name: "customer", type: "relationship", relationTo: "users", required: true },
     { name: "fullName", type: "text", required: true },
     { name: "company", type: "text" },
-    { name: "street1", type: "text", required: true },
+    {
+      name: "street1",
+      type: "text",
+      required: true,
+      admin: {
+        components: {
+          Field: "/app/(payload)/components/AdminAddressField.tsx#AdminAddressField"
+        }
+      }
+    },
     { name: "street2", type: "text" },
     { name: "city", type: "text", required: true },
     { name: "state", type: "text", required: true },
