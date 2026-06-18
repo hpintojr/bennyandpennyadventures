@@ -1,4 +1,5 @@
 import crypto from "node:crypto";
+import { headers as getHeaders } from "next/headers";
 import { NextResponse } from "next/server";
 import { getPayload } from "payload";
 import { books, bookFormats } from "@/lib/books";
@@ -38,8 +39,6 @@ export async function POST(request: Request) {
   const code = normalizeGiftCode(rawCode);
 
   const email = normEmail(body.email);
-  if (!email) return NextResponse.json({ error: "Enter a valid email." }, { status: 400 });
-
   const password = typeof body.password === "string" ? body.password : "";
   const consent = body.consent === true;
   const chosenSlug = typeof body.bookSlug === "string" ? body.bookSlug.trim() : "";
@@ -89,19 +88,32 @@ export async function POST(request: Request) {
     const book = bookRes.docs?.[0];
     if (!book) return NextResponse.json({ error: "That book is not available." }, { status: 400 });
 
-    // Find or create the recipient account.
-    const existing = (await payload.find({ collection: "users", limit: 1, where: { email: { equals: email } } })) as PayloadFindResult;
-    let user = existing.docs?.[0];
+    // Resolve the recipient. Prefer the logged-in session so existing/signed-in
+    // members claim straight to their own account — no email or password needed.
+    const auth = await payload.auth({ headers: await getHeaders() });
+    const sessionUser = auth.user && (auth.user as PayloadDoc).id ? (auth.user as PayloadDoc) : null;
+
+    let user: PayloadDoc | undefined;
     let createdAccount = false;
 
-    if (!user) {
-      if (password.length < 8) return NextResponse.json({ error: "Choose a password (at least 8 characters)." }, { status: 400 });
-      user = (await payload.create({
-        collection: "users",
-        data: { email, password, role: "customer", acquiredVia: "gift", passwordSetByCustomer: true }
-      })) as PayloadDoc;
-      createdAccount = true;
+    if (sessionUser) {
+      user = sessionUser;
+    } else {
+      if (!email) return NextResponse.json({ error: "Enter a valid email." }, { status: 400 });
+      const existing = (await payload.find({ collection: "users", limit: 1, where: { email: { equals: email } } })) as PayloadFindResult;
+      user = existing.docs?.[0];
+      if (!user) {
+        if (password.length < 8) return NextResponse.json({ error: "Choose a password (at least 8 characters) to set up your new account." }, { status: 400 });
+        user = (await payload.create({
+          collection: "users",
+          data: { email, password, role: "customer", acquiredVia: "gift", passwordSetByCustomer: true }
+        })) as PayloadDoc;
+        createdAccount = true;
+      }
     }
+
+    const recipientEmail = (typeof user.email === "string" && user.email) || email || "";
+    const alreadyMember = Boolean(sessionUser) || (!createdAccount);
 
     // Deliver via a downloads record (one download), reusing the existing R2 delivery path.
     const def = giftDownloadDef(giftFormat);
@@ -142,20 +154,20 @@ export async function POST(request: Request) {
     }
 
     // Catalogue the lead (best-effort).
-    if (consent) {
+    if (consent && recipientEmail) {
       try {
-        const sub = (await payload.find({ collection: "subscribers", limit: 1, where: { email: { equals: email } } })) as PayloadFindResult;
+        const sub = (await payload.find({ collection: "subscribers", limit: 1, where: { email: { equals: recipientEmail } } })) as PayloadFindResult;
         if (!sub.docs?.length) {
-          await payload.create({ collection: "subscribers", data: { email, marketingOptIn: true, source: "gift-redemption" } });
+          await payload.create({ collection: "subscribers", data: { email: recipientEmail, marketingOptIn: true, source: "gift-redemption" } });
         }
-        await upsertSubscriber({ email, tags: ["gift-recipient"], customAttributes: { acquiredVia: "gift" } });
+        await upsertSubscriber({ email: recipientEmail, tags: ["gift-recipient"], customAttributes: { acquiredVia: "gift" } });
       } catch (e) {
         console.error("Gift lead capture failed (non-fatal)", e);
       }
     }
 
     void crypto; // reserved for future tokenized flows
-    return NextResponse.json({ ok: true, createdAccount, email });
+    return NextResponse.json({ ok: true, createdAccount, alreadyMember, loggedIn: Boolean(sessionUser), email: recipientEmail });
   } catch (error) {
     console.error("Gift redemption failed", error);
     return NextResponse.json({ error: "We could not redeem this code right now. Please try again." }, { status: 500 });
