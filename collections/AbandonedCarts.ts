@@ -10,23 +10,18 @@ export const AbandonedCarts: CollectionConfig = {
   admin: {
     useAsTitle: "email",
     description: "Cart recovery, consent, Sequenzy delivery, coupon attribution, and campaign reporting.",
-    defaultColumns: [
-      "email",
-      "marketingConsent",
-      "recoveryEligible",
-      "recoveryState",
-      "status",
-      "itemCount",
-      "subtotal",
-      "itemsSummary",
-      "abandonedAt",
-      "lastReminderSentAt",
-      "recoveredOrderNumber",
-      "recoveredRevenue",
-      "convertedAt"
-    ]
+    defaultColumns: ["email", "marketingConsent", "recoveryEligible", "recoveryState", "status", "itemCount", "subtotal", "itemsSummary", "abandonedAt", "lastReminderSentAt", "recoveredOrderNumber", "recoveredRevenue", "convertedAt"]
   },
   fields: [
+    {
+      name: "recoveryControls",
+      type: "ui",
+      admin: {
+        components: {
+          Field: "/app/(payload)/components/CartRecoveryRecordActions.tsx#CartRecoveryRecordActions"
+        }
+      }
+    },
     { name: "email", type: "email" },
     { name: "customer", type: "relationship", relationTo: "users" },
     { name: "subscriber", type: "relationship", relationTo: "subscribers" },
@@ -66,21 +61,14 @@ export const AbandonedCarts: CollectionConfig = {
       label: "Cart Reminder?",
       type: "checkbox",
       defaultValue: false,
-      admin: {
-        description: "Whether the guest explicitly opted into cart reminders.",
-        components: { Cell: yesNoCell }
-      }
+      admin: { description: "Whether the guest explicitly opted into cart reminders.", components: { Cell: yesNoCell } }
     },
     {
       name: "recoveryEligible",
       label: "Recovery Eligible?",
       type: "checkbox",
       defaultValue: false,
-      admin: {
-        readOnly: true,
-        description: "Email, consent, and subscriber preferences all allow a recovery message.",
-        components: { Cell: yesNoCell }
-      }
+      admin: { readOnly: true, description: "Email, consent, and subscriber preferences all allow a recovery message.", components: { Cell: yesNoCell } }
     },
     {
       name: "recoveryState",
