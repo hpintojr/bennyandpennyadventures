@@ -9,8 +9,22 @@ export const AbandonedCarts: CollectionConfig = {
   access: adminOnly,
   admin: {
     useAsTitle: "email",
-    description: "Cart and checkout intent tracking for recovery, Sequenzy sync, coupon attribution, and campaign reporting.",
-    defaultColumns: ["email", "marketingConsent", "status", "itemCount", "subtotal", "lastActivityAt", "checkoutStartedAt", "convertedAt"]
+    description: "Cart recovery, consent, Sequenzy delivery, coupon attribution, and campaign reporting.",
+    defaultColumns: [
+      "email",
+      "marketingConsent",
+      "recoveryEligible",
+      "recoveryState",
+      "status",
+      "itemCount",
+      "subtotal",
+      "itemsSummary",
+      "abandonedAt",
+      "lastReminderSentAt",
+      "recoveredOrderNumber",
+      "recoveredRevenue",
+      "convertedAt"
+    ]
   },
   fields: [
     { name: "email", type: "email" },
@@ -43,6 +57,7 @@ export const AbandonedCarts: CollectionConfig = {
         { name: "coverImage", type: "text" }
       ]
     },
+    { name: "itemsSummary", type: "textarea", label: "Items summary", admin: { readOnly: true } },
     { name: "itemCount", type: "number", defaultValue: 0, admin: { readOnly: true } },
     { name: "subtotal", type: "number", defaultValue: 0, admin: { readOnly: true } },
     { name: "requiresShipping", type: "checkbox", defaultValue: false },
@@ -56,6 +71,33 @@ export const AbandonedCarts: CollectionConfig = {
         components: { Cell: yesNoCell }
       }
     },
+    {
+      name: "recoveryEligible",
+      label: "Recovery Eligible?",
+      type: "checkbox",
+      defaultValue: false,
+      admin: {
+        readOnly: true,
+        description: "Email, consent, and subscriber preferences all allow a recovery message.",
+        components: { Cell: yesNoCell }
+      }
+    },
+    {
+      name: "recoveryState",
+      label: "Recovery State",
+      type: "select",
+      defaultValue: "not-eligible",
+      admin: { readOnly: true },
+      options: [
+        { label: "Not eligible", value: "not-eligible" },
+        { label: "Eligible", value: "eligible" },
+        { label: "Reminder 1 sent", value: "reminder-1-sent" },
+        { label: "Reminder 2 sent", value: "reminder-2-sent" },
+        { label: "Suppressed", value: "suppressed" },
+        { label: "Recovered", value: "recovered" },
+        { label: "Converted", value: "converted" }
+      ]
+    },
     { name: "couponCode", type: "text" },
     { name: "giftCode", type: "text" },
     { name: "bpgCode", type: "text" },
@@ -64,9 +106,15 @@ export const AbandonedCarts: CollectionConfig = {
     { name: "firstSeenAt", type: "date" },
     { name: "lastActivityAt", type: "date" },
     { name: "checkoutStartedAt", type: "date" },
+    { name: "abandonedAt", type: "date", admin: { readOnly: true } },
+    { name: "firstReminderSentAt", type: "date", admin: { readOnly: true } },
+    { name: "secondReminderSentAt", type: "date", admin: { readOnly: true } },
+    { name: "lastReminderSentAt", type: "date", admin: { readOnly: true } },
+    { name: "recoveryEmailError", type: "text", admin: { readOnly: true } },
+    { name: "recoveredOrderNumber", type: "text", admin: { readOnly: true } },
+    { name: "recoveredRevenue", type: "number", admin: { readOnly: true } },
     { name: "convertedAt", type: "date" },
-    { name: "abandonedAt", type: "date" },
-    { name: "recoveredAt", type: "date" },
+    { name: "recoveredAt", type: "date", admin: { readOnly: true } },
     { name: "lastSequenzySyncAt", type: "date", admin: { readOnly: true } },
     { name: "sequenzyTags", type: "json", admin: { readOnly: true } },
     { name: "source", type: "text" },
