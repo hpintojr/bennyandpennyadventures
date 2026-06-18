@@ -4,6 +4,7 @@ import type Stripe from "stripe";
 import { getPayload } from "payload";
 import { buildOrderMetadata, cartRequiresShipping, validateCheckoutItems } from "@/lib/stripeCheckout";
 import { getSiteUrl, getStripe } from "@/lib/stripe";
+import { upsertSubscriber } from "@/lib/email";
 
 export const runtime = "nodejs";
 
@@ -11,12 +12,20 @@ type CheckoutRequestBody = {
   items?: unknown;
   shippingAddressId?: unknown;
   billingAddressId?: unknown;
+  cartToken?: unknown;
+  email?: unknown;
+  marketingConsent?: unknown;
+  couponCode?: unknown;
+  giftCode?: unknown;
+  bpgCode?: unknown;
 };
 
 type PayloadDoc = {
   id: string | number;
   [key: string]: unknown;
 };
+
+type PayloadFindResult = { docs?: PayloadDoc[] };
 
 const shippingCountries: Stripe.Checkout.SessionCreateParams.ShippingAddressCollection.AllowedCountry[] = ["US"];
 
@@ -33,10 +42,19 @@ function getText(value: unknown) {
   return typeof value === "string" && value.trim() ? value.trim() : undefined;
 }
 
+function getEmail(value: unknown) {
+  const email = getText(value)?.toLowerCase();
+  return email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? email : undefined;
+}
+
 function getId(value: unknown): string | number | undefined {
   if (typeof value === "number") return value;
   if (typeof value === "string" && value.trim()) return value.trim();
   return undefined;
+}
+
+function code(value: unknown) {
+  return getText(value)?.slice(0, 80);
 }
 
 // Loads a customer-addresses doc only if it belongs to the signed-in customer.
@@ -74,6 +92,64 @@ function toStripeAddress(address: PayloadDoc): Stripe.AddressParam | undefined {
   };
 }
 
+async function findCart(payload: Awaited<ReturnType<typeof getPayloadClient>>, cartToken: string) {
+  const result = (await payload.find({ collection: "abandoned-carts", limit: 1, where: { cartToken: { equals: cartToken } } })) as PayloadFindResult;
+  return result.docs?.[0] || null;
+}
+
+async function markCheckoutStarted(
+  payload: Awaited<ReturnType<typeof getPayloadClient>>,
+  args: {
+    cartToken?: string;
+    email?: string;
+    customerId?: string | number;
+    stripeCheckoutSessionId: string;
+    stripeCustomerId?: string;
+    marketingConsent?: boolean;
+    couponCode?: string;
+    giftCode?: string;
+    bpgCode?: string;
+  }
+) {
+  if (!args.cartToken) return;
+  const existing = await findCart(payload, args.cartToken);
+  const now = new Date().toISOString();
+  const tags = ["ecommerce.in_checkout"];
+  if (args.couponCode) tags.push("coupon-user");
+  if (args.bpgCode || /^BPG/i.test(args.giftCode || "")) tags.push("bpg-gift-code-user");
+
+  if (args.email && (args.marketingConsent || args.customerId)) {
+    await upsertSubscriber({
+      email: args.email,
+      tags,
+      customAttributes: { acquiredVia: "checkout", cartToken: args.cartToken, couponCode: args.couponCode, giftCode: args.giftCode, bpgCode: args.bpgCode }
+    }).catch(() => null);
+  }
+
+  const data: Record<string, unknown> = {
+    email: args.email || existing?.email,
+    customer: args.customerId || existing?.customer,
+    status: existing?.status === "converted" ? "converted" : "checkout-started",
+    cartToken: args.cartToken,
+    stripeCheckoutSessionId: args.stripeCheckoutSessionId,
+    stripeCustomerId: args.stripeCustomerId || existing?.stripeCustomerId,
+    marketingConsent: args.marketingConsent || existing?.marketingConsent === true,
+    couponCode: args.couponCode || existing?.couponCode,
+    giftCode: args.giftCode || existing?.giftCode,
+    bpgCode: args.bpgCode || existing?.bpgCode,
+    checkoutStartedAt: existing?.checkoutStartedAt || now,
+    lastActivityAt: now,
+    lastSequenzySyncAt: args.email && (args.marketingConsent || args.customerId) ? now : existing?.lastSequenzySyncAt,
+    sequenzyTags: args.email && (args.marketingConsent || args.customerId) ? tags : existing?.sequenzyTags,
+    source: "checkout",
+    metadata: { ...(typeof existing?.metadata === "object" && existing.metadata ? (existing.metadata as Record<string, unknown>) : {}), checkoutStarted: true }
+  };
+  if (!existing) data.firstSeenAt = now;
+
+  if (existing) await payload.update({ collection: "abandoned-carts", id: existing.id, data });
+  else await payload.create({ collection: "abandoned-carts", data });
+}
+
 export async function POST(request: Request) {
   let body: CheckoutRequestBody;
 
@@ -102,15 +178,24 @@ export async function POST(request: Request) {
   let chosenShipping: PayloadDoc | null = null;
   let chosenBilling: PayloadDoc | null = null;
   let customerUserId: string | number | undefined;
+  let checkoutEmail = getEmail(body.email);
+  const cartToken = getText(body.cartToken);
+  const couponCode = code(body.couponCode);
+  const giftCode = code(body.giftCode);
+  const bpgCode = code(body.bpgCode);
+  const marketingConsent = body.marketingConsent === true;
+  let payloadForTracking: Awaited<ReturnType<typeof getPayloadClient>> | null = null;
 
   try {
     const payload = await getPayloadClient();
+    payloadForTracking = payload;
     const headers = await getHeaders();
     const auth = await payload.auth({ headers });
     const user = auth.user as PayloadDoc | null | undefined;
 
     if (user?.id) {
       customerUserId = user.id;
+      checkoutEmail = getEmail(user.email) || checkoutEmail;
       const billingId = getId(body.billingAddressId);
       const shippingId = getId(body.shippingAddressId);
 
@@ -153,6 +238,10 @@ export async function POST(request: Request) {
     if (customerUserId) metadata.customerUserId = String(customerUserId);
     if (chosenShipping) metadata.shippingAddressId = String(chosenShipping.id);
     if (chosenBilling) metadata.billingAddressId = String(chosenBilling.id);
+    if (cartToken) metadata.cartToken = cartToken;
+    if (couponCode) metadata.couponCode = couponCode;
+    if (giftCode) metadata.giftCode = giftCode;
+    if (bpgCode) metadata.bpgCode = bpgCode;
 
     const params: Stripe.Checkout.SessionCreateParams = {
       mode: "payment",
@@ -193,10 +282,25 @@ export async function POST(request: Request) {
         ...(requiresShipping ? { shipping: "auto" } : {})
       };
     } else {
+      if (checkoutEmail) params.customer_email = checkoutEmail;
       params.customer_creation = "always";
     }
 
     const session = await stripe.checkout.sessions.create(params);
+
+    if (payloadForTracking && cartToken) {
+      await markCheckoutStarted(payloadForTracking, {
+        cartToken,
+        email: checkoutEmail,
+        customerId: customerUserId,
+        stripeCheckoutSessionId: session.id,
+        stripeCustomerId,
+        marketingConsent,
+        couponCode,
+        giftCode,
+        bpgCode
+      }).catch((error) => console.error("Checkout cart tracking failed", error));
+    }
 
     return NextResponse.json({ url: session.url });
   } catch (error) {
