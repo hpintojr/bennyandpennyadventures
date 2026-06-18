@@ -16,8 +16,8 @@ export const Orders: CollectionConfig = {
   defaultSort: "-createdAt",
   admin: {
     useAsTitle: "orderNumber",
-    description: "Review checkout orders, customer purchase data, addresses, taxes, and fulfillment progress.",
-    defaultColumns: ["orderNumber", "customerName", "customerEmail", "itemsSummary", "status", "total", "createdAt"]
+    description: "Review checkout orders, customer purchase data, addresses, taxes, fulfillment progress, and campaign attribution.",
+    defaultColumns: ["orderNumber", "customerName", "customerEmail", "itemsSummary", "couponCode", "bpgCode", "recoveredCart", "status", "total", "createdAt"]
   },
   fields: [
     { name: "orderNumber", type: "text", required: true, unique: true },
@@ -41,6 +41,11 @@ export const Orders: CollectionConfig = {
     { name: "stripeCheckoutSessionId", type: "text", label: "Stripe checkout session ID" },
     { name: "stripePaymentIntentId", type: "text", label: "Stripe payment intent ID" },
     { name: "stripeCustomerId", type: "text", label: "Stripe customer ID" },
+    { name: "couponCode", type: "text", label: "Coupon code", admin: { readOnly: true } },
+    { name: "giftCode", type: "text", label: "Gift code", admin: { readOnly: true } },
+    { name: "bpgCode", type: "text", label: "BPG code", admin: { readOnly: true } },
+    { name: "recoveredCart", type: "checkbox", defaultValue: false, label: "Recovered cart?", admin: { readOnly: true } },
+    { name: "sourceCart", type: "relationship", relationTo: "abandoned-carts", label: "Source cart", admin: { readOnly: true } },
     { name: "subtotal", type: "number", required: true, defaultValue: 0 },
     { name: "taxTotal", type: "number", required: true, defaultValue: 0, label: "Tax total" },
     { name: "shippingTotal", type: "number", required: true, defaultValue: 0, label: "Shipping total" },
