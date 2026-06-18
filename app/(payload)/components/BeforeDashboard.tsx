@@ -23,7 +23,7 @@ const serviceLogos = {
   r2: "https://cdn.jsdelivr.net/gh/selfhst/icons/svg/cloudflare-zero-trust.svg",
   sequenzy: "https://media.theresanaiforthat.com/icons/sequenzy.svg",
   mailjet: "https://cdn.jsdelivr.net/gh/selfhst/icons/svg/mailjet.svg",
-  geoapify: "https://cdn.brandfetch.io/idlDc2LPA8/w/400/h/400/theme/dark/icon.png?c=1bxid64Mup7aczewSAYMX&t=1780788948277",
+  googlePlaces: "https://www.svgrepo.com/show/353810/google-developers.svg",
   lulu: "https://cdn.brandfetch.io/idICJd57ED/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1778052093073"
 };
 
@@ -99,10 +99,11 @@ function isCompletedSale(status: string) {
   return ["paid", "fulfilled", "complete", "completed", "shipped"].includes(status.toLowerCase());
 }
 
-function hasGeoapifyConfig() {
-  const privateName = ["GEOAPIFY", "API", "KEY"].join("_");
-  const publicName = ["NEXT", "PUBLIC", "GEOAPIFY", "API", "KEY"].join("_");
-  return Boolean(process.env[privateName] || process.env[publicName]);
+function hasGooglePlacesConfig() {
+  const primary = ["GOOGLE", "PLACES", "API", "KEY"].join("_");
+  const maps = ["GOOGLE", "MAPS", "API", "KEY"].join("_");
+  const publicName = ["NEXT", "PUBLIC", "GOOGLE", "PLACES", "API", "KEY"].join("_");
+  return Boolean(process.env[primary] || process.env[maps] || process.env[publicName]);
 }
 
 async function safeFind(collection: string, options: Record<string, unknown> = {}): Promise<PayloadListResult> {
@@ -162,7 +163,7 @@ async function getDashboardData() {
   const totalRevenue = completedOrders.reduce((sum, order) => sum + getNumber(order.total), 0);
   const totalItems = orderItems.docs.reduce((sum, item) => sum + Math.max(1, getNumber(item.quantity) || 1), 0);
   const hasStripeRecords = allOrders.docs.some((order) => getString(order.stripeCheckoutSessionId) || getString(order.stripePaymentIntentId));
-  const geoapifyConfigured = hasGeoapifyConfig();
+  const googlePlacesConfigured = hasGooglePlacesConfig();
 
   const stats: StatCard[] = [
     { label: "Total Revenue", value: formatMoney(totalRevenue), note: "Paid Stripe orders", trend: `${completedOrders.length} paid`, Icon: Wallet },
@@ -212,7 +213,7 @@ async function getDashboardData() {
     { label: "R2 Fulfillment", detail: downloads.ok ? "CONNECTED/ACTIVE" : "CHECK FULFILLMENT", logoUrl: serviceLogos.r2, active: downloads.ok },
     { label: "Sequenzy API", detail: subscribers.ok ? "CONNECTED/ACTIVE" : "CHECK EMAIL", logoUrl: serviceLogos.sequenzy, active: subscribers.ok },
     { label: "Mailjet API", detail: subscribers.ok ? "CONNECTED/ACTIVE" : "CHECK EMAIL", logoUrl: serviceLogos.mailjet, active: subscribers.ok },
-    { label: "Geoapify API", detail: geoapifyConfigured ? "CONNECTED/ACTIVE" : "READY TO CONFIGURE", logoUrl: serviceLogos.geoapify, active: geoapifyConfigured },
+    { label: "Google Places API", detail: googlePlacesConfigured ? "CONNECTED/ACTIVE" : "READY TO CONFIGURE", logoUrl: serviceLogos.googlePlaces, active: googlePlacesConfigured },
     { label: "LuLu Press API", detail: orderItems.ok ? "CONNECTED/ACTIVE" : "READY TO VERIFY", logoUrl: serviceLogos.lulu, active: orderItems.ok }
   ];
 

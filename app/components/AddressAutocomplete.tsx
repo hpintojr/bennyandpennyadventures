@@ -11,6 +11,8 @@ export type AddressSuggestion = {
   country: string;
 };
 
+type Prediction = { label: string; placeId: string };
+
 type Props = {
   value: string;
   onChange: (value: string) => void;
@@ -22,13 +24,13 @@ type Props = {
 };
 
 export default function AddressAutocomplete({ value, onChange, onSelect, className, placeholder, required, id }: Props) {
-  const [suggestions, setSuggestions] = useState<AddressSuggestion[]>([]);
+  const [predictions, setPredictions] = useState<Prediction[]>([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const skipNext = useRef(false);
   const boxRef = useRef<HTMLDivElement>(null);
 
-  // Debounced lookup as the customer types.
+  // Debounced lookup as the customer types (Google Places autocomplete).
   useEffect(() => {
     if (skipNext.current) {
       skipNext.current = false;
@@ -36,7 +38,7 @@ export default function AddressAutocomplete({ value, onChange, onSelect, classNa
     }
     const q = value.trim();
     if (q.length < 3) {
-      setSuggestions([]);
+      setPredictions([]);
       setOpen(false);
       return;
     }
@@ -44,11 +46,11 @@ export default function AddressAutocomplete({ value, onChange, onSelect, classNa
       setLoading(true);
       try {
         const res = await fetch(`/api/geo/autocomplete?text=${encodeURIComponent(q)}`, { credentials: "include" });
-        const data = (await res.json()) as { suggestions?: AddressSuggestion[] };
-        setSuggestions(data.suggestions || []);
+        const data = (await res.json()) as { suggestions?: Prediction[] };
+        setPredictions(data.suggestions || []);
         setOpen((data.suggestions || []).length > 0);
       } catch {
-        setSuggestions([]);
+        setPredictions([]);
       } finally {
         setLoading(false);
       }
@@ -65,11 +67,25 @@ export default function AddressAutocomplete({ value, onChange, onSelect, classNa
     return () => document.removeEventListener("mousedown", onDocClick);
   }, []);
 
-  function choose(s: AddressSuggestion) {
-    skipNext.current = true; // don't re-query for the value we just set
-    onSelect(s);
-    setSuggestions([]);
+  async function choose(p: Prediction) {
+    skipNext.current = true; // don't re-query for the value we set
     setOpen(false);
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/geo/place?place_id=${encodeURIComponent(p.placeId)}`, { credentials: "include" });
+      const data = (await res.json()) as { address?: Omit<AddressSuggestion, "label"> };
+      if (data.address) {
+        onSelect({ label: p.label, ...data.address });
+      } else {
+        // Fallback: at least drop the typed street line in.
+        onChange(p.label);
+      }
+    } catch {
+      onChange(p.label);
+    } finally {
+      setLoading(false);
+      setPredictions([]);
+    }
   }
 
   return (
@@ -82,19 +98,19 @@ export default function AddressAutocomplete({ value, onChange, onSelect, classNa
         placeholder={placeholder}
         autoComplete="off"
         onChange={(e) => onChange(e.target.value)}
-        onFocus={() => suggestions.length > 0 && setOpen(true)}
+        onFocus={() => predictions.length > 0 && setOpen(true)}
       />
       {loading && <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-ink/40">…</span>}
-      {open && suggestions.length > 0 && (
+      {open && predictions.length > 0 && (
         <ul className="absolute z-30 mt-1 max-h-64 w-full overflow-auto rounded-2xl border border-tan bg-white py-1 shadow-lg">
-          {suggestions.map((s, i) => (
-            <li key={`${s.label}-${i}`}>
+          {predictions.map((p, i) => (
+            <li key={`${p.placeId}-${i}`}>
               <button
                 type="button"
-                onClick={() => choose(s)}
+                onClick={() => choose(p)}
                 className="block w-full px-4 py-2.5 text-left text-sm text-ink transition hover:bg-cream"
               >
-                {s.label}
+                {p.label}
               </button>
             </li>
           ))}
