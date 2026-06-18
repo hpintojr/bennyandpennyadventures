@@ -161,6 +161,13 @@ export async function sendGiftRedeemedEmail(opts: { to: string; code: string; bo
   });
 }
 
+function sequenzyTags(tags?: string[]): string[] | undefined {
+  if (!tags?.length) return undefined;
+  const normalized = new Set(tags.filter((tag) => typeof tag === "string" && tag.trim()).map((tag) => tag.trim()));
+  if (normalized.has("customer")) normalized.add("ecommerce.customer");
+  return Array.from(normalized);
+}
+
 // Adds/updates a Sequenzy subscriber (auto-creates). Used to catalogue leads. Fails soft.
 export async function upsertSubscriber(opts: {
   email: string;
@@ -181,7 +188,7 @@ export async function upsertSubscriber(opts: {
         email: opts.email,
         firstName: opts.firstName,
         lastName: opts.lastName,
-        tags: opts.tags,
+        tags: sequenzyTags(opts.tags),
         customAttributes: opts.customAttributes
       })
     });
