@@ -93,7 +93,12 @@ function toStripeAddress(address: PayloadDoc): Stripe.AddressParam | undefined {
 }
 
 async function findCart(payload: Awaited<ReturnType<typeof getPayloadClient>>, cartToken: string) {
-  const result = (await payload.find({ collection: "abandoned-carts", limit: 1, where: { cartToken: { equals: cartToken } } })) as PayloadFindResult;
+  const result = (await payload.find({
+    collection: "abandoned-carts",
+    overrideAccess: true,
+    limit: 1,
+    where: { cartToken: { equals: cartToken } }
+  })) as PayloadFindResult;
   return result.docs?.[0] || null;
 }
 
@@ -146,8 +151,8 @@ async function markCheckoutStarted(
   };
   if (!existing) data.firstSeenAt = now;
 
-  if (existing) await payload.update({ collection: "abandoned-carts", id: existing.id, data });
-  else await payload.create({ collection: "abandoned-carts", data });
+  if (existing) await payload.update({ collection: "abandoned-carts", overrideAccess: true, id: existing.id, data });
+  else await payload.create({ collection: "abandoned-carts", overrideAccess: true, data });
 }
 
 export async function POST(request: Request) {
