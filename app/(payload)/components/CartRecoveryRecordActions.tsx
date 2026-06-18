@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -64,7 +65,7 @@ export function CartRecoveryRecordActions() {
       <div style={{ display: "flex", flexWrap: "wrap", gap: ".55rem" }}>
         <button type="button" disabled={Boolean(working)} onClick={() => void run("dry-run-cart")}>{working === "dry-run-cart" ? "Running…" : "Run email-safe test"}</button>
         <button type="button" disabled={Boolean(working)} onClick={() => void run("send-test-reminder")}>{working === "send-test-reminder" ? "Sending…" : "Send controlled reminder"}</button>
-        <a href="/admin/collections/abandoned-carts?where[recoveryEligible][equals]=true">Eligible worklist →</a>
+        <Link href="/admin/collections/abandoned-carts?where[recoveryEligible][equals]=true">Eligible worklist →</Link>
       </div>
       <small style={{ color: "#50676c", display: "block", marginTop: ".65rem" }}>{message || (overview.config?.emailsEnabled ? "Email delivery is enabled; use only a consented test cart." : "Email-safe dry run is active.")}</small>
       {m ? <p style={{ color: "#065d66", fontSize: ".8rem", marginTop: ".8rem" }}>Abandoned: {m.abandoned || 0} · Eligible: {m.eligible || 0} · Reminders: {(m.firstReminderSent || 0) + (m.secondReminderSent || 0)} · Recovered: {money(m.recoveredRevenue)} · Coupon: {m.couponCarts || 0} / {money(m.couponRevenue)} · BPG: {m.bpgCarts || 0} / {money(m.bpgRevenue)} · Gifts: {m.giftsSent || 0} / {m.giftsRedeemed || 0} · Suppressed: {m.suppressed || 0}</p> : null}
