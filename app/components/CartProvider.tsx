@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { sendCartEvent } from "./cartTrackingClient";
 
 export type CartItem = {
   id: string;
@@ -57,6 +58,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const commit = useCallback((next: CartItem[]) => {
     setItems(next);
     writeCart(next);
+    sendCartEvent(next, next.length ? "cart-updated" : "cart-cleared");
   }, []);
 
   const addItem = useCallback(
