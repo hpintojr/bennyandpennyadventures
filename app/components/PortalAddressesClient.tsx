@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import AddressAutocomplete from "./AddressAutocomplete";
 
 type AddressType = "billing" | "shipping" | "both";
 
@@ -170,7 +171,24 @@ function AddressForm({
         </div>
         <div className="sm:col-span-2">
           <label className={fieldLabelClass}>Street address *</label>
-          <input className={inputClass} value={form.street1} onChange={(e) => update("street1", e.target.value)} required />
+          <AddressAutocomplete
+            className={inputClass}
+            value={form.street1}
+            required
+            placeholder="Start typing your address…"
+            onChange={(v) => update("street1", v)}
+            onSelect={(s) =>
+              setForm((prev) => ({
+                ...prev,
+                street1: s.street1,
+                city: s.city || prev.city,
+                state: s.state || prev.state,
+                postalCode: s.postalCode || prev.postalCode,
+                country: s.country || prev.country
+              }))
+            }
+          />
+          <p className="mt-1 text-xs text-ink/55">Pick a suggestion to auto-fill city, state, and ZIP — or just keep typing to enter it manually.</p>
         </div>
         <div className="sm:col-span-2">
           <label className={fieldLabelClass}>Apartment, suite, etc.</label>
