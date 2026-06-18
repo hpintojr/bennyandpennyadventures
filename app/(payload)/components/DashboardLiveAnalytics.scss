@@ -1,0 +1,37 @@
+.bp-dashboard__rangeContent {
+  transition: opacity 160ms ease;
+}
+
+.bp-dashboard__rangeContent.is-loading .bp-dashboard__stats,
+.bp-dashboard__rangeContent.is-loading .bp-dashboard__card--performance,
+.bp-dashboard__rangeContent.is-loading .bp-dashboard__card--funnel {
+  opacity: 0.7;
+}
+
+.bp-dashboard__rangePill {
+  align-items: center;
+  background: #e8f7f4;
+  border: 1px solid rgba(15, 97, 112, 0.18);
+  border-radius: 999px;
+  color: #0f6170;
+  display: inline-flex;
+  font-size: 0.74rem;
+  font-weight: 950;
+  min-height: 2rem;
+  padding: 0.3rem 0.62rem;
+  white-space: nowrap;
+}
+
+.bp-dashboard__rangeError {
+  background: #fff2f2;
+  border: 1px solid rgba(162, 45, 45, 0.2);
+  border-radius: 10px;
+  color: #8d2d2d !important;
+  font-size: 0.78rem !important;
+  margin-top: 0.75rem !important;
+  padding: 0.55rem 0.65rem;
+}
+
+.bp-performance-tracker[aria-busy="true"] select {
+  cursor: wait;
+}
