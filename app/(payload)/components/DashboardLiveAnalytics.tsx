@@ -4,7 +4,7 @@ import { BookCopy, Mail, Package, Wallet, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import React, { useCallback, useState } from "react";
 import DashboardSalesChart from "./DashboardSalesChart";
-import type { DashboardAnalyticsData, DashboardStatData } from "@/lib/dashboardAnalytics";
+import type { DashboardAnalyticsData, DashboardRecentOrder, DashboardRecentSubscriber, DashboardStatData } from "@/lib/dashboardAnalytics";
 import type { DashboardRange } from "@/lib/dashboardRanges";
 
 const icons: Record<DashboardStatData["icon"], LucideIcon> = {
@@ -14,11 +14,21 @@ const icons: Record<DashboardStatData["icon"], LucideIcon> = {
   subscribers: Mail
 };
 
-type Props = {
-  initialData: DashboardAnalyticsData;
+type SystemStatusItem = {
+  label: string;
+  detail: string;
+  logoUrl: string;
+  active: boolean;
 };
 
-export function DashboardLiveAnalytics({ initialData }: Props) {
+type Props = {
+  initialData: DashboardAnalyticsData;
+  systemStatus: SystemStatusItem[];
+  recentOrders: DashboardRecentOrder[];
+  latestSubscribers: DashboardRecentSubscriber[];
+};
+
+export function DashboardLiveAnalytics({ initialData, systemStatus, recentOrders, latestSubscribers }: Props) {
   const [data, setData] = useState(initialData);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -27,6 +37,7 @@ export function DashboardLiveAnalytics({ initialData }: Props) {
     if (range === data.range || isLoading) return;
     setIsLoading(true);
     setError("");
+
     try {
       const response = await fetch(`/api/admin/dashboard?range=${encodeURIComponent(range)}`, { credentials: "include", cache: "no-store" });
       const result = (await response.json()) as { data?: DashboardAnalyticsData; error?: string };
@@ -67,6 +78,37 @@ export function DashboardLiveAnalytics({ initialData }: Props) {
             {error ? <p className="bp-dashboard__rangeError" role="alert">{error}</p> : null}
           </article>
 
+          <article className="bp-dashboard__card bp-dashboard__card--system">
+            <div className="bp-dashboard__cardHeader"><div><h2>System Status Check</h2><p>CMS, checkout, email, and fulfillment services.</p></div></div>
+            <div className="bp-dashboard__systemList">
+              {systemStatus.map((item) => (
+                <div className="bp-dashboard__systemItem" key={item.label}>
+                  <span className="bp-dashboard__serviceIcon" aria-hidden="true"><img alt="" height={20} src={item.logoUrl} width={20} /></span>
+                  <div><strong>{item.label}</strong><small>{item.detail}</small></div>
+                  <em className={item.active ? "is-active" : "is-pending"}>{item.active ? "ONLINE" : "CHECK"}</em>
+                </div>
+              ))}
+            </div>
+          </article>
+        </div>
+
+        <div className="bp-dashboard__row bp-dashboard__row--wide">
+          <article className="bp-dashboard__card bp-dashboard__card--recent">
+            <div className="bp-dashboard__cardHeader"><div><h2>Recent Orders</h2><p>Latest checkout activity from Stripe-backed orders.</p></div><Link href="/admin/collections/orders">View all</Link></div>
+            <div className="bp-dashboard__orderTable">
+              {recentOrders.length ? recentOrders.map((order) => (
+                <Link className="bp-dashboard__orderRow" href={order.href} key={order.id}>
+                  <span><strong>{order.orderId}</strong><small>{order.customerName}</small></span>
+                  <span>{order.created}</span>
+                  <em className={`tone-${order.tone}`}>{order.status}</em>
+                  <strong>{order.total}</strong>
+                </Link>
+              )) : <p className="bp-dashboard__empty">No orders yet.</p>}
+            </div>
+          </article>
+        </div>
+
+        <div className="bp-dashboard__row bp-dashboard__row--half">
           <article className="bp-dashboard__card bp-dashboard__card--funnel">
             <div className="bp-dashboard__cardHeader"><div><h2>Launch Funnel</h2><p>Estimated funnel snapshot for the selected period.</p></div></div>
             <div className="bp-dashboard__funnel">
@@ -78,35 +120,17 @@ export function DashboardLiveAnalytics({ initialData }: Props) {
               ))}
             </div>
           </article>
-        </div>
 
-        <div className="bp-dashboard__row bp-dashboard__row--wide">
-          <article className="bp-dashboard__card bp-dashboard__card--recent">
-            <div className="bp-dashboard__cardHeader"><div><h2>Recent Orders</h2><p>Checkout activity within the selected period.</p></div><Link href="/admin/collections/orders">View all</Link></div>
-            <div className="bp-dashboard__orderTable">
-              {data.recentOrders.length ? data.recentOrders.map((order) => (
-                <Link className="bp-dashboard__orderRow" href={order.href} key={order.id}>
-                  <span><strong>{order.orderId}</strong><small>{order.customerName}</small></span>
-                  <span>{order.created}</span>
-                  <em className={`tone-${order.tone}`}>{order.status}</em>
-                  <strong>{order.total}</strong>
-                </Link>
-              )) : <p className="bp-dashboard__empty">No orders in this period.</p>}
-            </div>
-          </article>
-        </div>
-
-        <div className="bp-dashboard__row bp-dashboard__row--wide">
           <article className="bp-dashboard__card bp-dashboard__card--subscribers">
-            <div className="bp-dashboard__cardHeader"><div><h2>Community Growth</h2><p>New subscribers and gift-led contacts in the selected period.</p></div><Link href="/admin/collections/subscribers">Subscribers</Link></div>
+            <div className="bp-dashboard__cardHeader"><div><h2>Community Growth</h2><p>Recent subscribers and gift-led contacts.</p></div><Link href="/admin/collections/subscribers">Subscribers</Link></div>
             <div className="bp-dashboard__subscriberList">
-              {data.latestSubscribers.length ? data.latestSubscribers.map((subscriber) => (
+              {latestSubscribers.length ? latestSubscribers.map((subscriber) => (
                 <Link className="bp-dashboard__subscriberRow" href={subscriber.href} key={subscriber.id}>
                   <span><strong>{subscriber.name}</strong><small>{subscriber.email}</small></span>
                   <em>{subscriber.dateJoined}</em>
                   <small>{subscriber.status}</small>
                 </Link>
-              )) : <p className="bp-dashboard__empty">No subscribers in this period.</p>}
+              )) : <p className="bp-dashboard__empty">No subscribers yet.</p>}
             </div>
           </article>
         </div>
