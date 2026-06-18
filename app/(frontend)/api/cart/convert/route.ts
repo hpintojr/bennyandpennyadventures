@@ -16,32 +16,43 @@ function text(value: unknown) {
 }
 
 export async function POST(request: Request) {
-  let body: { sessionId?: unknown };
   try {
-    body = (await request.json()) as typeof body;
-  } catch {
-    return NextResponse.json({ error: "Invalid conversion request." }, { status: 400 });
-  }
-
-  const sessionId = text(body.sessionId);
-  if (!sessionId || !sessionId.startsWith("cs_")) return NextResponse.json({ error: "Missing checkout session." }, { status: 400 });
-
-  const payload = await getPayloadClient();
-  const result = (await payload.find({ collection: "abandoned-carts", limit: 1, where: { stripeCheckoutSessionId: { equals: sessionId } } })) as PayloadFindResult;
-  const cart = result.docs?.[0];
-  if (!cart) return NextResponse.json({ ok: true, converted: false });
-
-  const now = new Date().toISOString();
-  await payload.update({
-    collection: "abandoned-carts",
-    id: cart.id,
-    data: {
-      status: "converted",
-      convertedAt: now,
-      lastActivityAt: now,
-      metadata: { ...(typeof cart.metadata === "object" && cart.metadata ? (cart.metadata as Record<string, unknown>) : {}), convertedFromThankYou: true }
+    let body: { sessionId?: unknown };
+    try {
+      body = (await request.json()) as typeof body;
+    } catch {
+      return NextResponse.json({ error: "Invalid conversion request." }, { status: 400 });
     }
-  });
 
-  return NextResponse.json({ ok: true, converted: true });
+    const sessionId = text(body.sessionId);
+    if (!sessionId || !sessionId.startsWith("cs_")) return NextResponse.json({ error: "Missing checkout session." }, { status: 400 });
+
+    const payload = await getPayloadClient();
+    const result = (await payload.find({
+      collection: "abandoned-carts",
+      overrideAccess: true,
+      limit: 1,
+      where: { stripeCheckoutSessionId: { equals: sessionId } }
+    })) as PayloadFindResult;
+    const cart = result.docs?.[0];
+    if (!cart) return NextResponse.json({ ok: true, converted: false });
+
+    const now = new Date().toISOString();
+    await payload.update({
+      collection: "abandoned-carts",
+      overrideAccess: true,
+      id: cart.id,
+      data: {
+        status: "converted",
+        convertedAt: now,
+        lastActivityAt: now,
+        metadata: { ...(typeof cart.metadata === "object" && cart.metadata ? (cart.metadata as Record<string, unknown>) : {}), convertedFromThankYou: true }
+      }
+    });
+
+    return NextResponse.json({ ok: true, converted: true });
+  } catch (error) {
+    console.error("Cart conversion tracking failed", error);
+    return NextResponse.json({ error: "Cart conversion tracking failed." }, { status: 500 });
+  }
 }
