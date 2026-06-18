@@ -1,16 +1,17 @@
 "use client";
 
-import { Activity, BookOpen, Image as ImageIcon, LayoutDashboard, Mail, Package, Gift, ShieldAlert, Ticket, UserCog, Users, type LucideIcon } from "lucide-react";
+import { Activity, BookOpen, Image as ImageIcon, LayoutDashboard, Mail, Package, Gift, ShieldAlert, ShoppingCart, Ticket, UserCog, Users, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
 
-export type SidebarIconName = "activity" | "book" | "dashboard" | "image" | "mail" | "package" | "gift" | "shield" | "ticket" | "userCog" | "users";
-export type SidebarActiveKey = "books" | "customers" | "dashboard" | "luluSubmit" | "media" | "orders" | "printJobs" | "gifts" | "privacy" | "promotions" | "subscribers" | "system" | "users";
+export type SidebarIconName = "activity" | "book" | "cart" | "dashboard" | "image" | "mail" | "package" | "gift" | "shield" | "ticket" | "userCog" | "users";
+export type SidebarActiveKey = "abandonedCarts" | "books" | "customers" | "dashboard" | "luluSubmit" | "media" | "orders" | "printJobs" | "gifts" | "privacy" | "promotions" | "subscribers" | "system" | "users";
 
 const iconMap: Record<SidebarIconName, LucideIcon> = {
   activity: Activity,
   book: BookOpen,
+  cart: ShoppingCart,
   dashboard: LayoutDashboard,
   image: ImageIcon,
   mail: Mail,
@@ -38,6 +39,7 @@ function isLinkActive(activeKey: SidebarActiveKey, pathname: string) {
   const customerFilter = hasCustomerFilter();
   if (activeKey === "dashboard") return pathname === "/admin" || pathname === "/admin/";
   if (activeKey === "orders") return isBasePath(pathname, "/admin/collections/orders");
+  if (activeKey === "abandonedCarts") return isBasePath(pathname, "/admin/collections/abandoned-carts");
   if (activeKey === "customers") return isBasePath(pathname, "/admin/collections/users") && customerFilter;
   if (activeKey === "users") return isBasePath(pathname, "/admin/collections/users") && !customerFilter;
   if (activeKey === "books") return isBasePath(pathname, "/admin/collections/books");
