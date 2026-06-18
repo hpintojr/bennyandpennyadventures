@@ -17,8 +17,7 @@ export default function CartRecoveryRestore() {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const token = params.get("recover");
+    const token = new URLSearchParams(window.location.search).get("recover") || "";
     if (!token) return;
 
     let active = true;
