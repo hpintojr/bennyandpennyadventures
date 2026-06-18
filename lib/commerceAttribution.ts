@@ -27,8 +27,6 @@ export async function syncPurchaseAttribution(session: Stripe.Checkout.Session, 
     if (!order) return;
 
     const email = text(order.customerEmail) || text(session.customer_details?.email) || text(session.customer_email);
-    if (!email) return;
-
     const metadata = (session.metadata || {}) as Record<string, string | undefined>;
     const couponCode = text(metadata.couponCode);
     const giftCode = text(metadata.giftCode);
@@ -38,23 +36,6 @@ export async function syncPurchaseAttribution(session: Stripe.Checkout.Session, 
     if (couponCode || discountTotal > 0) tags.push("coupon-user");
     if (bpgCode) tags.push("bpg-gift-code-user");
 
-    await upsertSubscriber({
-      email,
-      tags,
-      customAttributes: {
-        acquiredVia: "purchase",
-        orderNumber: summary.orderNumber,
-        orderId: summary.orderId,
-        discountTotal,
-        couponUsed: Boolean(couponCode || discountTotal > 0),
-        couponCode,
-        giftCode,
-        bpgCode,
-        cartStatus: "converted",
-        cartRecoveryEligible: false
-      }
-    }).catch(() => null);
-
     const carts = (await payload.find({
       collection: "abandoned-carts",
       overrideAccess: true,
@@ -62,6 +43,41 @@ export async function syncPurchaseAttribution(session: Stripe.Checkout.Session, 
       where: { stripeCheckoutSessionId: { equals: session.id } }
     })) as PayloadFindResult;
     const cart = carts.docs?.[0];
+    const recoveredCart = Boolean(cart?.abandonedAt);
+
+    await payload.update({
+      collection: "orders",
+      overrideAccess: true,
+      id: order.id,
+      data: {
+        couponCode: couponCode || order.couponCode,
+        giftCode: giftCode || order.giftCode,
+        bpgCode: bpgCode || order.bpgCode,
+        recoveredCart,
+        sourceCart: cart?.id || order.sourceCart
+      }
+    });
+
+    if (email) {
+      await upsertSubscriber({
+        email,
+        tags,
+        customAttributes: {
+          acquiredVia: "purchase",
+          orderNumber: summary.orderNumber,
+          orderId: summary.orderId,
+          discountTotal,
+          couponUsed: Boolean(couponCode || discountTotal > 0),
+          couponCode,
+          giftCode,
+          bpgCode,
+          recoveredCart,
+          cartStatus: "converted",
+          cartRecoveryEligible: false
+        }
+      }).catch(() => null);
+    }
+
     if (!cart) return;
 
     const priorMetadata = typeof cart.metadata === "object" && cart.metadata ? (cart.metadata as Record<string, unknown>) : {};
@@ -73,12 +89,15 @@ export async function syncPurchaseAttribution(session: Stripe.Checkout.Session, 
         couponCode: couponCode || cart.couponCode,
         giftCode: giftCode || cart.giftCode,
         bpgCode: bpgCode || cart.bpgCode,
+        recoveredOrderNumber: recoveredCart ? summary.orderNumber : cart.recoveredOrderNumber,
+        recoveredRevenue: recoveredCart ? number(order.total) : cart.recoveredRevenue,
         metadata: {
           ...priorMetadata,
           attributionSyncedAt: new Date().toISOString(),
           couponUsed: Boolean(couponCode || discountTotal > 0),
           discountTotal,
-          orderNumber: summary.orderNumber
+          orderNumber: summary.orderNumber,
+          recoveredCart
         }
       }
     });
