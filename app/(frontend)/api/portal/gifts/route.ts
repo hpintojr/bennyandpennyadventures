@@ -2,7 +2,7 @@ import { headers as getHeaders } from "next/headers";
 import { NextResponse } from "next/server";
 import { getPayload } from "payload";
 import { digitalValueForFormat, generateGiftCode } from "@/lib/gifts";
-import { sendGiftEmail } from "@/lib/email";
+import { sendGiftEmail, upsertSubscriber } from "@/lib/email";
 
 export const runtime = "nodejs";
 
@@ -120,7 +120,6 @@ async function generateUniqueCode(payload: Awaited<ReturnType<typeof getPayloadC
     const existing = (await payload.find({ collection: "gifts", limit: 1, where: { redemptionCode: { equals: code } } })) as PayloadFindResult;
     if (!existing.docs?.length) return code;
   }
-  // Extremely unlikely fallback: append more entropy.
   return `${generateGiftCode()}${Math.floor(Math.random() * 90 + 10)}`;
 }
 
@@ -151,9 +150,7 @@ export async function POST(request: Request) {
   if (!giftFormat) return NextResponse.json({ error: "Only digital and audiobook items can be gifted." }, { status: 400 });
 
   const remaining = num(download.maxDownloads) - num(download.downloadsUsed) - num(download.giftsIssued);
-  if (remaining <= 0) {
-    return NextResponse.json({ error: "You have no gift slots left on this item." }, { status: 403 });
-  }
+  if (remaining <= 0) return NextResponse.json({ error: "You have no gift slots left on this item." }, { status: 403 });
 
   const code = await generateUniqueCode(payload);
   const expiresAt = new Date(Date.now() + GIFT_EXPIRY_DAYS * 24 * 60 * 60 * 1000).toISOString();
@@ -175,14 +172,23 @@ export async function POST(request: Request) {
     }
   })) as PayloadDoc;
 
-  // Consume a slot from the source download.
   await payload.update({
     collection: "downloads",
     id: download.id,
     data: { giftsIssued: num(download.giftsIssued) + 1 }
   });
 
-  // Email the recipient (best-effort; the code is also shown on-screen for manual sharing).
+  const senderEmail = typeof user.email === "string" ? user.email.trim().toLowerCase() : "";
+  if (senderEmail) {
+    await upsertSubscriber({
+      email: senderEmail,
+      firstName: typeof user.firstName === "string" ? user.firstName : undefined,
+      lastName: typeof user.lastName === "string" ? user.lastName : undefined,
+      tags: ["gift-sender"],
+      customAttributes: { acquiredVia: "gift-sender", giftId: gift.id, giftFormat, giftCode: code }
+    }).catch(() => null);
+  }
+
   let emailed = false;
   try {
     const fn = typeof user.firstName === "string" ? user.firstName.trim() : "";
@@ -200,9 +206,7 @@ export async function POST(request: Request) {
       expiresAt
     });
     emailed = result.ok;
-    if (!result.ok && result.error !== "email-not-configured") {
-      console.error("Gift email send failed", result.error);
-    }
+    if (!result.ok && result.error !== "email-not-configured") console.error("Gift email send failed", result.error);
   } catch (error) {
     console.error("Gift email send threw", error);
   }
@@ -210,7 +214,6 @@ export async function POST(request: Request) {
   return NextResponse.json({
     emailed,
     gift: { id: gift.id, code, recipientEmail, format: giftFormat, expiresAt },
-    // Until Mailjet is live, the UI shows this code for manual sharing.
     redeemUrl: `/gift/redeem?code=${encodeURIComponent(code)}`
   }, { status: 201 });
 }
@@ -227,9 +230,7 @@ export async function PATCH(request: Request) {
   }
 
   const id = body.id as string | number | undefined;
-  if (!id || body.action !== "revoke") {
-    return NextResponse.json({ error: "A gift id and action are required." }, { status: 400 });
-  }
+  if (!id || body.action !== "revoke") return NextResponse.json({ error: "A gift id and action are required." }, { status: 400 });
 
   let gift: PayloadDoc | null = null;
   try {
@@ -237,25 +238,18 @@ export async function PATCH(request: Request) {
   } catch {
     gift = null;
   }
-  if (!gift || String(relId(gift.gifter)) !== String(user.id)) {
-    return NextResponse.json({ error: "Gift not found." }, { status: 404 });
-  }
-  if (gift.status !== "sent") {
-    return NextResponse.json({ error: "Only unredeemed gifts can be revoked." }, { status: 409 });
-  }
+  if (!gift || String(relId(gift.gifter)) !== String(user.id)) return NextResponse.json({ error: "Gift not found." }, { status: 404 });
+  if (gift.status !== "sent") return NextResponse.json({ error: "Only unredeemed gifts can be revoked." }, { status: 409 });
 
   await payload.update({ collection: "gifts", id: gift.id, data: { status: "revoked" } });
 
-  // Restore the slot on the source download.
   const sourceId = relId(gift.sourceDownload);
   if (sourceId) {
     try {
       const dl = (await payload.findByID({ collection: "downloads", id: sourceId, depth: 0 })) as PayloadDoc | null;
-      if (dl) {
-        await payload.update({ collection: "downloads", id: sourceId, data: { giftsIssued: Math.max(0, num(dl.giftsIssued) - 1) } });
-      }
+      if (dl) await payload.update({ collection: "downloads", id: sourceId, data: { giftsIssued: Math.max(0, num(dl.giftsIssued) - 1) } });
     } catch {
-      // ignore
+      // The gift revoke still completed even if a source record is unavailable.
     }
   }
 
