@@ -4,6 +4,7 @@ import { BookCopy, Mail, Package, Wallet, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import React, { useCallback, useState } from "react";
 import DashboardSalesChart from "./DashboardSalesChart";
+import "./DashboardLiveAnalytics.scss";
 import type { DashboardAnalyticsData, DashboardRecentOrder, DashboardRecentSubscriber, DashboardStatData } from "@/lib/dashboardAnalytics";
 import type { DashboardRange } from "@/lib/dashboardRanges";
 
