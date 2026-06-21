@@ -3,7 +3,7 @@ import { getPayload } from "payload";
 import { checkBotProtection, getRequestIp } from "@/lib/botProtection";
 
 function isValidEmail(email: string) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  return /^\S+@\S+\.\S+$/.test(email);
 }
 
 function isMissingTableError(error: unknown) {
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
     const email = String(body.email || "").trim().toLowerCase();
     const source = String(body.source || "website").trim();
     const emailOptIn = getBoolean(body.emailOptIn);
-    const emailConsentText = String(body.emailConsentText || "I agree to receive occasional email updates from Benny & Penny's Adventures. I can unsubscribe at any time.").trim();
+    const emailConsentText = String(body.emailConsentText || "I agree to receive occasional email updates from Benny & Penny Adventures. I can unsubscribe at any time.").trim();
     const ipAddress = getRequestIp(request);
     const userAgent = request.headers.get("user-agent") || "";
 
