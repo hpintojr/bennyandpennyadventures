@@ -5,12 +5,12 @@ import { checkBotProtection, getRequestIp } from "@/lib/botProtection";
 
 const contactEmail = process.env.CONTACT_EMAIL || process.env.NEXT_PUBLIC_CONTACT_EMAIL || "hello@bennyandpenny.com";
 const fromEmail = process.env.CONTACT_FROM_EMAIL || contactEmail;
-const fromName = process.env.CONTACT_FROM_NAME || "Benny & Penny's Adventures";
+const fromName = process.env.CONTACT_FROM_NAME || "Benny & Penny Adventures";
 const mailjetApiKey = process.env.MAILJET_API_KEY;
 const mailjetSecretKey = process.env.MAILJET_SECRET_KEY;
 
 function isValidEmail(email: string) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  return /^\S+@\S+\.\S+$/.test(email);
 }
 
 function isMissingTableError(error: unknown) {
@@ -54,7 +54,7 @@ async function saveContactSubmission({ name, email, phone, inquiryType, message,
   const created = await payload.create({ collection: "contact-submissions", data: { name, email, phone: phone || undefined, inquiryType, message, contactConsent, emailOptIn, smsOptIn, smsConsentText: smsConsentText || undefined, consentTimestamp, consentIpAddress: consentIpAddress || undefined, consentUserAgent: consentUserAgent || undefined, status: "new" } });
   const relatedId = String((created as { id?: string | number }).id || "");
   const consentEvents = [
-    { consentType: "contact-consent", optIn: contactConsent, consentText: "User agreed that Benny & Penny's Adventures may contact them about this inquiry using the information provided." },
+    { consentType: "contact-consent", optIn: contactConsent, consentText: "User agreed that Benny & Penny Adventures may contact them about this inquiry using the information provided." },
     emailOptIn ? { consentType: "email-marketing", optIn: true, consentText: "User agreed to receive occasional email updates about books, resources, releases, and family support content." } : null,
     smsOptIn ? { consentType: "sms", optIn: true, consentText: smsConsentText } : null
   ].filter(Boolean) as { consentType: string; optIn: boolean; consentText: string }[];
