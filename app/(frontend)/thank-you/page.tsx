@@ -5,13 +5,9 @@ import { fulfillCheckoutSessionById, type FulfillmentSummary } from "@/lib/strip
 import SiteShell from "../../components/SiteShell";
 import SetPasswordCard from "@/app/components/SetPasswordCard";
 
-export const metadata: Metadata = {
-  title: "Thank You"
-};
+export const metadata: Metadata = { title: "Thank You" };
 
-type ThankYouPageProps = {
-  searchParams?: Promise<Record<string, string | string[] | undefined>>;
-};
+type ThankYouPageProps = { searchParams?: Promise<Record<string, string | string[] | undefined>> };
 
 function getSearchParam(searchParams: Record<string, string | string[] | undefined>, key: string) {
   const value = searchParams[key];
@@ -25,9 +21,7 @@ function isNewsletterSignup(searchParams: Record<string, string | string[] | und
   return Boolean(email && !sessionId);
 }
 
-function sleep(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
+function sleep(ms: number) { return new Promise((resolve) => setTimeout(resolve, ms)); }
 
 function getCheckoutReference(sessionId: string | undefined) {
   if (!sessionId || !sessionId.startsWith("cs_")) return null;
@@ -37,7 +31,6 @@ function getCheckoutReference(sessionId: string | undefined) {
 
 async function reconcileStripeCheckout(sessionId: string | undefined): Promise<FulfillmentSummary | null> {
   if (!sessionId || !sessionId.startsWith("cs_")) return null;
-
   for (let attempt = 1; attempt <= 3; attempt += 1) {
     try {
       const summary = await fulfillCheckoutSessionById(sessionId);
@@ -48,7 +41,6 @@ async function reconcileStripeCheckout(sessionId: string | undefined): Promise<F
       if (attempt < 3) await sleep(1200);
     }
   }
-
   return null;
 }
 
@@ -58,49 +50,11 @@ export default async function ThankYouPage({ searchParams }: ThankYouPageProps) 
   const newsletterSignup = isNewsletterSignup(resolvedSearchParams);
   const fulfillment = newsletterSignup ? null : await reconcileStripeCheckout(sessionId);
   const checkoutReference = getCheckoutReference(sessionId);
-
-  const orderMessage = fulfillment
-    ? fulfillment.created
-      ? `Order #${fulfillment.orderNumber} has been created.`
-      : `Order #${fulfillment.orderNumber} has been confirmed.`
-    : checkoutReference
-      ? `Your payment was received. Confirmation reference: ${checkoutReference}. Your order number will appear in the admin once fulfillment sync finishes.`
-      : "Your payment was received. Your order will appear in the admin once fulfillment sync finishes.";
+  const orderMessage = fulfillment ? fulfillment.created ? `Order #${fulfillment.orderNumber} has been created.` : `Order #${fulfillment.orderNumber} has been confirmed.` : checkoutReference ? `Your payment was received. Confirmation reference: ${checkoutReference}. Your order number will appear in the admin once fulfillment sync finishes.` : "Your payment was received. Your order will appear in the admin once fulfillment sync finishes.";
 
   if (newsletterSignup) {
-    return (
-      <SiteShell>
-        <section className="page-wrap flex min-h-[60vh] flex-col items-center justify-center pb-20 pt-10 text-center">
-          <h1 className="font-serif text-5xl font-semibold text-teal">You&apos;re Signed Up!</h1>
-          <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-ink">
-            Thank you for joining Benny &amp; Penny&apos;s Adventures. We&apos;ll send gentle updates, book news, printables, and family-friendly resources to your inbox.
-          </p>
-          <p className="mx-auto mt-4 max-w-2xl rounded-3xl border border-gold/60 bg-white/80 px-6 py-4 text-sm font-bold text-teal shadow-soft">
-            Your newsletter signup was received. You can unsubscribe at any time using the link in future emails.
-          </p>
-          <div className="mt-8 flex flex-wrap justify-center gap-4">
-            <Link href="/books" className="btn">Explore Our Books</Link>
-            <Link href="/for-parents" className="btn-ghost">For Parents</Link>
-            <Link href="/" className="btn-ghost">Back to Home</Link>
-          </div>
-        </section>
-      </SiteShell>
-    );
+    return <SiteShell><section className="page-wrap flex min-h-[60vh] flex-col items-center justify-center pb-20 pt-10 text-center"><h1 className="font-serif text-5xl font-semibold text-teal">You&apos;re Signed Up!</h1><p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-ink">Thank you for joining Benny &amp; Penny Adventures. We&apos;ll send gentle updates, book news, printables, and family-friendly resources to your inbox.</p><p className="mx-auto mt-4 max-w-2xl rounded-3xl border border-gold/60 bg-white/80 px-6 py-4 text-sm font-bold text-teal shadow-soft">Your newsletter signup was received. You can unsubscribe at any time using the link in future emails.</p><div className="mt-8 flex flex-wrap justify-center gap-4"><Link href="/books" className="btn">Explore Our Books</Link><Link href="/for-parents" className="btn-ghost">For Parents</Link><Link href="/" className="btn-ghost">Back to Home</Link></div></section></SiteShell>;
   }
 
-  return (
-    <SiteShell>
-      <ClearCartOnSuccess shouldClear={Boolean(sessionId)} />
-      <section className="page-wrap flex min-h-[60vh] flex-col items-center justify-center pb-20 pt-10 text-center">
-        <h1 className="font-serif text-5xl font-semibold text-teal">Thank You!</h1>
-        <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-ink">Thank you for your Benny &amp; Penny order. We are preparing your purchase details and delivery access.</p>
-        <p className="mx-auto mt-4 max-w-2xl rounded-3xl border border-gold/60 bg-white/80 px-6 py-4 text-sm font-bold text-teal shadow-soft">{orderMessage}</p>
-        {sessionId ? <SetPasswordCard sessionId={sessionId} /> : null}
-        <div className="mt-8 flex flex-wrap justify-center gap-4">
-          <Link href="/books" className="btn">Explore Our Books</Link>
-          <Link href="/" className="btn-ghost">Back to Home</Link>
-        </div>
-      </section>
-    </SiteShell>
-  );
+  return <SiteShell><ClearCartOnSuccess shouldClear={Boolean(sessionId)} /><section className="page-wrap flex min-h-[60vh] flex-col items-center justify-center pb-20 pt-10 text-center"><h1 className="font-serif text-5xl font-semibold text-teal">Thank You!</h1><p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-ink">Thank you for your Benny &amp; Penny order. We are preparing your purchase details and delivery access.</p><p className="mx-auto mt-4 max-w-2xl rounded-3xl border border-gold/60 bg-white/80 px-6 py-4 text-sm font-bold text-teal shadow-soft">{orderMessage}</p>{sessionId ? <SetPasswordCard sessionId={sessionId} /> : null}<div className="mt-8 flex flex-wrap justify-center gap-4"><Link href="/books" className="btn">Explore Our Books</Link><Link href="/" className="btn-ghost">Back to Home</Link></div></section></SiteShell>;
 }

@@ -3,6 +3,8 @@
 // Docs: https://docs.sequenzy.com/api-reference/transactional/send
 
 const API_BASE = (process.env.SEQUENZY_API_URL || "https://api.sequenzy.com/api/v1").replace(/\/$/, "");
+const BRAND = "Benny & Penny";
+const BRAND_ADVENTURES = "Benny & Penny Adventures";
 
 export function isEmailConfigured(): boolean {
   return Boolean(process.env.SEQUENZY_API_KEY);
@@ -71,7 +73,7 @@ function layout(bodyInner: string): string {
     <div style="background:#ffffff;border:1px solid #e6d9c4;border-radius:18px;padding:24px;">
       ${bodyInner}
     </div>
-    <p style="text-align:center;color:#9aa0a0;font-size:12px;margin-top:16px;">© Benny &amp; Penny's Adventures. You received this because someone sent you a gift.</p>
+    <p style="text-align:center;color:#9aa0a0;font-size:12px;margin-top:16px;">© ${BRAND_ADVENTURES}. You received this because someone sent you a gift.</p>
   </div></body></html>`;
 }
 
@@ -109,8 +111,8 @@ export async function sendGiftEmail(opts: {
 
   return sendEmail({
     to: opts.to,
-    subject: opts.gifterName ? `${opts.gifterName} sent you a Benny & Penny book 🎁` : "🎁 A Benny & Penny book is waiting for you",
-    preview: opts.gifterName ? `${opts.gifterName} gifted you a Benny & Penny book — claim your free copy.` : "You've been gifted a Benny & Penny book — claim your free copy.",
+    subject: opts.gifterName ? `${opts.gifterName} sent you a ${BRAND} book 🎁` : `🎁 A ${BRAND} book is waiting for you`,
+    preview: opts.gifterName ? `${opts.gifterName} gifted you a ${BRAND} book — claim your free copy.` : `You've been gifted a ${BRAND} book — claim your free copy.`,
     html: layout(inner)
   });
 }
@@ -141,7 +143,7 @@ export async function sendOrderReceiptEmail(opts: {
     <p style="font-size:13px;color:#6b7d80;margin-top:16px;">You can view your orders and access your books any time in your <a href="${siteUrl()}/portal" style="color:#1f5c5f;">Customer Portal</a>.</p>`;
   return sendEmail({
     to: opts.to,
-    subject: `Your Benny & Penny order #${opts.orderNumber}`,
+    subject: `Your ${BRAND} order #${opts.orderNumber}`,
     preview: "Thanks for your order — set up your account to access your books.",
     html: layout(inner)
   });
@@ -155,7 +157,7 @@ export async function sendGiftRedeemedEmail(opts: { to: string; code: string; bo
     } was just redeemed. Thank you for sharing Benny &amp; Penny with someone you care about!</p>`;
   return sendEmail({
     to: opts.to,
-    subject: "Your Benny & Penny gift was claimed 🎁",
+    subject: `Your ${BRAND} gift was claimed 🎁`,
     preview: "Someone just redeemed the gift you sent.",
     html: layout(inner)
   });
@@ -208,8 +210,8 @@ export async function sendPasswordLinkEmail(opts: {
   const isReset = opts.mode === "reset";
   const heading = isReset ? "Reset your password" : "Finish setting up your account ♥";
   const lead = isReset
-    ? "We received a request to reset your Benny &amp; Penny password. Tap below to choose a new one."
-    : "Thanks for joining Benny &amp; Penny's Adventures! Tap below to create your password and unlock your Customer Portal — orders, addresses, and book downloads in one place.";
+    ? `We received a request to reset your ${BRAND} password. Tap below to choose a new one.`
+    : `Thanks for joining ${BRAND_ADVENTURES}! Tap below to create your password and unlock your Customer Portal — orders, addresses, and book downloads in one place.`;
   const cta = isReset ? "Reset my password" : "Create my password";
   const inner = `
     <h1 style="font-size:22px;color:#1f5c5f;margin:0 0 8px;">${heading}</h1>
@@ -221,7 +223,7 @@ export async function sendPasswordLinkEmail(opts: {
     <p style="font-size:12px;color:#9aa0a0;margin-top:14px;">This link expires in 48 hours. If you didn't request this, you can safely ignore this email.</p>`;
   return sendEmail({
     to: opts.to,
-    subject: isReset ? "Reset your Benny & Penny password" : "Finish setting up your Benny & Penny account",
+    subject: isReset ? `Reset your ${BRAND} password` : `Finish setting up your ${BRAND} account`,
     preview: isReset ? "Choose a new password." : "Create your password to access your books.",
     html: layout(inner)
   });

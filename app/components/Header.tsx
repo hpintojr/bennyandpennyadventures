@@ -41,8 +41,8 @@ export default function Header() {
   return (
     <header className="wrap py-5 sm:py-6">
       <div className="relative flex items-start justify-between gap-3 lg:items-center">
-        <Link href="/" className="min-w-0 flex-1 text-center leading-none lg:flex-none lg:text-left" aria-label="Benny and Penny's Adventures home">
-          <div className="font-serif text-[26px] font-bold text-teal sm:text-[42px] md:text-[46px]">Benny &amp; Penny&rsquo;s</div>
+        <Link href="/" className="min-w-0 flex-1 text-center leading-none lg:flex-none lg:text-left" aria-label="Benny and Penny Adventures home">
+          <div className="font-serif text-[26px] font-bold text-teal sm:text-[42px] md:text-[46px]">Benny &amp; Penny</div>
           <div className="text-center font-serif text-[26px] italic text-coral sm:text-[42px] md:text-[46px]">
             <span className="align-middle text-[.85em]">♥</span> Adventures <span className="align-middle text-[.85em]">♥</span>
           </div>
