@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "../globals.css";
 import { CartProvider } from "../components/CartProvider";
+import BrandNameNormalizer from "../components/BrandNameNormalizer";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://bennyandpennyadventures.com";
 
@@ -30,7 +31,10 @@ export default function FrontendLayout({ children }: Readonly<{ children: React.
   return (
     <html lang="en">
       <body>
-        <CartProvider>{children}</CartProvider>
+        <CartProvider>
+          <BrandNameNormalizer />
+          {children}
+        </CartProvider>
       </body>
     </html>
   );
