@@ -16,7 +16,7 @@ export function organizationSchema() {
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: "Benny & Penny's Adventures",
+    name: "Benny & Penny Adventures",
     url: base,
     logo: `${base}/images/og-image.png`,
     description:
@@ -30,7 +30,7 @@ export function websiteSchema() {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "Benny & Penny's Adventures",
+    name: "Benny & Penny Adventures",
     url: base,
     inLanguage: "en-US"
   };
@@ -59,7 +59,7 @@ export function bookSchema(book: BookLike) {
     ...(book.pages ? { numberOfPages: book.pages } : {}),
     ...(book.coverImage ? { image: `${base}${book.coverImage}` } : {}),
     author: { "@type": "Person", name: "Michelle Marie Pinto, RN" },
-    publisher: { "@type": "Organization", name: "Benny & Penny's Adventures" },
+    publisher: { "@type": "Organization", name: "Benny & Penny Adventures" },
     audience: { "@type": "PeopleAudience", suggestedMinAge: 3, suggestedMaxAge: 8 },
     offers: {
       "@type": "AggregateOffer",
