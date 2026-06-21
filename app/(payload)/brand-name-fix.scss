@@ -1,0 +1,7 @@
+/* Keeps the admin login brand aligned with the public naming standard. */
+.template-login form::before,
+.template-create-first-user form::before,
+.template-login .login__form::before,
+.template-create-first-user .login__form::before {
+  content: "♥ Benny & Penny Admin Panel";
+}
