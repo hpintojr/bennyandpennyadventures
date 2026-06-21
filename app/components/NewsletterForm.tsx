@@ -5,7 +5,7 @@ import { FormEvent, useState } from "react";
 
 type SubmitState = "idle" | "submitting" | "error";
 
-const emailConsentText = "I agree to receive occasional email updates from Benny & Penny's Adventures. I can unsubscribe at any time.";
+const emailConsentText = "I agree to receive occasional email updates from Benny & Penny Adventures. I can unsubscribe at any time.";
 
 export default function NewsletterForm({ compact = false, source = "website" }: { compact?: boolean; source?: string }) {
   const [email, setEmail] = useState("");
