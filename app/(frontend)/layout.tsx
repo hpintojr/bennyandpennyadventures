@@ -7,15 +7,15 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://bennyandpennyadvent
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Benny & Penny's Adventures",
-    template: "%s | Benny & Penny's Adventures"
+    default: "Benny & Penny Adventures",
+    template: "%s | Benny & Penny Adventures"
   },
   description: "Children's medical books that help brave little hearts understand infusions, ports, PICC lines, scans, hospital stays, and more.",
   openGraph: {
-    title: "Benny & Penny's Adventures",
+    title: "Benny & Penny Adventures",
     description: "Medical books for brave little hearts.",
     url: siteUrl,
-    siteName: "Benny & Penny's Adventures",
+    siteName: "Benny & Penny Adventures",
     images: [{ url: "/images/og-image.png", width: 1200, height: 630 }],
     locale: "en_US",
     type: "website"
