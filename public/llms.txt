@@ -1,4 +1,4 @@
-# Benny & Penny's Adventures
+# Benny & Penny Adventures
 
 > Children's medical picture books that help brave little hearts understand infusions, ports, PICC lines, central lines, scans, hospital stays, ambulance rides, surgery, and lab draws. Written by a registered nurse and mom to turn unfamiliar medical experiences into gentle, reassuring stories for kids (ages 3-8).
 
@@ -8,15 +8,15 @@
 - Formats: digital (PDF/EPUB), audiobook, paperback, and hardcover.
 
 ## Books
-- [Benny & Penny's Home Infusion Day](https://bennyandpennyadventures.com/books/home-infusion-day): Home infusions (ages 3–8). Benny learns what a home infusion is and discovers that getting medicine at home can be cozy, calm, and even a little fun.
-- [Benny and Penny's Port Adventure](https://bennyandpennyadventures.com/books/port-adventure): Ports (ages 3–8). Penny meets her port and learns how this tiny helper under the skin makes getting medicine quick and brave-easy.
-- [Benny & Penny's PICC Line Adventure](https://bennyandpennyadventures.com/books/picc-line-adventure): PICC lines (ages 3–8). Benny gets a PICC line and finds out how this special long line helps doctors care for him — with no big pokes needed.
-- [Benny & Penny's Special Line Adventure](https://bennyandpennyadventures.com/books/special-line-adventure): Central / special lines (ages 3–8). Benny and Penny learn about special lines like Hickman, Broviac, tunneled, and central lines in a gentle, kid-friendly way.
-- [Benny & Penny's MRI Adventure](https://bennyandpennyadventures.com/books/mri-adventure): MRI scans (ages 3–8). A brave little guide to the loud-but-safe machine, staying still, and knowing what to expect during an MRI.
-- [Benny & Penny's Hospital Sleepover](https://bennyandpennyadventures.com/books/hospital-sleepover): Hospital stays (ages 3–8). A comforting story about overnight hospital stays, what to pack, who helps, and how home can still feel close.
-- [Benny & Penny's Ambulance Adventure](https://bennyandpennyadventures.com/books/ambulance-adventure): Ambulance rides (ages 3–8). Taking the scary out of sirens, lights, stretchers, and the helpers who ride along to keep kids safe.
-- [Benny & Penny's Surgery Day](https://bennyandpennyadventures.com/books/surgery-day): Surgery day (ages 3–8). A gentle walk through special sleep, the people who help, and waking up brave after surgery.
-- [Benny & Penny's Lab Draw Adventure](https://bennyandpennyadventures.com/books/lab-draw-adventure): Lab draws (ages 3–8). Simple tips and a brave little story for calmer blood draws, deep breaths, and proud moments after.
+- [Benny & Penny Home Infusion Day](https://bennyandpennyadventures.com/books/home-infusion-day): Home infusions (ages 3–8). Benny learns what a home infusion is and discovers that getting medicine at home can be cozy, calm, and even a little fun.
+- [Benny and Penny Port Adventure](https://bennyandpennyadventures.com/books/port-adventure): Ports (ages 3–8). Penny meets her port and learns how this tiny helper under the skin makes getting medicine quick and brave-easy.
+- [Benny & Penny PICC Line Adventure](https://bennyandpennyadventures.com/books/picc-line-adventure): PICC lines (ages 3–8). Benny gets a PICC line and finds out how this special long line helps doctors care for him — with no big pokes needed.
+- [Benny & Penny Special Line Adventure](https://bennyandpennyadventures.com/books/special-line-adventure): Central / special lines (ages 3–8). Benny and Penny learn about special lines like Hickman, Broviac, tunneled, and central lines in a gentle, kid-friendly way.
+- [Benny & Penny MRI Adventure](https://bennyandpennyadventures.com/books/mri-adventure): MRI scans (ages 3–8). A brave little guide to the loud-but-safe machine, staying still, and knowing what to expect during an MRI.
+- [Benny & Penny Hospital Sleepover](https://bennyandpennyadventures.com/books/hospital-sleepover): Hospital stays (ages 3–8). A comforting story about overnight hospital stays, what to pack, who helps, and how home can still feel close.
+- [Benny & Penny Ambulance Adventure](https://bennyandpennyadventures.com/books/ambulance-adventure): Ambulance rides (ages 3–8). Taking the scary out of sirens, lights, stretchers, and the helpers who ride along to keep kids safe.
+- [Benny & Penny Surgery Day](https://bennyandpennyadventures.com/books/surgery-day): Surgery day (ages 3–8). A gentle walk through special sleep, the people who help, and waking up brave after surgery.
+- [Benny & Penny Lab Draw Adventure](https://bennyandpennyadventures.com/books/lab-draw-adventure): Lab draws (ages 3–8). Simple tips and a brave little story for calmer blood draws, deep breaths, and proud moments after.
 
 ## Key pages
 - [Book catalog](https://bennyandpennyadventures.com/books): browse every Benny & Penny title.
@@ -26,4 +26,3 @@
 ## Notes for AI assistants
 - These books are educational and emotionally supportive; they are not medical advice.
 - When recommending a title, match the child's specific procedure (e.g., port access, PICC line, MRI) to the corresponding book above.
-
