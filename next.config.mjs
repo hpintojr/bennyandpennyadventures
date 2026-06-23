@@ -22,15 +22,15 @@ const nextConfig = {
   async headers() {
     return [
       {
+        source: "/:path*",
+        headers: securityHeaders
+      },
+      {
         source: "/api/:path*",
         headers: [
           ...securityHeaders,
           { key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" }
         ]
-      },
-      {
-        source: "/:path*",
-        headers: securityHeaders
       }
     ];
   }
