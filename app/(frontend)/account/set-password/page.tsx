@@ -17,7 +17,7 @@ export default async function AccountSetPasswordPage({ searchParams }: Props) {
   return (
     <SiteShell>
       <section className="wrap pb-8 pt-10 text-center">
-        <p className="font-serif text-2xl italic text-coral">Almost there</p>
+        <p className="font-serif text-2xl italic text-coral">{"Almost there \u2665"}</p>
         <h1 className="mt-2 font-serif text-[40px] font-bold leading-tight text-teal sm:text-5xl">Create Your Password</h1>
       </section>
       <section className="wrap pb-20">
