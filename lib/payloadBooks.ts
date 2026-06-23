@@ -49,12 +49,23 @@ function rowToBook(row: BookRow): Book {
   };
 }
 
+function getVerifiedDatabaseUri(value: string) {
+  const uri = new URL(value);
+  const sslMode = uri.searchParams.get("sslmode");
+
+  if (sslMode === "prefer" || sslMode === "require" || sslMode === "verify-ca") {
+    uri.searchParams.set("sslmode", "verify-full");
+  }
+
+  return uri.toString();
+}
+
 async function queryBooks(): Promise<Book[]> {
   const databaseUri = process.env.DATABASE_URI;
 
   if (!databaseUri) return fallbackBooks;
 
-  const client = new Client({ connectionString: databaseUri });
+  const client = new Client({ connectionString: getVerifiedDatabaseUri(databaseUri) });
 
   try {
     await client.connect();
