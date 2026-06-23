@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { getPayload } from "payload";
 import { createPasswordToken, passwordSetupUrl } from "@/lib/authTokens";
 import { sendPasswordLinkEmail } from "@/lib/email";
+import { checkBotProtection } from "@/lib/botProtection";
 
 export const runtime = "nodejs";
 
@@ -28,6 +29,14 @@ export async function POST(request: Request) {
   } catch {
     return NextResponse.json({ error: "Invalid request." }, { status: 400 });
   }
+
+  const botResponse = await checkBotProtection({
+    body: body as Record<string, unknown>,
+    request,
+    routeName: "register",
+    maxRequests: 3
+  });
+  if (botResponse) return botResponse;
 
   const email = normEmail(body.email);
   if (!email) return NextResponse.json({ error: "Enter a valid email." }, { status: 400 });
