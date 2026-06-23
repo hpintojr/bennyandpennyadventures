@@ -21,7 +21,31 @@ export function hashToken(raw: string): string {
   return crypto.createHash("sha256").update(raw).digest("hex");
 }
 
+async function consumeExistingPasswordTokens(payload: PayloadLike, userId: string | number) {
+  const active = (await payload.find({
+    collection: "password-tokens",
+    limit: 100,
+    where: {
+      and: [{ user: { equals: userId } }, { usedAt: { exists: false } }]
+    },
+    overrideAccess: true
+  })) as { docs?: PasswordTokenRecord[] };
+
+  const now = new Date().toISOString();
+  await Promise.all(
+    (active.docs || []).map((record) =>
+      payload.update({
+        collection: "password-tokens",
+        id: record.id,
+        data: { usedAt: now },
+        overrideAccess: true
+      })
+    )
+  );
+}
+
 // Creates a stored, hashed token and returns the RAW token for the email link.
+// Issuing a new link invalidates any still-active links for that account.
 export async function createPasswordToken(
   payload: PayloadLike,
   userId: string | number,
@@ -29,6 +53,8 @@ export async function createPasswordToken(
   type: "setup" | "reset",
   ttlHours = 48
 ): Promise<string> {
+  await consumeExistingPasswordTokens(payload, userId);
+
   const raw = makeRawToken();
   await payload.create({
     collection: "password-tokens",
@@ -69,7 +95,7 @@ export async function consumePasswordToken(
   return { userId };
 }
 
-export function passwordSetupUrl(raw: string): string {
+export function passwordSetupUrl(raw: string) {
   const base = (process.env.NEXT_PUBLIC_SITE_URL || "https://bennyandpennyadventures.com").replace(/\/$/, "");
-  return `${base}/account/set-password?token=${encodeURIComponent(raw)}`;
+  return `${base}/account/set-password#token=${encodeURIComponent(raw)}`;
 }
