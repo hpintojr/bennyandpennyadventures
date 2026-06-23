@@ -52,5 +52,5 @@ export function verifyCartRecoveryToken(token: string): CartRecoveryPayload | nu
 
 export function cartRecoveryUrl(token: string) {
   const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || process.env.PAYLOAD_PUBLIC_SERVER_URL || "https://bennyandpennyadventures.com").replace(/\/$/, "");
-  return `${siteUrl}/cart?recover=${encodeURIComponent(token)}`;
+  return `${siteUrl}/cart#recover=${encodeURIComponent(token)}`;
 }

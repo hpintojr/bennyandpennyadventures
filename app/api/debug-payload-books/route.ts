@@ -1,23 +1,11 @@
 import config from "@payload-config";
 import { getPayload } from "payload";
+import { isOperationsRouteAllowed, operationsRouteNotFound } from "@/lib/operationsRouteGuard";
 
 export const dynamic = "force-dynamic";
 
-function isAuthorized(request: Request) {
-  const expectedSecret = process.env.PAYLOAD_SETUP_SECRET;
-  const providedSecret = new URL(request.url).searchParams.get("secret");
-  return Boolean(expectedSecret && providedSecret && providedSecret === expectedSecret);
-}
-
 export async function GET(request: Request) {
-  // Setup/debug endpoints are disabled in production. Set ALLOW_SETUP_ROUTES=true to re-enable temporarily.
-  if (process.env.NODE_ENV === "production" && process.env.ALLOW_SETUP_ROUTES !== "true") {
-    return new Response("Not found", { status: 404 });
-  }
-
-  if (!isAuthorized(request)) {
-    return Response.json({ ok: false, message: "Unauthorized debug request." }, { status: 401 });
-  }
+  if (!isOperationsRouteAllowed(request)) return operationsRouteNotFound();
 
   try {
     const payload = await getPayload({ config });

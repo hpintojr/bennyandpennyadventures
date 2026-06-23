@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getPayload } from "payload";
 import { consumePasswordToken } from "@/lib/authTokens";
+import { checkBotProtection } from "@/lib/botProtection";
 
 export const runtime = "nodejs";
 
@@ -16,6 +17,14 @@ export async function POST(request: Request) {
   } catch {
     return NextResponse.json({ error: "Invalid request." }, { status: 400 });
   }
+
+  const botResponse = await checkBotProtection({
+    body: body as Record<string, unknown>,
+    request,
+    routeName: "set-password",
+    maxRequests: 5
+  });
+  if (botResponse) return botResponse;
 
   const token = typeof body.token === "string" ? body.token.trim() : "";
   const password = typeof body.password === "string" ? body.password : "";

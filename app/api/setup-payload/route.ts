@@ -1,4 +1,5 @@
 import { Client } from "pg";
+import { isOperationsRouteAllowed, operationsRouteNotFound } from "@/lib/operationsRouteGuard";
 
 export const dynamic = "force-dynamic";
 
@@ -50,23 +51,9 @@ const repairSessionsIdSql = [
 ].join('; ');
 
 export async function GET(request: Request) {
-  // Setup/debug endpoints are disabled in production. Set ALLOW_SETUP_ROUTES=true to re-enable temporarily.
-  if (process.env.NODE_ENV === "production" && process.env.ALLOW_SETUP_ROUTES !== "true") {
-    return new Response("Not found", { status: 404 });
-  }
+  if (!isOperationsRouteAllowed(request)) return operationsRouteNotFound();
 
-  const url = new URL(request.url);
-  const providedSecret = url.searchParams.get("secret");
-  const expectedSecret = process.env.PAYLOAD_SETUP_SECRET;
   const databaseUri = process.env.DATABASE_URI;
-
-  if (!expectedSecret) {
-    return jsonResponse({ ok: false, message: "PAYLOAD_SETUP_SECRET is not configured in Vercel." }, 500);
-  }
-
-  if (!providedSecret || providedSecret !== expectedSecret) {
-    return jsonResponse({ ok: false, message: "Unauthorized setup request." }, 401);
-  }
 
   if (!databaseUri) {
     return jsonResponse({ ok: false, message: "DATABASE_URI is not configured in Vercel." }, 500);
@@ -87,7 +74,7 @@ export async function GET(request: Request) {
     return jsonResponse(
       {
         ok: false,
-        message: "Payload database schema setup failed. Check Vercel runtime logs for the full error.",
+        message: "Payload database schema setup failed. Check runtime logs for the full error.",
         error: error instanceof Error ? error.message : "Unknown error"
       },
       500

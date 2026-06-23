@@ -17,13 +17,24 @@ export default function CartRecoveryRestore() {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    const token = new URLSearchParams(window.location.search).get("recover") || "";
+    const fragmentToken = new URLSearchParams(window.location.hash.slice(1)).get("recover") || "";
+    const legacyToken = new URLSearchParams(window.location.search).get("recover") || "";
+    const token = fragmentToken || legacyToken;
     if (!token) return;
+
+    // Remove the token before any further requests so it cannot appear in
+    // referrers, copied URLs, browser history, or server request logs.
+    window.history.replaceState({}, "", "/cart");
 
     let active = true;
     async function restore() {
       try {
-        const response = await fetch(`/api/cart/recover?token=${encodeURIComponent(token)}`, { credentials: "include" });
+        const response = await fetch("/api/cart/recover", {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token })
+        });
         const data = (await response.json()) as { cartToken?: string; items?: RestoredItem[]; error?: string };
         if (!response.ok || !data.cartToken || !Array.isArray(data.items) || !data.items.length) throw new Error(data.error || "We could not restore this cart.");
         if (!active) return;
@@ -32,7 +43,6 @@ export default function CartRecoveryRestore() {
         window.localStorage.setItem("bp_cart_token", data.cartToken);
         window.dispatchEvent(new Event("bp-cart-updated"));
         sendCartEvent(data.items, "cart-updated");
-        window.history.replaceState({}, "", "/cart");
         setMessage("Your saved cart is ready to review. ♥");
       } catch (error) {
         if (!active) return;

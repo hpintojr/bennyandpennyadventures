@@ -1,14 +1,34 @@
 "use client";
 
 import type { FormEvent } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
-export default function SetPasswordByTokenClient({ token }: { token: string }) {
+export default function SetPasswordByTokenClient({ legacyToken }: { legacyToken: string }) {
+  const [fragmentToken, setFragmentToken] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [state, setState] = useState<"idle" | "loading" | "done" | "error">("idle");
   const [message, setMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.hash.slice(1));
+    const tokenFromFragment = params.get("token")?.trim() || "";
+
+    if (tokenFromFragment) {
+      setFragmentToken(tokenFromFragment);
+      window.history.replaceState(null, "", window.location.pathname);
+      return;
+    }
+
+    // Support links sent before fragment-based tokens were introduced, then
+    // remove the sensitive query string from the address bar immediately.
+    if (legacyToken) {
+      window.history.replaceState(null, "", window.location.pathname);
+    }
+  }, [legacyToken]);
+
+  const token = fragmentToken || legacyToken;
 
   if (!token) {
     return (

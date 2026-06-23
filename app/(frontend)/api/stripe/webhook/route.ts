@@ -48,21 +48,19 @@ async function markTrackedCartConverted(sessionId: string, orderId?: string | nu
 }
 
 export async function GET() {
-  return NextResponse.json({
-    ok: true,
-    route: "/api/stripe/webhook",
-    status: "Stripe webhook endpoint is online. Stripe events must be sent as signed POST requests.",
-    accepts: ["checkout.session.completed", "payment_intent.payment_failed"]
+  return new Response("Not found", {
+    status: 404,
+    headers: { "Cache-Control": "no-store" }
   });
 }
 
 export async function POST(request: Request) {
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
-  if (!webhookSecret) return NextResponse.json({ error: "Stripe webhook secret is not configured." }, { status: 500 });
+  if (!webhookSecret) return NextResponse.json({ error: "Webhook unavailable." }, { status: 404 });
 
   const signature = request.headers.get("stripe-signature");
-  if (!signature) return NextResponse.json({ error: "Missing Stripe signature." }, { status: 400 });
+  if (!signature) return NextResponse.json({ error: "Invalid webhook request." }, { status: 400 });
 
   const rawBody = await request.text();
   const stripe = getStripe();
