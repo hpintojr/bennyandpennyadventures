@@ -27,6 +27,17 @@ if (!databaseUri || !payloadKey) {
   throw new Error("Payload CMS environment variables are required.");
 }
 
+function getVerifiedDatabaseUri(value: string) {
+  const uri = new URL(value);
+  const sslMode = uri.searchParams.get("sslmode");
+
+  if (sslMode === "prefer" || sslMode === "require" || sslMode === "verify-ca") {
+    uri.searchParams.set("sslmode", "verify-full");
+  }
+
+  return uri.toString();
+}
+
 export default buildConfig({
   admin: {
     user: Users.slug,
@@ -36,7 +47,7 @@ export default buildConfig({
         "/app/(payload)/components/AdminAfterNavLinks.tsx#AdminAfterNavLinks"
       ],
       beforeDashboard: ["/app/(payload)/components/BeforeDashboard.tsx#BeforeDashboard"],
-      beforeNavLinks: ["/app/(payload)/components/AdminBeforeNavLinks.tsx#AdminBeforeNavLinks"],
+      beforeNavLinks: ["/app/(payload)/components/AdminBeforeNavLinks.tsx#AdminAfterNavLinks"],
       graphics: {
         Icon: "/app/(payload)/graphics/Icon.tsx#Icon",
         Logo: "/app/(payload)/graphics/Logo.tsx#Logo"
@@ -70,7 +81,7 @@ export default buildConfig({
   db: postgresAdapter({
     push: true,
     pool: {
-      connectionString: databaseUri
+      connectionString: getVerifiedDatabaseUri(databaseUri)
     }
   }),
   secret: payloadKey,
