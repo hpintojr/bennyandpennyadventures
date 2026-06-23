@@ -1,5 +1,6 @@
 import { bookFormats, books } from "@/lib/books";
 import { Client } from "pg";
+import { isOperationsRouteAllowed, operationsRouteNotFound } from "@/lib/operationsRouteGuard";
 
 export const dynamic = "force-dynamic";
 
@@ -70,19 +71,9 @@ CREATE INDEX IF NOT EXISTS "books_slug_idx" ON "books" ("slug");
 `;
 
 export async function GET(request: Request) {
-  // Setup/debug endpoints are disabled in production. Set ALLOW_SETUP_ROUTES=true to re-enable temporarily.
-  if (process.env.NODE_ENV === "production" && process.env.ALLOW_SETUP_ROUTES !== "true") {
-    return new Response("Not found", { status: 404 });
-  }
+  if (!isOperationsRouteAllowed(request)) return operationsRouteNotFound();
 
-  const url = new URL(request.url);
-  const providedSecret = url.searchParams.get("secret");
-  const expectedSecret = process.env.PAYLOAD_SETUP_SECRET;
   const databaseUri = process.env.DATABASE_URI;
-
-  if (!expectedSecret || !providedSecret || providedSecret !== expectedSecret) {
-    return jsonResponse({ ok: false, message: "Unauthorized setup request." }, 401);
-  }
 
   if (!databaseUri) {
     return jsonResponse({ ok: false, message: "DATABASE_URI is not configured in Vercel." }, 500);
