@@ -47,7 +47,7 @@ export default buildConfig({
         "/app/(payload)/components/AdminAfterNavLinks.tsx#AdminAfterNavLinks"
       ],
       beforeDashboard: ["/app/(payload)/components/BeforeDashboard.tsx#BeforeDashboard"],
-      beforeNavLinks: ["/app/(payload)/components/AdminBeforeNavLinks.tsx#AdminAfterNavLinks"],
+      beforeNavLinks: ["/app/(payload)/components/AdminBeforeNavLinks.tsx#AdminBeforeNavLinks"],
       graphics: {
         Icon: "/app/(payload)/graphics/Icon.tsx#Icon",
         Logo: "/app/(payload)/graphics/Logo.tsx#Logo"
