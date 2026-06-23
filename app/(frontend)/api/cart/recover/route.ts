@@ -14,16 +14,35 @@ function number(value: unknown, fallback = 0) {
   return typeof value === "number" && Number.isFinite(value) ? value : fallback;
 }
 
-export async function GET(request: Request) {
-  const token = new URL(request.url).searchParams.get("token") || "";
+function json(body: Record<string, unknown>, status = 200) {
+  return NextResponse.json(body, {
+    status,
+    headers: { "Cache-Control": "no-store" }
+  });
+}
+
+export async function GET() {
+  return new Response("Not found", { status: 404, headers: { "Cache-Control": "no-store" } });
+}
+
+export async function POST(request: Request) {
+  let body: { token?: unknown };
+
+  try {
+    body = (await request.json()) as typeof body;
+  } catch {
+    return json({ error: "Invalid cart recovery request." }, 400);
+  }
+
+  const token = typeof body.token === "string" ? body.token.trim() : "";
   const payloadData = verifyCartRecoveryToken(token);
-  if (!payloadData) return NextResponse.json({ error: "This cart recovery link is invalid or has expired." }, { status: 400 });
+  if (!payloadData) return json({ error: "This cart recovery link is invalid or has expired." }, 400);
 
   try {
     const { default: config } = await import("@payload-config");
     const payload = await getPayload({ config });
     const cart = (await payload.findByID({ collection: "abandoned-carts", overrideAccess: true, id: payloadData.cartId, depth: 0 })) as PayloadDoc | null;
-    if (!cart || cart.status !== "abandoned") return NextResponse.json({ error: "This cart is no longer available for recovery." }, { status: 410 });
+    if (!cart || cart.status !== "abandoned") return json({ error: "This cart is no longer available for recovery." }, 410);
 
     const rawItems = Array.isArray(cart.items) ? cart.items as PayloadDoc[] : [];
     const items = rawItems
@@ -38,7 +57,7 @@ export async function GET(request: Request) {
       })
       .filter((item): item is NonNullable<typeof item> => Boolean(item));
 
-    if (!items.length) return NextResponse.json({ error: "This cart no longer has recoverable items." }, { status: 410 });
+    if (!items.length) return json({ error: "This cart no longer has recoverable items." }, 410);
 
     const now = new Date().toISOString();
     const metadata = typeof cart.metadata === "object" && cart.metadata ? (cart.metadata as Record<string, unknown>) : {};
@@ -49,9 +68,9 @@ export async function GET(request: Request) {
       data: { lastActivityAt: now, metadata: { ...metadata, recoveryLinkOpenedAt: now } }
     });
 
-    return NextResponse.json({ cartToken: cart.cartToken, items });
+    return json({ cartToken: cart.cartToken, items });
   } catch (error) {
     console.error("Cart recovery lookup failed", error);
-    return NextResponse.json({ error: "We could not restore this cart right now." }, { status: 500 });
+    return json({ error: "We could not restore this cart right now." }, 500);
   }
 }
